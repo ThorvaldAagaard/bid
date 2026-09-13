@@ -25,8 +25,14 @@ Two traps, both of which cost time to find:
 
 `/version` reports ruleCount ~1,037,464, so the tree cannot be walked
 exhaustively. --depth 2 (the default) fetches every opening and every response
-to every opening: 384 auctions, ~3.5k call definitions, under a minute.
+to every opening: ~350 auctions, ~3.1k call definitions, under a minute.
 --depth 3 is roughly 22,000 auctions -- hours, and a very large file.
+
+Trap 3: the service IGNORES LEADING PASSES. `P-1C-*` and `1C-*` return
+byte-identical rule sets, as do `*`, `P-*` and `P-P-*`. Passes that are not
+leading are significant (`1C-P-P-*` differs from `1C-P-*`). Naively expanding
+every `P` in the tree therefore mints ~34 duplicate positions (about 12% of
+the file) that add no information; `canonical()` collapses them.
 
 Reading a position
 ------------------
@@ -91,10 +97,46 @@ def child(parent, bid):
     return (parent[:-1] if parent.endswith("*") else parent + "-") + bid + "-*"
 
 
+def canonical(auction):
+    """Collapse leading passes: 'P-P-1C-*' -> '1C-*', 'P-*' -> '*'.
+
+    Verified against the live service 2026-09-12:
+        '*' == 'P-*' == 'P-P-*'
+        '1C-*' == 'P-1C-*' == 'P-P-1C-*'
+        '1H-1S-*' == 'P-1H-1S-*'      '1N-*' == 'P-1N-*'      '2C-*' == 'P-2C-*'
+    but non-leading passes matter:
+        '1C-*' (35 rows) != '1C-P-P-*' (16)     '1H-P-*' (25) != '1H-P-P-*' (12)
+    """
+    core = auction[:-2] if auction.endswith("-*") else (
+        "" if auction == "*" else auction)
+    toks = [t for t in core.split("-") if t]
+    while toks and toks[0] == "P":
+        toks.pop(0)
+    return "-".join(toks) + "-*" if toks else "*"
+
+
+def dedupe(out):
+    """Fold 'P-'-prefixed alias keys into their canonical auction.
+
+    Shortest key wins, so the canonical form is always inserted first.
+    Returns (rules, n_aliases_dropped).
+    """
+    merged, dropped = {}, 0
+    for a in sorted(out, key=lambda x: (len(x), x)):
+        c = canonical(a)
+        if c in merged:
+            dropped += 1
+            continue
+        merged[c] = out[a]
+    return merged, dropped
+
+
 def crawl(max_calls, workers, cache_path=None):
     if cache_path and os.path.exists(cache_path):
         print(f"using cache {cache_path}")
-        return json.load(open(cache_path))
+        rules, dropped = dedupe(json.load(open(cache_path)))
+        print(f"  canonicalised: dropped {dropped} leading-pass aliases")
+        return rules
     t0 = time.time()
     root = fetch_rules("*")
     if root is None:
@@ -103,9 +145,15 @@ def crawl(max_calls, workers, cache_path=None):
     print(f"root: {len(root)} opening responses", flush=True)
     frontier = ["*"]
     for depth in range(1, max_calls + 1):
-        targets = sorted({child(p, r["bid"])
-                          for p in frontier for r in (out.get(p) or [])
-                          if child(p, r["bid"]) not in out})
+        targets, seen = [], set()
+        for p in frontier:
+            for r in (out.get(p) or []):
+                key = canonical(child(p, r["bid"]))
+                if key in out or key in seen:
+                    continue
+                seen.add(key)
+                targets.append(key)
+        targets.sort()
         print(f"depth {depth}: {len(targets)} auctions "
               f"({time.time()-t0:.0f}s)", flush=True)
         if not targets:
@@ -339,6 +387,11 @@ def build(rules, doc_md, ver, out_path):
          "competitive one, and the same sequence with the intervening pass is "
          "our constructive auction.", ""]
 
+    # Safety net: two distinct auctions can still return byte-identical rule
+    # sets. Print the table once and point the second one at it rather than
+    # duplicating rows nobody can tell apart.
+    sig_seen, dup_pos, dup_rows = {}, 0, 0
+
     prev = None
     for a in auctions:
         depth = auction_key(a)[0]
@@ -348,8 +401,21 @@ def build(rules, doc_md, ver, out_path):
                             3: "Continuations (three calls made)"}.get(
                                 depth, f"{depth} calls"), ""]
             prev = depth
-        L.append("#### `{}`".format("*" if a == "*" else a.rstrip("-*")))
+        label = "*" if a == "*" else a.rstrip("-*")
+        L.append("#### `{}`".format(label))
         L.append("")
+        sig = json.dumps([[r.get("displayBid") or r.get("bid"), r.get("means"),
+                           r.get("requires"), r.get("postCondition"),
+                           r.get("convention"), r.get("priority")]
+                          for r in (rules[a] or [])], sort_keys=True)
+        if rules[a] and sig in sig_seen:
+            dup_pos += 1
+            dup_rows += len(rules[a])
+            L += ["_Same rule set as `{}` — the service returns an identical "
+                  "table for this position._".format(sig_seen[sig]), ""]
+            continue
+        if rules[a]:
+            sig_seen[sig] = label
         if rules[a]:
             L += table(rules[a])
         else:
@@ -361,6 +427,9 @@ def build(rules, doc_md, ver, out_path):
     print(f"wrote {out_path}: {len(text.splitlines())} lines, {len(text):,} bytes")
     print(f"  {len(rules)} auctions, {n_rows} rows, {n_empty} terminal, "
           f"{n_unnamed} unnamed")
+    if dup_pos:
+        print(f"  {dup_pos} positions collapsed as content-identical "
+              f"({dup_rows} rows not repeated)")
 
 
 def main():

@@ -1891,7 +1891,15 @@ one call short.
 ### 6.42 How much of Brill is reachable, and what each fix would buy
 
 Measured by re-running the converter with each class of atom temporarily
-made translatable (`research/brill_to_dsl.py`, 3,515 rows):
+made translatable (`research/brill_to_dsl.py`).
+
+> **Note (2026-09-13).** The table below was measured on the 3,515-row
+> capture. After the de-duplication in §6.43 the same run yields
+> **1,552 rules / 1,101 rows / 36.1 %** — the baseline percentages are
+> unchanged to within a point, so the conclusions below still hold. The
+> absolute columns should be read as "at 3,515 rows"; re-measuring every
+> ablation is not worth the compute until one of the fixes is actually
+> implemented.
 
 | Cumulative fix | Rules | Rows emitted | |
 |---|---|---|---|
@@ -1926,13 +1934,84 @@ that is real work with a guessing step, not a mechanical addition.
 
 Separately from features, two other ceilings apply:
 
-- **Crawl depth.** Everything above is the 2-call sweep (384 auctions).
-  Depth 3 is ~22k auctions; the full engine has 1,037,464 rules, so
+- **Crawl depth.** Everything above is the 2-call sweep (349 auctions).
+  Depth 3 is ~22k auctions; the full engine has 1,040,694 rules, so
   exhaustive capture is impossible regardless of features.
 - **Prose not yet used.** Part 1's responding/competing/slam sections
   (Drury, New Minor Forcing, Fourth Suit Forcing, Texas, Gerber,
   Cappelletti, Michaels, Unusual NT, negative doubles) are still
   unencoded — only the openings were taken from prose (§6.40).
+
+### 6.43 Is the capture complete? Three findings — one bug, two non-issues
+
+Asked whether `system/brill.md` really holds everything the service exposes.
+Short answer: **yes for authored content, and the JSON's extra columns are
+empty.** But chasing the question turned up a genuine bug that had been
+silently corrupting the DSL.
+
+**(1) The service ignores leading passes — and that was masking a real bug.**
+
+`GET /getresponses?auction=P-1C-*` and `auction=1C-*` return identical rule
+sets, as do `*`, `P-*` and `P-P-*`. Passes that are *not* leading are
+significant (`1C-P-P-*` has 16 rows, `1C-P-*` has 27). The old crawler
+expanded `P` like any other call, so 35 of its 351 headings (463 rows,
+13 %) were aliases of positions already in the file.
+
+Removing them exposed the bug: `auction_context()` handled `""` and `"P"`
+but not `"*"` — the spelling `system/brill.md` actually uses for the empty
+auction. The 44 opening-bid rows therefore fell through to the generic
+branch and were emitted as `opp_last_call == '*'`, which never matches.
+The old `brill.dsl` only had correct opening bids **by accident**, because
+the duplicate `P` heading supplied them. Fixed in `brill_to_dsl.py`; the
+opening seat now contributes 22 real rules (1C, 1D, 1NT, 2C, 2NT, 3NT and
+the 6/7-level preempts) and the smoke suite is back to 8/8.
+
+| | old | new |
+|---|---|---|
+| headings (positions) | 351 | 316 canonical + 83 collapsed |
+| captured rows | 3,515 | 3,052 |
+| DSL rules | 1,830 | 1,552 |
+| smoke cases | 8/8 | 8/8 |
+
+The 83 "collapsed" positions are *different* auctions that happen to return
+a byte-identical table — `2H-P-*` == `2H-X-*`, `6C-*` == `7S-*`,
+`5C-5H-*` == `5D-5S-*`. `brill.md` prints such a table once and points the
+rest at it, but `brill_parser.rows_from_brill_md()` expands the pointers
+again, because the table is the same while the *context* guarding it is not.
+
+**(2) The JSON is not richer than the markdown.** `/getresponses` returns 17
+fields; the capture uses 6. Measured over 1,470 rows from 151 auctions:
+`rule`, `parentName`, `auction`, `bindings`, `resolvedParentName`,
+`isDenial` and `denialMeans` are populated **0.0 %** of the time, and
+`resolvedMeans` never differs from `means`. `priority` is 91.7 % populated,
+`means` 69.3 %, `postCondition` 36.1 %, `convention` 16.6 %, `artificial`
+13.1 %. So nothing material was dropped — the markdown is not a lossy
+view of a structured original.
+
+**(3) `/inferresponses` is real new content, and it is worthless here.**
+This endpoint returns meanings for calls the system does *not* define —
+e.g. after `1H-P-*`, Brill does not define `6C`, and infers
+`(C_slam and StrongRebiddable('C')) or monsterslam('C')`. It cannot be
+crawled: it requires an explicit `bids=` list and 400s without one.
+`research/brill_infer_audit.py` asks it about every undefined call at every
+captured position and pushes each answer through the converter:
+
+```
+inferred rows            : 9,798
+  would emit a DSL rule  :    99  (1.0 %)
+  all clauses dropped    : 9,699
+```
+
+The 99 that convert are all bare suit-length tests with no strength
+requirement — `1C-1H` → `2S` inferred as `S >= 4`. Adding them would
+*relax* the system, which §6.40's "drop a clause, never relax one" rule
+exists to prevent. **Not captured, deliberately.**
+
+**Staleness check.** The engine was rebuilt during this work
+(1,037,464 → 1,040,694 rules). A row-level diff of the two captures over all
+316 positions found **zero** content changes — the only difference anywhere
+is a stray trailing backslash in one expression. The earlier "+23 new rows"
+was whitespace.
 
 ## 7. Roadmap (prioritized)
 

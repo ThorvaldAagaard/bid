@@ -22,11 +22,15 @@ Two spellings of OR appear in the wild ('or' and '|'); both are supported and
 flattened into a single n-ary Or node so that DNF conversion is trivial.
 
 Also exposes `rows_from_brill_md()` which re-reads the merged markdown file
-(the canonical artefact) rather than re-crawling the service.
+(the canonical artefact) rather than re-crawling the service. That file prints
+a position's table once and points duplicate positions at it; this function
+expands those pointers again, because `2H-P` and `2H-X` share a table but are
+not the same position.
 """
 
 import re
-from dataclasses import dataclass, field
+import sys
+from dataclasses import dataclass, field, replace
 from typing import Any, Dict, List, Optional
 
 # ---------------------------------------------------------------- AST nodes
@@ -300,13 +304,20 @@ def _split_row(line: str) -> List[str]:
     return [p.strip().replace("\\|", "|") for p in parts[1:-1]]
 
 
+_ALIAS_RE = re.compile(r"^_Same rule set as `([^`]+)`")
+
+
 def rows_from_brill_md(path: str = "system/brill.md") -> List[Row]:
     lines = open(path, encoding="utf-8").read().split("\n")
     start = lines.index("## Part 2 — Rule tree")
-    rows, auction = [], None
+    rows, auction, aliases = [], None, {}
     for line in lines[start:]:
         if line.startswith("#### `"):
             auction = re.findall(r"`([^`]*)`", line)[0]
+            continue
+        m = _ALIAS_RE.match(line)
+        if m and auction:
+            aliases[auction] = m.group(1)
             continue
         if not line.startswith("| "):
             continue
@@ -318,6 +329,25 @@ def rows_from_brill_md(path: str = "system/brill.md") -> List[Row]:
             continue
         rows.append(Row(auction=auction, call=c[0], means=c[1], requires=c[2],
                         post=c[3], convention=c[4], pri=c[5]))
+
+    # `system/brill.md` prints a position once and points the rest at it when
+    # the service returns a byte-identical table (e.g. 2H-P and 2H-X). Those
+    # are still DIFFERENT auction positions, so each needs its own rules here:
+    # the table is the same, the context guarding it is not.
+    if aliases:
+        by_auction: Dict[str, List[Row]] = {}
+        for r in rows:
+            by_auction.setdefault(r.auction, []).append(r)
+        missing = []
+        for target, src in aliases.items():
+            src_rows = by_auction.get(src)
+            if not src_rows:
+                missing.append((target, src))
+                continue
+            for r in src_rows:
+                rows.append(replace(r, auction=target, expr=None))
+        if missing:
+            print(f"  ! unresolved aliases: {missing}", file=sys.stderr)
     return rows
 
 

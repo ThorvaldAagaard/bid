@@ -74,6 +74,7 @@ from brill_parser import (  # noqa: E402
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DEFAULT_OUT = os.path.join(REPO_ROOT, "system", "brill.dsl")
+BRILL_MD = os.path.join(REPO_ROOT, "system", "brill.md")
 
 # ------------------------------------------------------------------ sentinels
 
@@ -348,7 +349,12 @@ def auction_context(auction: str) -> List[Tuple[str, str, Any]]:
     # rule (2nd seat, partner silent) also fired in the `P-2H` position
     # (partner passed first), which Brill scores differently — that produced
     # 380 priority-shadowing warnings in the linter.
-    if auction in ("P", "", "—"):
+    # "*" is how system/brill.md headings spell the empty auction; "P" is how
+    # the position used to reach us (the service ignores leading passes, so the
+    # old capture carried a duplicate 'P' heading). Both are the opening seat.
+    # Missing "*" here used to be masked: the duplicate 'P' heading supplied the
+    # real opening rules while "*" silently produced dead 'opp_last_call == *'.
+    if auction.rstrip("-*") == "" or auction in ("P", "", "—"):
         return [("is_opening", "==", True),
                 ("partner_last_call", "==", "NONE"),
                 ("my_last_call", "==", "NONE")]
@@ -461,7 +467,7 @@ def prose_opening_rules() -> List[OutRule]:
 
 
 def build(allow_approx: bool = True, max_clauses: int = 64):
-    rows = rows_from_brill_md(os.path.join(REPO_ROOT, "system", "brill.md"))
+    rows = rows_from_brill_md(BRILL_MD)
     rules: List[OutRule] = []
     stats = Counter()
     seen_bodies = set()
@@ -569,6 +575,25 @@ def build(allow_approx: bool = True, max_clauses: int = 64):
     return rules, stats, len(rows)
 
 
+def _service_line():
+    """The 'Brill <version> · <n> rules in the engine' header, read from the
+    capture so the two files cannot drift apart."""
+    fallback = ["Brill 0.1.0+20260912.0835.g9eb75e9-dirty",
+                "(1,037,464 rules in the live engine)"]
+    try:
+        with open(BRILL_MD, encoding="utf-8") as f:
+            for line in f:
+                m = re.search(r"\*\*Service:\*\* (.+?) · (.+?) · (.+?) rules",
+                              line)
+                if m:
+                    return ["{} {}".format(m.group(1), m.group(2)),
+                            "({:,} rules in the live engine)".format(
+                                int(m.group(3).replace(",", "")))]
+    except OSError:
+        pass
+    return fallback
+
+
 def render(rules: List[OutRule], stats: Counter, total_rows: int,
            allow_approx: bool) -> str:
     out = []
@@ -576,8 +601,8 @@ def render(rules: List[OutRule], stats: Counter, total_rows: int,
     out.append("# BRILL BIDDING SYSTEM — converted from system/brill.md")
     out.append("#")
     out.append("# Source : https://brillsystem.aalborgdata.dk/")
-    out.append("#         Brill 0.1.0+20260912.0835.g9eb75e9-dirty")
-    out.append("#         (1,037,464 rules in the live engine)")
+    for ln in _service_line():
+        out.append("#         " + ln)
     out.append("# Convert: python3 research/brill_to_dsl.py")
     out.append("#")
     out.append(f"# {total_rows} Brill call definitions -> {len(rules)} DSL rules.")

@@ -4,11 +4,11 @@
 >
 > - **Source pages:** <https://brillsystem.aalborgdata.dk/index.html> (system summary) and <https://brillsystem.aalborgdata.dk/browse.html> (rule browser)
 > - **Rule data:** `GET https://brillservice.aalborgdata.dk/getresponses?auction=<sequence>` — the endpoint `browse.html` itself calls.
-> - **Fetched:** 2026-09-12
-> - **Service:** Brill · 0.1.0+20260912.0835.g9eb75e9-dirty · 1,037,464 rules in the engine
-> - **Scope:** the complete tree to **2 calls** deep — 384 auctions, 3515 call definitions.
+> - **Fetched:** 2026-09-13
+> - **Service:** Brill · 0.1.0+20260913.1018.g5039e2b-dirty · 1,040,694 rules in the engine
+> - **Scope:** the complete tree to **2 calls** deep — 349 auctions, 3052 call definitions.
 >
-> The engine reports **1,037,464** rules in total, so the tree cannot be walked exhaustively. 33 auctions here are terminal (a 7-level call ends the bidding). 1081 rows carry no authored description; the `requires` expression is then the whole definition. Regenerate with `python3 research/fetch_brill.py`.
+> The engine reports **1,040,694** rules in total, so the tree cannot be walked exhaustively. 33 auctions here are terminal (a 7-level call ends the bidding). 961 rows carry no authored description; the `requires` expression is then the whole definition. Regenerate with `python3 research/fetch_brill.py`.
 
 ## Contents
 
@@ -167,55 +167,6 @@ Each table is one auction position; the rows are every call the system defines t
 So both seats appear at every level: the bare sequence is the competitive one, and the same sequence with the intervening pass is our constructive auction.
 
 ### Responses (one call made)
-
-#### `P`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | No opening bid | (hcp < 12 and not ruleof21) |  |  |  |
-| 1C | 12-21 HCP, 3+ clubs | ((ruleof21 and hcp<= 21) and (clublongest or explicitshape == '4=3=3=3' or explicitshape == '3=4=3=3' or explicitshape == '4=4=2=3') ) \| ((HCP >= 12 and hcp<= 21) and (clublongest or explicitshape == '4=3=3=3' or explicitshape == '3=4=3=3' or explicitshape == '4=4=2=3') ) | minC=3 |  | 60 |
-| 1D | 12-21 HCP, 3+ diamonds | ((ruleof21 and hcp<= 21) and (diamondlongest or explicitshape == '4=4=3=2')) \| ((HCP >= 12 and hcp<= 21) and (diamondlongest or explicitshape == '4=4=3=2')) | minD=3 |  | 65 |
-| 1H | 4th seat opening, Rule of 15 (HCP + spades >= 15) | (fourthseatopening('H') and bestsuit('H')) | minhcp = 12 |  | 56 |
-| 1H | Light opening, 11 HCP with 5-4 in the majors or a 6-card major | (lightmajoropening('H')) | minhcp = 12 |  | 61 |
-| 1H | 12-21 HCP, 5+ hearts | (ruleof21 and hcp<= 21 and Opening1H) \| ((HCP >= 12 and hcp<= 21) and Opening1H) |  |  | 70 |
-| 1S | 4th seat opening, Rule of 15 (HCP + spades >= 15) | (fourthseatopening('S') and bestsuit('S')) | minhcp = 12 |  | 57 |
-| 1S | Light opening, 11 HCP with 5-4 in the majors or a 6-card major | (lightmajoropening('S')) | minhcp = 12 |  | 62 |
-| 1S | 12-21 HCP, 5+ spades | (ruleof21 and hcp<= 21 and spades >= 5 and spadelongest) \| (hcp>= 12 and hcp<= 21 and Opening1S) |  |  | 75 |
-| 1N | Balanced hand, 15-17 HCP | (Balanced and hcp>= 15 and hcp<= 16 and H == 5) \| (Balanced and hcp>= 15 and hcp<= 16 and S == 5) \| ((Balanced or semibalanced) and hcp>= 15 and hcp<= 17 and S <= 4 and H <= 4) |  |  | 120 |
-| 2C* | Strong -- 0-1 losers, slam in our own hand | (losers <= 1 and hcp>= 16) | minhcp=18 |  | 112 |
-| 2C* | Strong -- 2 losers, ~11 playing tricks | (losers <= 2 and hcp>= 16 and lengthlongestsuit >= 5) | minhcp=18 |  | 113 |
-| 2C* | Strong | (hcp>= 18 and (not twosuited or hcp >= 20) and bestsuit('C') and C >= 6 and losers <= 2 and aces >= 2) \| (hcp>= 18 and (not twosuited or hcp >= 20) and bestsuit('D') and D >= 6 and losers <= 2 and aces >= 2) \| (hcp>= 18 and (not twosuited or hcp >= 20) and bestsuit('H') and H >= 6 and losers <= 3 and aces >= 2) \| (hcp>= 18 and (not twosuited or hcp >= 20) and bestsuit('S') and S >= 6 and losers <= 3 and aces >= 2) \| (hcp>= 22 and (balanced or semibalanced)) \| (hcp>= 22 and losers <= 5) | minhcp=18 |  | 118 |
-| 2D | Weak 2 D | (hcp<= 11 and D == 6 and hcp> 4 and bestsuit('D') and HasTopHonors('D', 2, 3) and S <= 4 and H <= 4 and not ruleof21) \| (hcp<= 11 and D == 6 and hcp> 4 and bestsuit('D') and loserlevel >= 2 and D_points >= 6 and S <= 4 and H <= 4 and not ruleof21) | preempt,minhcp=6,loserlevel=2 |  | 60 |
-| 2H | Weak 2 H | (hcp<= 11 and H == 6 and hcp> 4 and bestsuit('H') and HasTopHonors('H', 2, 3) and S <= 3 and not ruleof21) \| (hcp<= 11 and H == 6 and hcp> 4 and bestsuit('H') and loserlevel >= 2 and H_points >= 6 and S <= 4 and not ruleof21) | preempt,minhcp=6,loserlevel=2 |  | 60 |
-| 2S | Weak 2 S | (hcp<= 11 and S == 6 and hcp> 4 and bestsuit('S') and HasTopHonors('S', 2, 3) and H <= 3 and not ruleof21) \| (hcp<= 11 and S == 6 and hcp> 4 and bestsuit('S') and loserlevel >= 2 and S_points >= 6 and H <= 4 and not ruleof21) | preempt,minhcp=6,loserlevel=2 |  | 60 |
-| 2N | Balanced hand, 20-21 HCP | (balish and hcp>= 20 and hcp<= 21) | minS=2, minH=2, minD=2, minC=2 |  | 122 |
-| 3C | Preempt, good suit | (C >= 7 and hcp>= 5 and hcp<= 10 and TwiceRebiddable('C') and loserlevel >= 3 and H <= 4 and S <= 4 and not ruleof21) | preempt, maxlosers=7 |  | 83 |
-| 3C | Preempt | (clubs >= 7 and hcp>= 5 and hcp<= 11 and totalpoints >= 6 and not ruleof21 and H <= 4 and S <= 4) | preempt, minhcp=7, maxlosers=7 |  | 85 |
-| 3D | Preempt, good suit | (D >= 7 and hcp>= 5 and hcp<= 10 and TwiceRebiddable('D') and loserlevel >= 3 and H <= 4 and S <= 4 and not ruleof21) | preempt, maxlosers=7 |  | 83 |
-| 3D | Preempt | (diamonds >= 7 and hcp>= 5 and hcp<= 11 and totalpoints >= 6 and not ruleof21 and H <= 4 and S <= 4 ) | preempt, maxlosers=7 |  | 86 |
-| 3H | Preempt, good suit | (H >= 7 and hcp>= 5 and hcp<= 10 and TwiceRebiddable('H') and loserlevel >= 3 and S <= 4 and not ruleof21) | preempt, maxlosers=7 |  | 84 |
-| 3H | Preempt | (hearts >= 7 and hcp>= 5 and hcp<= 11 and totalpoints >= 6 and not ruleof21 and S <= 4) | preempt, maxlosers=7 |  | 87 |
-| 3S | Preempt, good suit | (S >= 7 and hcp>= 5 and hcp<= 10 and TwiceRebiddable('S') and loserlevel >= 3 and H <= 4 and not ruleof21) | preempt, maxlosers=7 |  | 84 |
-| 3S | Preempt | (spades >= 7 and hcp>= 5 and hcp<= 11 and totalpoints >= 6 and not ruleof21 and H <= 4) | preempt, maxlosers=7 |  | 88 |
-| 3N | Balanced hand, 25-27 HCP | (balish and hcp>= 25 and hcp<= 27 and H<= 4 and S <= 4) |  |  | 130 |
-| 4C | Preempt | (C >= 7 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and H <= 4 and S <= 4 and not ruleof21) \| (C >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 3 and H <= 4 and S <= 4 and not ruleof21) | preempt, loserlevel=3 |  | 97 |
-| 4D | Preempt | (D >= 7 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and H <= 4 and S <= 4 and not ruleof21) \| (D >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 3 and H <= 4 and S <= 4 and not ruleof21) | preempt, loserlevel=3 |  | 97 |
-| 4H | Preempt | (H >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and S <= 4) \| (H >= 7 and hcp>= 7 and hcp<= 11 and loserlevel >= 4 and S <= 4) | preempt, loserlevel=4 |  | 128 |
-| 4S | Preempt | (S >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and H <= 4) \| (S >= 7 and hcp>= 7 and hcp<= 11 and loserlevel >= 4 and H <= 4) | preempt, loserlevel=4 |  | 128 |
-| 5C | Preempt -- 8+ C; 6-11 HCP assumed | (C >= 8 and hcp>= 6 and hcp<= 11 and loserlevel >= 5 and H <= 4 and S <= 4) | preempt, loserlevel=5 |  | 98 |
-| 5D | Preempt -- 8+ D; 6-11 HCP assumed | (D >= 8 and hcp>= 6 and hcp<= 11 and loserlevel >= 5 and H <= 4 and S <= 4) | preempt, loserlevel=5 |  | 98 |
-| 5H | Preempt -- 9+ H; 6-11 HCP assumed | (H >= 9 and hcp>= 6 and hcp<= 11 and loserlevel >= 5 and S <= 4) | preempt, loserlevel=5 |  | 129 |
-| 5S | Preempt -- 9+ S; 6-11 HCP assumed | (S >= 9 and hcp>= 6 and hcp<= 11 and loserlevel >= 5 and H <= 4) | preempt, loserlevel=5 |  | 129 |
-| 6C | Strong rebiddable C; 32+ total points | (clubs >= 9 and totalpoints >= 32) |  |  | 10 |
-| 6D | Strong rebiddable D; 32+ total points | (diamonds >= 9 and totalpoints >= 32) |  |  | 11 |
-| 6H | Strong rebiddable H; 32+ total points | (hearts >= 9 and totalpoints >= 32) |  |  | 12 |
-| 6S | Strong rebiddable S; 32+ total points | (spades >= 9 and totalpoints >= 32) |  |  | 13 |
-| 6N | 33-34 HCP | (balanced and hcp>= 33 and hcp<= 34) |  |  | 14 |
-| 7C | 31+ HCP; strong rebiddable C; 35+ total points | (clubs >= 9 and hcp>= 31 and totalpoints >= 35) |  |  | 15 |
-| 7D | 31+ HCP; strong rebiddable D; 35+ total points | (diamonds >= 9 and hcp>= 31 and totalpoints >= 35) |  |  | 23 |
-| 7H | 31+ HCP; strong rebiddable H; 35+ total points | (hearts >= 9 and hcp>= 31 and totalpoints >= 35) |  |  | 24 |
-| 7S | 31+ HCP; strong rebiddable S; 35+ total points | (spades >= 9 and hcp>= 31 and totalpoints >= 35) |  |  | 25 |
-| 7N | 36+ HCP; 35+ total points | (balanced and hcp>= 36 and totalpoints >= 35) |  |  | 26 |
 
 #### `1C`
 
@@ -619,12 +570,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `5D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| 5H | Hand: AK87.AKQ76542.3. (GameEval) | (cansacrifice('H')) |  |  | 44 |
-| 5S | Hand: AK87.AKQ76542.3. (GameEval) | (cansacrifice('S')) |  |  | 44 |
-| X | Hand: 973.A52.AKT83.93 (PenaltyDouble) | (penalty) |  |  | 90 |
+_Same rule set as `5C` — the service returns an identical table for this position._
 
 #### `5H`
 
@@ -650,52 +596,31 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `6D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
+_Same rule set as `6C` — the service returns an identical table for this position._
 
 #### `6H`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
+_Same rule set as `6C` — the service returns an identical table for this position._
 
 #### `6S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
+_Same rule set as `6C` — the service returns an identical table for this position._
 
 #### `7C`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
+_Same rule set as `6C` — the service returns an identical table for this position._
 
 #### `7D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
+_Same rule set as `6C` — the service returns an identical table for this position._
 
 #### `7H`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
+_Same rule set as `6C` — the service returns an identical table for this position._
 
 #### `7S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
+_Same rule set as `6C` — the service returns an identical table for this position._
 
 #### `*`
 
@@ -727,8 +652,8 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 | 3S | Preempt, good suit | (S >= 7 and hcp>= 5 and hcp<= 10 and TwiceRebiddable('S') and loserlevel >= 3 and H <= 4 and not ruleof21) | preempt, maxlosers=7 |  | 84 |
 | 3S | Preempt | (spades >= 7 and hcp>= 5 and hcp<= 11 and totalpoints >= 6 and not ruleof21 and H <= 4) | preempt, maxlosers=7 |  | 88 |
 | 3N | Balanced hand, 25-27 HCP | (balish and hcp>= 25 and hcp<= 27 and H<= 4 and S <= 4) |  |  | 130 |
-| 4C | Preempt | (C >= 7 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and H <= 4 and S <= 4 and not ruleof21) \| (C >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 3 and H <= 4 and S <= 4 and not ruleof21) | preempt, loserlevel=3 |  | 97 |
-| 4D | Preempt | (D >= 7 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and H <= 4 and S <= 4 and not ruleof21) \| (D >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 3 and H <= 4 and S <= 4 and not ruleof21) | preempt, loserlevel=3 |  | 97 |
+| 4C | Preempt | (C >= 7 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and H <= 4 and S <= 4 and not ruleof21) \| (C >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 3 and H <= 4 and S <= 4 and not ruleof21) | preempt, loserlevel=4 |  | 97 |
+| 4D | Preempt | (D >= 7 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and H <= 4 and S <= 4 and not ruleof21) \| (D >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 3 and H <= 4 and S <= 4 and not ruleof21) | preempt, loserlevel=4 |  | 97 |
 | 4H | Preempt | (H >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and S <= 4) \| (H >= 7 and hcp>= 7 and hcp<= 11 and loserlevel >= 4 and S <= 4) | preempt, loserlevel=4 |  | 128 |
 | 4S | Preempt | (S >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and H <= 4) \| (S >= 7 and hcp>= 7 and hcp<= 11 and loserlevel >= 4 and H <= 4) | preempt, loserlevel=4 |  | 128 |
 | 5C | Preempt -- 8+ C; 6-11 HCP assumed | (C >= 8 and hcp>= 6 and hcp<= 11 and loserlevel >= 5 and H <= 4 and S <= 4) | preempt, loserlevel=5 |  | 98 |
@@ -794,10 +719,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `6N`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
+_Same rule set as `6C` — the service returns an identical table for this position._
 
 #### `7N`
 
@@ -807,595 +729,6 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 | X | _(unnamed — the Requires expression is the definition)_ | (aces >= 1 and willbeonlead) |  |  | 10 |
 
 ### Continuations (two calls made)
-
-#### `P-P`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | No opening bid | (hcp < 12 and not ruleof21) |  |  |  |
-| 1C | 12-21 HCP, 3+ clubs | ((ruleof21 and hcp<= 21) and (clublongest or explicitshape == '4=3=3=3' or explicitshape == '3=4=3=3' or explicitshape == '4=4=2=3') ) \| ((HCP >= 12 and hcp<= 21) and (clublongest or explicitshape == '4=3=3=3' or explicitshape == '3=4=3=3' or explicitshape == '4=4=2=3') ) | minC=3 |  | 60 |
-| 1D | 12-21 HCP, 3+ diamonds | ((ruleof21 and hcp<= 21) and (diamondlongest or explicitshape == '4=4=3=2')) \| ((HCP >= 12 and hcp<= 21) and (diamondlongest or explicitshape == '4=4=3=2')) | minD=3 |  | 65 |
-| 1H | 4th seat opening, Rule of 15 (HCP + spades >= 15) | (fourthseatopening('H') and bestsuit('H')) | minhcp = 12 |  | 56 |
-| 1H | Light opening, 11 HCP with 5-4 in the majors or a 6-card major | (lightmajoropening('H')) | minhcp = 12 |  | 61 |
-| 1H | 12-21 HCP, 5+ hearts | (ruleof21 and hcp<= 21 and Opening1H) \| ((HCP >= 12 and hcp<= 21) and Opening1H) |  |  | 70 |
-| 1S | 4th seat opening, Rule of 15 (HCP + spades >= 15) | (fourthseatopening('S') and bestsuit('S')) | minhcp = 12 |  | 57 |
-| 1S | Light opening, 11 HCP with 5-4 in the majors or a 6-card major | (lightmajoropening('S')) | minhcp = 12 |  | 62 |
-| 1S | 12-21 HCP, 5+ spades | (ruleof21 and hcp<= 21 and spades >= 5 and spadelongest) \| (hcp>= 12 and hcp<= 21 and Opening1S) |  |  | 75 |
-| 1N | Balanced hand, 15-17 HCP | (Balanced and hcp>= 15 and hcp<= 16 and H == 5) \| (Balanced and hcp>= 15 and hcp<= 16 and S == 5) \| ((Balanced or semibalanced) and hcp>= 15 and hcp<= 17 and S <= 4 and H <= 4) |  |  | 120 |
-| 2C* | Strong -- 0-1 losers, slam in our own hand | (losers <= 1 and hcp>= 16) | minhcp=18 |  | 112 |
-| 2C* | Strong -- 2 losers, ~11 playing tricks | (losers <= 2 and hcp>= 16 and lengthlongestsuit >= 5) | minhcp=18 |  | 113 |
-| 2C* | Strong | (hcp>= 18 and (not twosuited or hcp >= 20) and bestsuit('C') and C >= 6 and losers <= 2 and aces >= 2) \| (hcp>= 18 and (not twosuited or hcp >= 20) and bestsuit('D') and D >= 6 and losers <= 2 and aces >= 2) \| (hcp>= 18 and (not twosuited or hcp >= 20) and bestsuit('H') and H >= 6 and losers <= 3 and aces >= 2) \| (hcp>= 18 and (not twosuited or hcp >= 20) and bestsuit('S') and S >= 6 and losers <= 3 and aces >= 2) \| (hcp>= 22 and (balanced or semibalanced)) \| (hcp>= 22 and losers <= 5) | minhcp=18 |  | 118 |
-| 2D | Weak 2 D | (hcp<= 11 and D == 6 and hcp> 4 and bestsuit('D') and HasTopHonors('D', 2, 3) and S <= 4 and H <= 4 and not ruleof21) \| (hcp<= 11 and D == 6 and hcp> 4 and bestsuit('D') and loserlevel >= 2 and D_points >= 6 and S <= 4 and H <= 4 and not ruleof21) | preempt,minhcp=6,loserlevel=2 |  | 60 |
-| 2H | Weak 2 H | (hcp<= 11 and H == 6 and hcp> 4 and bestsuit('H') and HasTopHonors('H', 2, 3) and S <= 3 and not ruleof21) \| (hcp<= 11 and H == 6 and hcp> 4 and bestsuit('H') and loserlevel >= 2 and H_points >= 6 and S <= 4 and not ruleof21) | preempt,minhcp=6,loserlevel=2 |  | 60 |
-| 2S | Weak 2 S | (hcp<= 11 and S == 6 and hcp> 4 and bestsuit('S') and HasTopHonors('S', 2, 3) and H <= 3 and not ruleof21) \| (hcp<= 11 and S == 6 and hcp> 4 and bestsuit('S') and loserlevel >= 2 and S_points >= 6 and H <= 4 and not ruleof21) | preempt,minhcp=6,loserlevel=2 |  | 60 |
-| 2N | Balanced hand, 20-21 HCP | (balish and hcp>= 20 and hcp<= 21) | minS=2, minH=2, minD=2, minC=2 |  | 122 |
-| 3C | Preempt, good suit | (C >= 7 and hcp>= 5 and hcp<= 10 and TwiceRebiddable('C') and loserlevel >= 3 and H <= 4 and S <= 4 and not ruleof21) | preempt, maxlosers=7 |  | 83 |
-| 3C | Preempt | (clubs >= 7 and hcp>= 5 and hcp<= 11 and totalpoints >= 6 and not ruleof21 and H <= 4 and S <= 4) | preempt, minhcp=7, maxlosers=7 |  | 85 |
-| 3D | Preempt, good suit | (D >= 7 and hcp>= 5 and hcp<= 10 and TwiceRebiddable('D') and loserlevel >= 3 and H <= 4 and S <= 4 and not ruleof21) | preempt, maxlosers=7 |  | 83 |
-| 3D | Preempt | (diamonds >= 7 and hcp>= 5 and hcp<= 11 and totalpoints >= 6 and not ruleof21 and H <= 4 and S <= 4 ) | preempt, maxlosers=7 |  | 86 |
-| 3H | Preempt, good suit | (H >= 7 and hcp>= 5 and hcp<= 10 and TwiceRebiddable('H') and loserlevel >= 3 and S <= 4 and not ruleof21) | preempt, maxlosers=7 |  | 84 |
-| 3H | Preempt | (hearts >= 7 and hcp>= 5 and hcp<= 11 and totalpoints >= 6 and not ruleof21 and S <= 4) | preempt, maxlosers=7 |  | 87 |
-| 3S | Preempt, good suit | (S >= 7 and hcp>= 5 and hcp<= 10 and TwiceRebiddable('S') and loserlevel >= 3 and H <= 4 and not ruleof21) | preempt, maxlosers=7 |  | 84 |
-| 3S | Preempt | (spades >= 7 and hcp>= 5 and hcp<= 11 and totalpoints >= 6 and not ruleof21 and H <= 4) | preempt, maxlosers=7 |  | 88 |
-| 3N | Balanced hand, 25-27 HCP | (balish and hcp>= 25 and hcp<= 27 and H<= 4 and S <= 4) |  |  | 130 |
-| 4C | Preempt | (C >= 7 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and H <= 4 and S <= 4 and not ruleof21) \| (C >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 3 and H <= 4 and S <= 4 and not ruleof21) | preempt, loserlevel=3 |  | 97 |
-| 4D | Preempt | (D >= 7 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and H <= 4 and S <= 4 and not ruleof21) \| (D >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 3 and H <= 4 and S <= 4 and not ruleof21) | preempt, loserlevel=3 |  | 97 |
-| 4H | Preempt | (H >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and S <= 4) \| (H >= 7 and hcp>= 7 and hcp<= 11 and loserlevel >= 4 and S <= 4) | preempt, loserlevel=4 |  | 128 |
-| 4S | Preempt | (S >= 8 and hcp>= 5 and hcp<= 11 and loserlevel >= 4 and H <= 4) \| (S >= 7 and hcp>= 7 and hcp<= 11 and loserlevel >= 4 and H <= 4) | preempt, loserlevel=4 |  | 128 |
-| 5C | Preempt -- 8+ C; 6-11 HCP assumed | (C >= 8 and hcp>= 6 and hcp<= 11 and loserlevel >= 5 and H <= 4 and S <= 4) | preempt, loserlevel=5 |  | 98 |
-| 5D | Preempt -- 8+ D; 6-11 HCP assumed | (D >= 8 and hcp>= 6 and hcp<= 11 and loserlevel >= 5 and H <= 4 and S <= 4) | preempt, loserlevel=5 |  | 98 |
-| 5H | Preempt -- 9+ H; 6-11 HCP assumed | (H >= 9 and hcp>= 6 and hcp<= 11 and loserlevel >= 5 and S <= 4) | preempt, loserlevel=5 |  | 129 |
-| 5S | Preempt -- 9+ S; 6-11 HCP assumed | (S >= 9 and hcp>= 6 and hcp<= 11 and loserlevel >= 5 and H <= 4) | preempt, loserlevel=5 |  | 129 |
-| 6C | Strong rebiddable C; 32+ total points | (clubs >= 9 and totalpoints >= 32) |  |  | 10 |
-| 6D | Strong rebiddable D; 32+ total points | (diamonds >= 9 and totalpoints >= 32) |  |  | 11 |
-| 6H | Strong rebiddable H; 32+ total points | (hearts >= 9 and totalpoints >= 32) |  |  | 12 |
-| 6S | Strong rebiddable S; 32+ total points | (spades >= 9 and totalpoints >= 32) |  |  | 13 |
-| 6N | 33-34 HCP | (balanced and hcp>= 33 and hcp<= 34) |  |  | 14 |
-| 7C | 31+ HCP; strong rebiddable C; 35+ total points | (clubs >= 9 and hcp>= 31 and totalpoints >= 35) |  |  | 15 |
-| 7D | 31+ HCP; strong rebiddable D; 35+ total points | (diamonds >= 9 and hcp>= 31 and totalpoints >= 35) |  |  | 23 |
-| 7H | 31+ HCP; strong rebiddable H; 35+ total points | (hearts >= 9 and hcp>= 31 and totalpoints >= 35) |  |  | 24 |
-| 7S | 31+ HCP; strong rebiddable S; 35+ total points | (spades >= 9 and hcp>= 31 and totalpoints >= 35) |  |  | 25 |
-| 7N | 36+ HCP; 35+ total points | (balanced and hcp>= 36 and totalpoints >= 35) |  |  | 26 |
-
-#### `P-1C`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true or C >= 7) \| (true) |  |  |  |
-| 1D | Natural 1D Overcall | (D >= 5 and hcp>= 10 and hcp<= 17 and bestsuit('D') and HasTopHonors('D', 1, 3)) \| (overcall('D')) |  |  | 21 |
-| 1H | Natural 1H Overcall | (H >= 6 and hcp >= 7 and H_points >= 10 and hcp<= 17 and bestsuit('H') and HasTopHonors('H', 1, 3)) \| (overcall('H')) |  |  | 72 |
-| 1S | Natural 1S Overcall | (S >= 6 and hcp >= 7 and S_points >= 10 and hcp<= 17 and bestsuit('S') and HasTopHonors('S', 1, 3)) \| (overcall('S')) |  |  | 72 |
-| 1N | 15-17 | (C >= 4 and hcp>= 15 and hcp<= 17 and (balanced or semibalanced)) \| (C >= 5 and hcp>= 15 and hcp<= 18 and (balanced or semibalanced)) \| (stopper('C') and hcp>= 15 and hcp<= 17 and (balanced or semibalanced)) | maxhcp=17 |  | 60 |
-| 2C* | 5-5 in Majors | (spades >= 5 and hearts >= 5 and spades <= 6 and hearts <= 6 and loserlevel >= 2 and totalpoints >= 8) | minhcp = 10, maxhcp = 20 | MichaelsCuebidMinor | 120 |
-| 2D | Preemptive | (IsWeakTwoDiamonds) |  |  | 60 |
-| 2H | Weak 2H Overcall | (IsWeakTwoHearts) |  |  | 79 |
-| 2S | Weak 2S Overcall | (IsWeakTwoSpades) |  |  | 80 |
-| 2N* | 5-5 in lowest two unbid | (hearts >= 5 and D >= 5 and loserlevel >= 3 and totalpoints >= 10) | minhcp = 10 | UnusualNTOverMinor | 110 |
-| 3C | Preemptive | (C >= 7 and hcp< 12 and loserlevel >= 3 and singlesuited) | minhcp=5 |  | 20 |
-| 3D | Preemptive | (D >= 6 and hcp< 12 and loserlevel >= 3 and singlesuited) | minhcp=5 |  | 22 |
-| 3D | _(unnamed — the Requires expression is the definition)_ | (D >= 6 and hcp < 12 and loserlevel >= 3 and HasTopHonors('D', 2, 4) and isvalidbid('3D') and S <= 5 and H <= 5) |  |  | 62 |
-| 3H | _(unnamed — the Requires expression is the definition)_ | (H >= 6 and hcp < 12 and loserlevel >= 3 and HasTopHonors('H', 2, 4)) |  |  | 23 |
-| 3H | Weak H Overcall | (H >= 7 and loserlevel >= 3 and hcp <= 13) | minhcp=5 |  | 85 |
-| 3S | _(unnamed — the Requires expression is the definition)_ | (S >= 6 and hcp < 12 and loserlevel >= 3 and HasTopHonors('S', 2, 4)) |  |  | 23 |
-| 3S | Weak S Overcall | (S >= 7 and loserlevel >= 3 and hcp <= 13) | minhcp=5 |  | 85 |
-| 4D | Preemptive | (D >= 7 and hcp< 12 and loserlevel >= 4 and HasTopHonors('D', 2, 4) and H < 5 and S < 5) | minhcp=6, maxhcp=14 |  | 130 |
-| 4H | Strong Preemptive Overcall | (H >= 7 and loserlevel >= 4 and hcp <= 13 and HasTopHonors('H', 2, 4)) | minhcp=5 |  | 88 |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (H >= 8 and loserlevel >= 4 and hcp <= 13) | minhcp=5 |  | 90 |
-| 4H | Preemptive with 8+ card suit | (H >= 8 and hcp <= 10 and HasTopHonors('H', 1, 5)) | minhcp=5 |  | 91 |
-| 4H | Preemptive | (H >= 7 and hcp<= 10 and singlesuited and loserlevel >= 4) \| (H >= 7 and hcp< 14 and loserlevel >= 4 and S < 5) | minhcp=5 \| minhcp=6, maxhcp=14 |  | 132 |
-| 4S | Strong Preemptive Overcall | (S >= 7 and loserlevel >= 4 and hcp <= 13 and HasTopHonors('S', 2, 4)) | minhcp=5 |  | 88 |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (S >= 8 and loserlevel >= 4 and hcp <= 13) | minhcp=5 |  | 90 |
-| 4S | Preemptive with 8+ card suit | (S >= 8 and hcp <= 10 and HasTopHonors('S', 1, 5)) | minhcp=5 |  | 91 |
-| 4S | Preemptive | (S >= 7 and hcp<= 10 and singlesuited and loserlevel >= 4) \| (S >= 7 and hcp< 14 and loserlevel >= 4 and H < 5) | minhcp=5 \| minhcp=6, maxhcp=14 |  | 132 |
-| 5D | _(unnamed — the Requires expression is the definition)_ | (D >= 8 and loserlevel >= 5) | minhcp=5 |  | 95 |
-| 5D | Preemptive | (D >= 8 and hcp< 14 and loserlevel >= 5 and H < 5 and S < 5) | minhcp=6, maxhcp=14 |  | 131 |
-| 6D | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('D') and losers == 1) | T=D |  | 140 |
-| 6H | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('H') and losers == 1) | T=H |  | 142 |
-| 6S | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('S') and losers == 1) | T=S |  | 142 |
-| 7D | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('D') and losers <= 0) | T=D |  | 141 |
-| 7H | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('H') and losers <= 0) | T=H |  | 143 |
-| 7S | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('S') and losers <= 0) | T=S |  | 143 |
-| X | T/O | (takeout('C')) \| (hcp >= 18) \| (hcp >= 12 and S >= 3 and H >= 3 and D >= 3 and D <= 5 and C <= 3 and (S + H >= 7)) \| (hcp >= 10 and S >= 4 and H >= 4 and D >= 3 and C <= 1) \| (doublethenovercall('H') or doublethenovercall('D')) \| (doublethenovercall('S') or doublethenovercall('D')) |  |  | 74 |
-
-#### `P-1D`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true or D >= 7) \| (true) |  |  |  |
-| 1H | Natural 1H Overcall | (H >= 6 and hcp >= 7 and H_points >= 10 and hcp<= 17 and bestsuit('H') and HasTopHonors('H', 1, 3)) \| (overcall('H')) |  |  | 72 |
-| 1S | Natural 1S Overcall | (S >= 6 and hcp >= 7 and S_points >= 10 and hcp<= 17 and bestsuit('S') and HasTopHonors('S', 1, 3)) \| (overcall('S')) |  |  | 72 |
-| 1N | 15-17 | (D >= 4 and hcp>= 15 and hcp<= 17 and (balanced or semibalanced)) \| (D >= 5 and hcp>= 15 and hcp<= 18 and (balanced or semibalanced)) \| (stopper('D') and hcp>= 15 and hcp<= 17 and (balanced or semibalanced)) | maxhcp=17 |  | 60 |
-| 2C | Nat | (C >= 5 and hcp>= 10 and hcp<= 17 and loserlevel >= 2 and bestsuit('C')) \| (C >= 6 and hcp>= 10 and hcp<= 17 and loserlevel >= 2 and bestsuit('C')) |  |  | 60 |
-| 2D* | 5-5 in Majors | (spades >= 5 and hearts >= 5 and spades <= 6 and hearts <= 6 and loserlevel >= 2 and totalpoints >= 8) | minhcp = 10, maxhcp = 20 | MichaelsCuebidMinor | 120 |
-| 2H | Weak 2H Overcall | (IsWeakTwoHearts) |  |  | 79 |
-| 2S | Weak 2S Overcall | (IsWeakTwoSpades) |  |  | 80 |
-| 2N* | 5-5 in lowest two unbid | (hearts >= 5 and C >= 5 and loserlevel >= 3 and totalpoints >= 10) | minhcp = 10 | UnusualNTOverMinor | 110 |
-| 3C | Preemptive | (C >= 6 and hcp< 12 and loserlevel >= 3 and singlesuited) | minhcp=5 |  | 22 |
-| 3C | _(unnamed — the Requires expression is the definition)_ | (C >= 6 and hcp < 12 and loserlevel >= 3 and HasTopHonors('C', 2, 4) and isvalidbid('3C') and S <= 5 and H <= 5) |  |  | 62 |
-| 3D | Preemptive | (D >= 7 and hcp< 12 and loserlevel >= 3 and singlesuited) | minhcp=5 |  | 20 |
-| 3H | _(unnamed — the Requires expression is the definition)_ | (H >= 6 and hcp < 12 and loserlevel >= 3 and HasTopHonors('H', 2, 4)) |  |  | 23 |
-| 3H | Weak H Overcall | (H >= 7 and loserlevel >= 3 and hcp <= 13) | minhcp=5 |  | 85 |
-| 3S | _(unnamed — the Requires expression is the definition)_ | (S >= 6 and hcp < 12 and loserlevel >= 3 and HasTopHonors('S', 2, 4)) |  |  | 23 |
-| 3S | Weak S Overcall | (S >= 7 and loserlevel >= 3 and hcp <= 13) | minhcp=5 |  | 85 |
-| 4C | Preemptive | (C >= 7 and hcp< 12 and loserlevel >= 4 and HasTopHonors('C', 2, 4) and H < 5 and S < 5) | minhcp=6, maxhcp=14 |  | 130 |
-| 4H | Strong Preemptive Overcall | (H >= 7 and loserlevel >= 4 and hcp <= 13 and HasTopHonors('H', 2, 4)) | minhcp=5 |  | 88 |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (H >= 8 and loserlevel >= 4 and hcp <= 13) | minhcp=5 |  | 90 |
-| 4H | Preemptive with 8+ card suit | (H >= 8 and hcp <= 10 and HasTopHonors('H', 1, 5)) | minhcp=5 |  | 91 |
-| 4H | Preemptive | (H >= 7 and hcp<= 10 and singlesuited and loserlevel >= 4) \| (H >= 7 and hcp< 14 and loserlevel >= 4 and S < 5) | minhcp=5 \| minhcp=6, maxhcp=14 |  | 132 |
-| 4S | Strong Preemptive Overcall | (S >= 7 and loserlevel >= 4 and hcp <= 13 and HasTopHonors('S', 2, 4)) | minhcp=5 |  | 88 |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (S >= 8 and loserlevel >= 4 and hcp <= 13) | minhcp=5 |  | 90 |
-| 4S | Preemptive with 8+ card suit | (S >= 8 and hcp <= 10 and HasTopHonors('S', 1, 5)) | minhcp=5 |  | 91 |
-| 4S | Preemptive | (S >= 7 and hcp<= 10 and singlesuited and loserlevel >= 4) \| (S >= 7 and hcp< 14 and loserlevel >= 4 and H < 5) | minhcp=5 \| minhcp=6, maxhcp=14 |  | 132 |
-| 5C | _(unnamed — the Requires expression is the definition)_ | (C >= 8 and loserlevel >= 5) | minhcp=5 |  | 95 |
-| 5C | Preemptive | (C >= 8 and hcp< 14 and loserlevel >= 5 and H < 5 and S < 5) | minhcp=6, maxhcp=14 |  | 131 |
-| 6C | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('C') and losers == 1) | T=C |  | 140 |
-| 6H | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('H') and losers == 1) | T=H |  | 142 |
-| 6S | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('S') and losers == 1) | T=S |  | 142 |
-| 7C | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('C') and losers <= 0) | T=C |  | 141 |
-| 7H | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('H') and losers <= 0) | T=H |  | 143 |
-| 7S | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('S') and losers <= 0) | T=S |  | 143 |
-| X | T/O | (takeout('D')) \| (hcp >= 18) \| (hcp >= 12 and S >= 3 and H >= 3 and C >= 3 and C <= 5 and D <= 3 and (S + H >= 7)) \| (hcp >= 10 and S >= 4 and H >= 4 and C >= 3 and D <= 1) \| (doublethenovercall('H') or doublethenovercall('C')) \| (doublethenovercall('S') or doublethenovercall('C')) |  |  | 74 |
-
-#### `P-1H`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) \| (H >= 6) |  |  | 1 |
-| 1S | Natural 1S Overcall | (S >= 5 and hcp>= 8 and hcp<= 17) |  |  | 60 |
-| 1N | 15-17 | (stopper('H') and hcp>= 15 and hcp<= 17 and (balanced or semibalanced)) |  |  | 60 |
-| 2C | _(unnamed — the Requires expression is the definition)_ | (overcall('C')) |  |  | 16 |
-| 2C | Natural 2C Overcall | (C >= 5 and hcp>= 10 and hcp<= 17 and loserlevel >= 2 and HasTopHonors('C', 2, 4)) \| (C >= 6 and hcp>= 12 and hcp<= 17 and loserlevel >= 2 and HasTopHonors('C', 1, 3)) |  |  | 55 |
-| 2D | _(unnamed — the Requires expression is the definition)_ | (overcall('D')) |  |  | 16 |
-| 2D | Natural 2D Overcall | (D >= 5 and hcp>= 10 and hcp<= 17 and loserlevel >= 2 and HasTopHonors('D', 2, 4)) \| (D >= 6 and hcp>= 12 and hcp<= 17 and loserlevel >= 2 and HasTopHonors('D', 1, 3)) |  |  | 55 |
-| 2H* | 5-5 in other Major and a minor | (S >= 5 and S <= 6 and (diamonds >= 5 or clubs >= 5) and loserlevel >= 2 and totalpoints >= 10) |  | MichaelsCuebidMajor | 120 |
-| 2S | Weak 2S Overcall | (IsWeakTwoSpades) |  |  | 62 |
-| 2N* | 5-5 in minors | (diamonds >= 5 and clubs >= 5 and loserlevel >= 3 and totalpoints >= 8) | minhcp=8, maxhcp= 14 | UnusualNTOverMajor | 110 |
-| 3C | _(unnamed — the Requires expression is the definition)_ | (C >= 6 and hcp < 12 and loserlevel >= 3 and HasTopHonors('C', 2, 4) and hcp >= 5 and S <= 4) | minhcp = 8 |  | 22 |
-| 3C | Preempt, good suit | (strongrebiddable('C') and C >= 7 and hcp>= 3 and hcp<= 10 and loserlevel >= 2) \| (C >= 7 and hcp>= 3 and hcp<= 10 and TwiceRebiddable('C') and loserlevel >= 3) |  |  | 61 |
-| 3C | Preemptive | (C >= 6 and hcp> 7 and hcp< 12 and loserlevel >= 3 and HasTopHonors('C', 2, 4)) |  |  | 63 |
-| 3D | _(unnamed — the Requires expression is the definition)_ | (D >= 6 and hcp < 12 and loserlevel >= 3 and HasTopHonors('D', 2, 4) and hcp >= 5 and S <= 4) | minhcp = 8 |  | 22 |
-| 3D | Preempt, good suit | (strongrebiddable('D') and D >= 7 and hcp>= 3 and hcp<= 10 and loserlevel >= 2) \| (D >= 7 and hcp>= 3 and hcp<= 10 and TwiceRebiddable('D') and loserlevel >= 3) |  |  | 61 |
-| 3D | Preemptive | (D >= 6 and hcp> 7 and hcp< 12 and loserlevel >= 3 and HasTopHonors('D', 2, 4)) |  |  | 63 |
-| 3S | _(unnamed — the Requires expression is the definition)_ | (S >= 6 and hcp <= 12 and loserlevel >= 3 and HasTopHonors('S', 2, 4) and hcp >= 5) | minhcp = 8 |  | 23 |
-| 3S | Preempt, good suit | (S >= 7 and hcp>= 3 and hcp<= 10 and TwiceRebiddable('S') and loserlevel >= 3) |  |  | 72 |
-| 3S | Preemptive | (S >= 6 and hcp> 7 and hcp< 12 and loserlevel >= 3) |  |  | 74 |
-| 4C | Preemptive | (C >= 7 and hcp< 12 and loserlevel >= 3 and HasTopHonors('C', 2, 4) and S < 5 and hcp >= 5) | minhcp = 8 |  | 130 |
-| 4D | Preemptive | (D >= 7 and hcp< 12 and loserlevel >= 3 and HasTopHonors('D', 2, 4) and S < 5 and hcp >= 5) | minhcp = 8 |  | 130 |
-| 4S | Preemptive | (S >= 7 and hcp< 14 and loserlevel >= 4 and hcp >= 5) |  |  | 132 |
-| 5C | Preemptive | (C >= 8 and hcp< 14 and loserlevel >= 5 and S < 5 and hcp >= 5) |  |  | 131 |
-| 5D | Preemptive | (D >= 8 and hcp< 14 and loserlevel >= 5 and S < 5 and hcp >= 5) |  |  | 131 |
-| 6C | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('C') and losers == 1) | T=C |  | 140 |
-| 6D | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('D') and losers == 1) | T=D |  | 140 |
-| 6S | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('S') and losers == 1) | T=S |  | 142 |
-| 7C | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('C') and losers <= 0) | T=C |  | 141 |
-| 7D | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('D') and losers <= 0) | T=D |  | 141 |
-| 7S | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('S') and losers <= 0) | T=S |  | 143 |
-| X | T/O | (hcp >= 18 and (H <= 4 or balanced)) \| (hcp >= 10 and hcp <= 17 and H <= 1 and S >= 3 and C >= 3 and D >= 3) \| (takeout('H')) \| (doublethenovercall('S')) \| (doublethenovercall('C')) \| (doublethenovercall('D')) |  |  | 76 |
-
-#### `P-1S`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) \| (S >= 6) |  |  | 1 |
-| 1N | 15-17 | (stopper('S') and hcp>= 15 and hcp<= 17 and (balanced or semibalanced)) |  |  | 60 |
-| 2C | _(unnamed — the Requires expression is the definition)_ | (overcall('C')) |  |  | 16 |
-| 2C | Natural 2C Overcall | (C >= 5 and hcp>= 10 and hcp<= 17 and loserlevel >= 2 and HasTopHonors('C', 2, 4)) \| (C >= 6 and hcp>= 12 and hcp<= 17 and loserlevel >= 2 and HasTopHonors('C', 1, 3)) |  |  | 55 |
-| 2D | _(unnamed — the Requires expression is the definition)_ | (overcall('D')) |  |  | 16 |
-| 2D | Natural 2D Overcall | (D >= 5 and hcp>= 10 and hcp<= 17 and loserlevel >= 2 and HasTopHonors('D', 2, 4)) \| (D >= 6 and hcp>= 12 and hcp<= 17 and loserlevel >= 2 and HasTopHonors('D', 1, 3)) |  |  | 55 |
-| 2H | Natural 2H Overcall | (H >= 5 and hcp>= 11 and hcp<= 17 and loserlevel >= 2 and HasTopHonors('H', 2, 3) and heartlongest) \| (H >= 5 and hcp>= 14 and hcp<= 17 and loserlevel >= 2 and HasTopHonors('H', 2, 4) and heartlongest) \| (H >= 6 and hcp>= 8 and hcp<= 17 and loserlevel >= 2 and HasTopHonors('H', 2, 4) and heartlongest) |  |  | 70 |
-| 2S* | 5-5 in other Major and a minor | (H >= 5 and H <= 6 and (diamonds >= 5 or clubs >= 5) and loserlevel >= 2 and totalpoints >= 10) |  | MichaelsCuebidMajor | 120 |
-| 2N* | 5-5 in minors | (diamonds >= 5 and clubs >= 5 and loserlevel >= 3 and totalpoints >= 8) | minhcp=8, maxhcp= 14 | UnusualNTOverMajor | 110 |
-| 3C | _(unnamed — the Requires expression is the definition)_ | (C >= 6 and hcp < 12 and loserlevel >= 3 and HasTopHonors('C', 2, 4) and hcp >= 5 and H <= 4) | minhcp = 8 |  | 22 |
-| 3C | Preempt, good suit | (strongrebiddable('C') and C >= 7 and hcp>= 3 and hcp<= 10 and loserlevel >= 2) \| (C >= 7 and hcp>= 3 and hcp<= 10 and TwiceRebiddable('C') and loserlevel >= 3) |  |  | 61 |
-| 3C | Preemptive | (C >= 6 and hcp> 7 and hcp< 12 and loserlevel >= 3 and HasTopHonors('C', 2, 4)) |  |  | 63 |
-| 3D | _(unnamed — the Requires expression is the definition)_ | (D >= 6 and hcp < 12 and loserlevel >= 3 and HasTopHonors('D', 2, 4) and hcp >= 5 and H <= 4) | minhcp = 8 |  | 22 |
-| 3D | Preempt, good suit | (strongrebiddable('D') and D >= 7 and hcp>= 3 and hcp<= 10 and loserlevel >= 2) \| (D >= 7 and hcp>= 3 and hcp<= 10 and TwiceRebiddable('D') and loserlevel >= 3) |  |  | 61 |
-| 3D | Preemptive | (D >= 6 and hcp> 7 and hcp< 12 and loserlevel >= 3 and HasTopHonors('D', 2, 4)) |  |  | 63 |
-| 3H | _(unnamed — the Requires expression is the definition)_ | (H >= 6 and hcp <= 12 and loserlevel >= 3 and HasTopHonors('H', 2, 4) and hcp >= 5) | minhcp = 8 |  | 23 |
-| 3H | Preempt, good suit | (H >= 7 and hcp>= 3 and hcp<= 10 and TwiceRebiddable('H') and loserlevel >= 3) |  |  | 72 |
-| 3H | Preemptive | (H >= 6 and hcp> 7 and hcp< 12 and loserlevel >= 3) |  |  | 74 |
-| 4C | Preemptive | (C >= 7 and hcp< 12 and loserlevel >= 3 and HasTopHonors('C', 2, 4) and H < 5 and hcp >= 5) | minhcp = 8 |  | 130 |
-| 4D | Preemptive | (D >= 7 and hcp< 12 and loserlevel >= 3 and HasTopHonors('D', 2, 4) and H < 5 and hcp >= 5) | minhcp = 8 |  | 130 |
-| 4H | Preemptive | (H >= 7 and hcp< 14 and loserlevel >= 4 and hcp >= 5) |  |  | 132 |
-| 5C | Preemptive | (C >= 8 and hcp< 14 and loserlevel >= 5 and H < 5 and hcp >= 5) |  |  | 131 |
-| 5D | Preemptive | (D >= 8 and hcp< 14 and loserlevel >= 5 and H < 5 and hcp >= 5) |  |  | 131 |
-| 6C | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('C') and losers == 1) | T=C |  | 140 |
-| 6D | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('D') and losers == 1) | T=D |  | 140 |
-| 6H | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('H') and losers == 1) | T=H |  | 142 |
-| 7C | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('C') and losers <= 0) | T=C |  | 141 |
-| 7D | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('D') and losers <= 0) | T=D |  | 141 |
-| 7H | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('H') and losers <= 0) | T=H |  | 143 |
-| X | T/O | (hcp >= 18 and (S <= 4 or balanced)) \| (hcp >= 10 and hcp <= 17 and S <= 1 and H >= 3 and C >= 3 and D >= 3) \| (takeout('S')) \| (doublethenovercall('H')) \| (doublethenovercall('C')) \| (doublethenovercall('D')) |  |  | 76 |
-
-#### `P-2C`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | -1 |
-| 2D | _(unnamed — the Requires expression is the definition)_ | (overcall('D')) |  |  | 17 |
-| 2H | _(unnamed — the Requires expression is the definition)_ | (H >= 6 and loserlevel >= 2) | minhcp=5,maxhcp=17 |  |  |
-| 2S | _(unnamed — the Requires expression is the definition)_ | (S >= 6 and loserlevel >= 2) | minhcp=5,maxhcp=17 |  |  |
-| 3C | Hand: 9.AJT2.64.AKJ985 (Overcall) | (overcall('C')) |  |  | 21 |
-| 3H | _(unnamed — the Requires expression is the definition)_ | (H >= 7 and loserlevel >= 3) | minhcp=5,maxhcp=17 |  | 10 |
-| 3S | _(unnamed — the Requires expression is the definition)_ | (S >= 7 and loserlevel >= 3) | minhcp=5,maxhcp=17 |  | 10 |
-| 4C | Hand: AT.T3.AQJT654.54 (Overcall) | (fourlevelovercall('C')) |  |  | 32 |
-| 4D | Hand: AT.T3.AQJT654.54 (Overcall) | (fourlevelovercall('D')) |  |  | 32 |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (H >= 8 and loserlevel >= 4) | minhcp=5,maxhcp=17 |  | 20 |
-| 4H | Hand: AT.T3.AQJT654.54 (Overcall) | (fourlevelovercall('H')) |  |  | 42 |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (S >= 8 and loserlevel >= 4) | minhcp=5,maxhcp=17 |  | 20 |
-| 4S | Hand: AT.T3.AQJT654.54 (Overcall) | (fourlevelovercall('S')) |  |  | 42 |
-| 5C | Hand: ..AKJT76432.QT76 (GameEval) | (C_compgame) |  |  | 52 |
-| 5D | Hand: ..AKJT76432.QT76 (GameEval) | (D_compgame) |  |  | 52 |
-
-#### `P-2D`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 15) \| (D >= 5) |  |  | 10 |
-| 2H | _(unnamed — the Requires expression is the definition)_ | (bestmajor('H') and H >= 6 and hcp>= 11 and hcp<= 17) \| (bestmajor('H') and H >= 5 and hcp>= 13 and hcp<= 18) |  |  | 90 |
-| 2S | _(unnamed — the Requires expression is the definition)_ | (bestmajor('S') and S >= 6 and hcp>= 11 and hcp<= 17) \| (bestmajor('S') and S >= 5 and hcp>= 13 and hcp<= 18) |  |  | 90 |
-| 2N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 15 and hcp<= 18 and balish and stopper('D')) |  |  | 80 |
-| 3C | _(unnamed — the Requires expression is the definition)_ | (C >= 5 and hcp>= 14 and hcp<= 19 and bestsuit('C')) \| (C >= 5 and hcp>= 14 and hcp<= 19 and (H <= 2 or S <= 2) and bestsuit('C')) |  |  | 79 |
-| 3D* | 5-5 in the majors | (hearts >= 5 and spades >= 5 and loserlevel >= 3 and hcp >= 10) |  | MichaelsCuebid2X | 110 |
-| 3H | _(unnamed — the Requires expression is the definition)_ | (H >= 7 and hcp>= 19) | F1 |  | 93 |
-| 3S | _(unnamed — the Requires expression is the definition)_ | (S >= 7 and hcp>= 19) | F1 |  | 93 |
-| 3N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 19 and hcp<= 24 and balish and stopper('D')) |  |  | 82 |
-| 4C | _(unnamed — the Requires expression is the definition)_ | (C >= 7 and hcp>= 19 and hcp <= 24) |  |  | 95 |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (H >= 7 and hcp>= 12 and hcp<= 14) \| (H >= 7 and losers <= 3 and hcp <= 15) |  |  | 97 |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (S >= 7 and hcp>= 12 and hcp<= 14) \| (S >= 7 and losers <= 3 and hcp <= 15) |  |  | 97 |
-| 6C | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('C') and losers == 1) | T=C |  | 140 |
-| 6H | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('H') and losers == 1) | T=H |  | 142 |
-| 6S | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('S') and losers == 1) | T=S |  | 142 |
-| 7C | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('C') and losers <= 0) | T=C |  | 141 |
-| 7H | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('H') and losers <= 0) | T=H |  | 143 |
-| 7S | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('S') and losers <= 0) | T=S |  | 143 |
-| X | _(unnamed — the Requires expression is the definition)_ | (hcp >= 12 and D <= 1 and S >= 3 and H >= 3 and C <= 5) \| (hcp >= 13 and S >= 3 and H >= 4) \| (hcp >= 13 and S >= 4 and H >= 3) \| (hcp >= 16) \| (H >= 6 and hcp >= 18 and losers <= 4) \| (S >= 6 and hcp >= 18 and losers <= 4) |  |  | 105 |
-
-#### `P-2H`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 17) |  |  |  |
-| 2S | 6-card overcall | (S >= 6 and hcp>= 10 and hcp<= 12 and HasTopHonors('S', 2, 3)) |  |  | 18 |
-| 2S | _(unnamed — the Requires expression is the definition)_ | (S >= 5 and hcp>= 13 and hcp<= 19) |  |  | 20 |
-| 2N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 15 and hcp<= 18 and balish and doublestopper('H')) \| (hcp >= 16 and hcp<= 18 and balish and stopper('H')) |  |  | 100 |
-| 3C | _(unnamed — the Requires expression is the definition)_ | (bestminor('C') and C >= 5 and S <= 2 and hcp>= 14 and hcp<= 19 and HasTopHonors('D', 2, 3)) \| (bestminor('C') and C >= 6 and hcp>= 14 and hcp<= 19) |  |  | 20 |
-| 3D | _(unnamed — the Requires expression is the definition)_ | (bestminor('D') and D >= 5 and S <= 2 and hcp>= 14 and hcp<= 19 and HasTopHonors('D', 2, 3)) \| (bestminor('D') and D >= 6 and hcp>= 14 and hcp<= 19) |  |  | 20 |
-| 3H* | 5-5 in other Major and a minor | (S >= 5 and (diamonds >= 5 or clubs >= 5) and loserlevel >= 3 and hcp>= 12) |  | MichaelsCuebid2X | 110 |
-| 3S | _(unnamed — the Requires expression is the definition)_ | (S >= 6 and hcp>= 19 and losers >= 4) | F1 |  | 30 |
-| 3N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 19 and hcp<= 24 and balish and stopper('H')) \| (hcp >= 20 and hcp<= 24 and H >= 4 and stopper('H')) |  |  | 50 |
-| 4C | _(unnamed — the Requires expression is the definition)_ | (bestminor('C') and C >= 7 and hcp>= 19 and singlesuited and losers >= 3) | maxhcp=24 |  | 28 |
-| 4D | _(unnamed — the Requires expression is the definition)_ | (bestminor('D') and D >= 7 and hcp>= 19 and singlesuited and losers >= 3) | maxhcp=24 |  | 28 |
-| 4H* | 5-5 in minors | (diamonds >= 5 and clubs >= 5 and losers <= 4 and hcp>= 17) |  | MichaelsCuebid2X | 120 |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (S >= 7 and S_points >= 18 and losers <= 4) | maxhcp=20 |  | 29 |
-| 4N* | 5-5 in minors | (diamonds >= 5 and clubs >= 5 and loserlevel >= 4 and hcp>= 12) |  | UnusualNT2M | 100 |
-| 6C | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('C') and losers == 1) | T=C |  | 140 |
-| 6D | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('D') and losers == 1) | T=D |  | 140 |
-| 6S | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('S') and losers == 1) | T=S |  | 142 |
-| 7C | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('C') and losers <= 0) | T=C |  | 141 |
-| 7D | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('D') and losers <= 0) | T=D |  | 141 |
-| 7S | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('S') and losers <= 0) | T=S |  | 143 |
-| X | _(unnamed — the Requires expression is the definition)_ | (hcp >= 15 and S >= 3 and H <= 3) \| (hcp >= 13 and S >= 4 and C >= 2 and D >= 2 and H <= 3) \| (hcp >= 18) \| (doublethenovercall('C')) \| (doublethenovercall('D')) |  |  | 24 |
-
-#### `P-2S`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 17) |  |  |  |
-| 2N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 15 and hcp<= 18 and balish and doublestopper('S')) \| (hcp >= 16 and hcp<= 18 and balish and stopper('S')) |  |  | 100 |
-| 3C | _(unnamed — the Requires expression is the definition)_ | (bestminor('C') and C >= 5 and H <= 2 and hcp>= 14 and hcp<= 19 and HasTopHonors('D', 2, 3)) \| (bestminor('C') and C >= 6 and hcp>= 14 and hcp<= 19) |  |  | 20 |
-| 3D | _(unnamed — the Requires expression is the definition)_ | (bestminor('D') and D >= 5 and H <= 2 and hcp>= 14 and hcp<= 19 and HasTopHonors('D', 2, 3)) \| (bestminor('D') and D >= 6 and hcp>= 14 and hcp<= 19) |  |  | 20 |
-| 3H | _(unnamed — the Requires expression is the definition)_ | (H >= 6 and hcp>= 13 and hcp<= 19) |  |  | 20 |
-| 3S* | 5-5 in other Major and a minor | (H >= 5 and (diamonds >= 5 or clubs >= 5) and loserlevel >= 3 and hcp>= 12) |  | MichaelsCuebid2X | 110 |
-| 3N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 19 and hcp<= 24 and balish and stopper('S')) \| (hcp >= 20 and hcp<= 24 and S >= 4 and stopper('S')) |  |  | 50 |
-| 4C | _(unnamed — the Requires expression is the definition)_ | (bestminor('C') and C >= 7 and hcp>= 19 and singlesuited and losers >= 3) | maxhcp=24 |  | 28 |
-| 4D | _(unnamed — the Requires expression is the definition)_ | (bestminor('D') and D >= 7 and hcp>= 19 and singlesuited and losers >= 3) | maxhcp=24 |  | 28 |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (H >= 7 and H_points >= 18 and losers <= 4) \| (H >= 6 and losers <= 4 and hcp >= 15 and HasTopHonors('H', 3, 5)) | maxhcp=20 |  | 30 |
-| 4S* | 5-5 in minors | (diamonds >= 5 and clubs >= 5 and losers <= 4 and hcp>= 17) |  | MichaelsCuebid2X | 120 |
-| 4N* | 5-5 in minors | (diamonds >= 5 and clubs >= 5 and loserlevel >= 4 and hcp>= 12) |  | UnusualNT2M | 100 |
-| 6C | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('C') and losers == 1) | T=C |  | 140 |
-| 6D | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('D') and losers == 1) | T=D |  | 140 |
-| 6H | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('H') and losers == 1) | T=H |  | 142 |
-| 7C | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('C') and losers <= 0) | T=C |  | 141 |
-| 7D | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('D') and losers <= 0) | T=D |  | 141 |
-| 7H | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('H') and losers <= 0) | T=H |  | 143 |
-| X | _(unnamed — the Requires expression is the definition)_ | (hcp >= 15 and H >= 3 and S <= 3) \| (hcp >= 13 and H >= 4 and C >= 2 and D >= 2 and S <= 3) \| (hcp >= 18) \| (doublethenovercall('C')) \| (doublethenovercall('D')) |  |  | 24 |
-
-#### `P-3C`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 20 and C >= 4) \| (hcp <= 17 and (S <= 2 or H <= 2)) \| (hcp <= 16 and C >= 3) \| (hcp <= 14) |  |  |  |
-| 3D | _(unnamed — the Requires expression is the definition)_ | (D >= 5 and diamondpoints >= 13 and hcp >= 11 and hcp<= 19 and S <= 4 and H <= 4) \| (D >= 6 and diamondpoints >= 14 and hcp >= 12 and hcp<= 19 and S <= 5 and H <= 5) |  |  | 31 |
-| 3H | Constructive - long suit with playing tricks | (H >= 7 and losers <= 5 and hcp >= 10 and HasTopHonors('H', 1, 2)) | minhcp=14 |  | 55 |
-| 3H | Constructive - quality 6-card suit | (H >= 6 and losers <= 5 and hcp >= 11 and HasTopHonors('H', 2, 3)) | minhcp=14 |  | 57 |
-| 3H | _(unnamed — the Requires expression is the definition)_ | (H >= 5 and hcp>= 14 and hcp<= 19) \| (H >= 5 and S <= 1 and hcp>= 14 and hcp<= 20) \| (H >= 6 and hcp>= 14 and hcp<= 19) | minhcp=14 |  | 60 |
-| 3S | Constructive - long suit with playing tricks | (S >= 7 and losers <= 5 and hcp >= 10 and HasTopHonors('S', 1, 2)) | minhcp=14 |  | 55 |
-| 3S | Constructive - quality 6-card suit | (S >= 6 and losers <= 5 and hcp >= 11 and HasTopHonors('S', 2, 3)) | minhcp=14 |  | 57 |
-| 3S | _(unnamed — the Requires expression is the definition)_ | (S >= 5 and hcp>= 14 and hcp<= 19) \| (S >= 5 and H <= 1 and hcp>= 14 and hcp<= 20) \| (S >= 6 and hcp>= 14 and hcp<= 19) | minhcp=14 |  | 60 |
-| 3N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 16 and stopper('C')) \| (hcp >= 17 and stopper('C')) |  |  | 50 |
-| 4C* | Strong 2-suited | (H >= 5 and S >= 5 and losers <= 5 and C <= 4 and controls >= 5) |  | MichaelsCuebid3X | 70 |
-| 4H | Constructive - long suit expects to make game | (H >= 7 and losers <= 4 and hcp >= 12 and HasTopHonors('H', 2, 3)) | minhcp=17 |  | 72 |
-| 4H | Constructive - powerful 6-card suit expects game | (H >= 6 and losers <= 4 and hcp >= 14 and HasTopHonors('H', 2, 3)) | minhcp=17 |  | 73 |
-| 4H | Natural overcall - 7!S (or 6 solid) - 17+ hcp | (H >= 6 and hcp >= 17) | minhcp=17 |  | 74 |
-| 4S | Constructive - long suit expects to make game | (S >= 7 and losers <= 4 and hcp >= 12 and HasTopHonors('S', 2, 3)) | minhcp=17 |  | 72 |
-| 4S | Constructive - powerful 6-card suit expects game | (S >= 6 and losers <= 4 and hcp >= 14 and HasTopHonors('S', 2, 3)) | minhcp=17 |  | 73 |
-| 4S | Natural overcall - 7!S (or 6 solid) - 17+ hcp | (S >= 6 and hcp >= 17) | minhcp=17 |  | 74 |
-| 5C | _(unnamed — the Requires expression is the definition)_ | (C >= 6 and hcp >= 10 and C_game) | minhcp=17 |  | 51 |
-| 6D | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('D') and losers == 1) | T=D |  | 140 |
-| 6H | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('H') and losers == 1) | T=H |  | 142 |
-| 6S | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('S') and losers == 1) | T=S |  | 142 |
-| 7D | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('D') and losers <= 0) | T=D |  | 141 |
-| 7H | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('H') and losers <= 0) | T=H |  | 143 |
-| 7S | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('S') and losers <= 0) | T=S |  | 143 |
-| X | _(unnamed — the Requires expression is the definition)_ | (hcp >= 13 and H >= 3 and S >= 3 and C <= 3 and not bestsuit('C')) \| (hcp >= 14 and H >= 4 and S >= 4) \| (takeout('C')) \| (hcp >= 20) |  |  | 32 |
-
-#### `P-3D`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 20 and D >= 4) \| (hcp <= 17 and (S <= 2 or H <= 2)) \| (hcp <= 16 and D >= 3) \| (hcp <= 14) |  |  |  |
-| 3H | Constructive - long suit with playing tricks | (H >= 7 and losers <= 5 and hcp >= 10 and HasTopHonors('H', 1, 2)) | minhcp=14 |  | 55 |
-| 3H | Constructive - quality 6-card suit | (H >= 6 and losers <= 5 and hcp >= 11 and HasTopHonors('H', 2, 3)) | minhcp=14 |  | 57 |
-| 3H | _(unnamed — the Requires expression is the definition)_ | (H >= 5 and hcp>= 14 and hcp<= 19) \| (H >= 5 and S <= 1 and hcp>= 14 and hcp<= 20) \| (H >= 6 and hcp>= 14 and hcp<= 19) | minhcp=14 |  | 60 |
-| 3S | Constructive - long suit with playing tricks | (S >= 7 and losers <= 5 and hcp >= 10 and HasTopHonors('S', 1, 2)) | minhcp=14 |  | 55 |
-| 3S | Constructive - quality 6-card suit | (S >= 6 and losers <= 5 and hcp >= 11 and HasTopHonors('S', 2, 3)) | minhcp=14 |  | 57 |
-| 3S | _(unnamed — the Requires expression is the definition)_ | (S >= 5 and hcp>= 14 and hcp<= 19) \| (S >= 5 and H <= 1 and hcp>= 14 and hcp<= 20) \| (S >= 6 and hcp>= 14 and hcp<= 19) | minhcp=14 |  | 60 |
-| 3N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 16 and stopper('D')) \| (hcp >= 17 and stopper('D')) |  |  | 50 |
-| 4C | _(unnamed — the Requires expression is the definition)_ | (C >= 5 and clubpoints >= 14 and hcp<= 19 and hcp>= 14 and S <= 4 and H <= 4) \| (C >= 6 and clubpoints >= 14 and hcp<= 19 and hcp>= 10 and S <= 5 and H <= 5) | minhcp = 15 |  | 20 |
-| 4D* | Strong 2-suited | (H >= 5 and S >= 5 and losers <= 5 and D <= 4 and controls >= 5) |  | MichaelsCuebid3X | 70 |
-| 4H | Constructive - long suit expects to make game | (H >= 7 and losers <= 4 and hcp >= 12 and HasTopHonors('H', 2, 3)) | minhcp=17 |  | 72 |
-| 4H | Constructive - powerful 6-card suit expects game | (H >= 6 and losers <= 4 and hcp >= 14 and HasTopHonors('H', 2, 3)) | minhcp=17 |  | 73 |
-| 4H | Natural overcall - 7!S (or 6 solid) - 17+ hcp | (H >= 6 and hcp >= 17) | minhcp=17 |  | 74 |
-| 4S | Constructive - long suit expects to make game | (S >= 7 and losers <= 4 and hcp >= 12 and HasTopHonors('S', 2, 3)) | minhcp=17 |  | 72 |
-| 4S | Constructive - powerful 6-card suit expects game | (S >= 6 and losers <= 4 and hcp >= 14 and HasTopHonors('S', 2, 3)) | minhcp=17 |  | 73 |
-| 4S | Natural overcall - 7!S (or 6 solid) - 17+ hcp | (S >= 6 and hcp >= 17) | minhcp=17 |  | 74 |
-| 5C | _(unnamed — the Requires expression is the definition)_ | (C >= 6 and hcp >= 10 and C_game) | minhcp=17 |  | 51 |
-| 6C | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('C') and losers == 1) | T=C |  | 140 |
-| 6H | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('H') and losers == 1) | T=H |  | 142 |
-| 6S | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('S') and losers == 1) | T=S |  | 142 |
-| 7C | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('C') and losers <= 0) | T=C |  | 141 |
-| 7H | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('H') and losers <= 0) | T=H |  | 143 |
-| 7S | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('S') and losers <= 0) | T=S |  | 143 |
-| X | _(unnamed — the Requires expression is the definition)_ | (hcp >= 13 and H >= 3 and S >= 3 and D <= 3 and not bestsuit('D')) \| (hcp >= 14 and H >= 4 and S >= 4) \| (takeout('D')) \| (hcp >= 20) |  |  | 32 |
-
-#### `P-3H`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 20 and H >= 4) \| (hcp <= 17) |  |  |  |
-| 3S | _(unnamed — the Requires expression is the definition)_ | (S >= 5 and hcp>= 12) \| (S >= 6 and hcp>= 14 and hcp<= 19) |  |  | 25 |
-| 3N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 17 and stopper('H')) \| (hcp >= 17 and doublestopper('H')) |  |  | 60 |
-| 4C | _(unnamed — the Requires expression is the definition)_ | (C >= 5 and hcp>= 16 and hcp<= 19) \| (C >= 6 and hcp>= 14 and hcp<= 19) |  |  | 22 |
-| 4D | _(unnamed — the Requires expression is the definition)_ | (D >= 5 and hcp>= 16 and hcp<= 19) \| (D >= 6 and hcp>= 14 and hcp<= 19) |  |  | 22 |
-| 4H* | Strong 2-suited | (S >= 5 and (D >= 5 or C >= 5) and losers <= 5 and H <= 3 and hcp >= 15) |  | MichaelsCuebid3X | 70 |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (S >= 6 and hcp>= 14 and hcp<= 19) \| (S >= 6 and losers <= 4) \| (S >= 7 and losers <= 3) | minhcp=14 |  | 75 |
-| 4N* | Unusual NT | (C >= 5 and D >= 5 and loserlevel >= 5 and hcp >= 15) | minhcp=15 | UnusualNT3X | 110 |
-| 6C | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('C') and losers == 1) | T=C |  | 140 |
-| 6D | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('D') and losers == 1) | T=D |  | 140 |
-| 6S | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('S') and losers == 1) | T=S |  | 142 |
-| 7C | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('C') and losers <= 0) | T=C |  | 141 |
-| 7D | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('D') and losers <= 0) | T=D |  | 141 |
-| 7S | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('S') and losers <= 0) | T=S |  | 143 |
-| X | _(unnamed — the Requires expression is the definition)_ | (hcp >= 18) \| (S >= 4 and hcp>= 14 and C >= 3 and D >= 3) \| (S >= 3 and hcp>= 17 and C >= 3 and D >= 3) |  |  | 18 |
-
-#### `P-3S`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 20 and S >= 4) \| (hcp <= 17) |  |  |  |
-| 3N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 17 and stopper('S')) \| (hcp >= 17 and doublestopper('S')) |  |  | 60 |
-| 4C | _(unnamed — the Requires expression is the definition)_ | (C >= 5 and hcp>= 16 and hcp<= 19) \| (C >= 6 and hcp>= 14 and hcp<= 19) |  |  | 22 |
-| 4D | _(unnamed — the Requires expression is the definition)_ | (D >= 5 and hcp>= 16 and hcp<= 19) \| (D >= 6 and hcp>= 14 and hcp<= 19) |  |  | 22 |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (H >= 6 and hcp>= 14 and hcp<= 19) \| (H >= 6 and losers <= 4) \| (H >= 7 and losers <= 3) | minhcp=14 |  | 75 |
-| 4S* | Strong 2-suited | (H >= 5 and (D >= 5 or C >= 5) and losers <= 5 and S <= 3 and hcp >= 15) |  | MichaelsCuebid3X | 70 |
-| 4N* | Unusual NT | (C >= 5 and D >= 5 and loserlevel >= 5 and hcp >= 15) | minhcp=15 | UnusualNT3X | 110 |
-| 6C | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('C') and losers == 1) | T=C |  | 140 |
-| 6D | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('D') and losers == 1) | T=D |  | 140 |
-| 6H | Real solid suit, one-loser hand -- twelve tricks on our own | (realsolid('H') and losers == 1) | T=H |  | 142 |
-| 7C | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('C') and losers <= 0) | T=C |  | 141 |
-| 7D | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('D') and losers <= 0) | T=D |  | 141 |
-| 7H | Real solid suit, no losers -- thirteen tricks on our own | (realsolid('H') and losers <= 0) | T=H |  | 143 |
-| X | _(unnamed — the Requires expression is the definition)_ | (hcp >= 18) \| (H >= 4 and hcp>= 14 and C >= 3 and D >= 3) \| (H >= 3 and hcp>= 17 and C >= 3 and D >= 3) |  |  | 18 |
-
-#### `P-4C`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 16 and (S <= 2 or H <= 2)) \| (hcp <= 18) |  |  |  |
-| 4D | _(unnamed — the Requires expression is the definition)_ | (D >= 6 and hcp>= 14 and hcp<= 19) |  |  | -1 |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (bestmajor('H') and H >= 5 and hcp>= 14 and hcp<= 19) \| (bestmajor('H') and H >= 6 and hcp>= 14 and hcp<= 19) |  |  | 10 |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (bestmajor('S') and S >= 5 and hcp>= 14 and hcp<= 19) \| (bestmajor('S') and S >= 6 and hcp>= 14 and hcp<= 19) |  |  | 10 |
-| 5C* | Strong 2-suited | (H >= 5 and S >= 5 and losers <= 2 and C <= 4) |  | MichaelsCuebid4X | 70 |
-| X | _(unnamed — the Requires expression is the definition)_ | (hcp >= 13 and C <= 1 and h >= 3 and S >= 3) \| (hcp >= 14 and h >= 4 and S >= 4) \| (hcp >= 16 and H >= 2 and S >= 2) \| (hcp >= 19) |  |  | 30 |
-
-#### `P-4D`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 16 and (S <= 2 or H <= 2)) \| (hcp <= 18) |  |  |  |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (bestmajor('H') and H >= 5 and hcp>= 14 and hcp<= 19) \| (bestmajor('H') and H >= 6 and hcp>= 14 and hcp<= 19) |  |  | 10 |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (bestmajor('S') and S >= 5 and hcp>= 14 and hcp<= 19) \| (bestmajor('S') and S >= 6 and hcp>= 14 and hcp<= 19) |  |  | 10 |
-| 5C | _(unnamed — the Requires expression is the definition)_ | (C >= 7 and losers <= 4 and hcp>= 14) |  |  | 20 |
-| 5D* | Strong 2-suited | (H >= 5 and S >= 5 and losers <= 2 and D <= 4) |  | MichaelsCuebid4X | 70 |
-| X | _(unnamed — the Requires expression is the definition)_ | (hcp >= 13 and D <= 1 and h >= 3 and S >= 3) \| (hcp >= 14 and h >= 4 and S >= 4) \| (hcp >= 16 and H >= 2 and S >= 2) \| (hcp >= 19) |  |  | 30 |
-
-#### `P-4H`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (makessense) |  |  |  |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (hcp >= 12 and S >= 5 and losers <= 4) \| (hcp >= 10 and S >= 6 and losers <= 5) \| (hcp >= 14 and S >= 6) |  |  | 25 |
-| 4N* | Unusual NT | (C >= 5 and D >= 5 and loserlevel >= 4) |  | UnusualNT4X | 110 |
-| 5C | Board: 880009, Hand: .AKT983.AK9853.A [MS=3a-loser-game(losers=2,ownTricks=11,game=5D,contract=4S)] | (twicerebiddable('C') and losers <= 2) \| (C_compgame) \| (cansacrifice('C')) | T=C |  | 29 |
-| 5C | _(unnamed — the Requires expression is the definition)_ | (C >= 7 and hcp >= 16) \| (C >= 7 and loserlevel >= 5) | minhcp=15 |  | 30 |
-| 5D | Board: 880009, Hand: .AKT983.AK9853.A [MS=3a-loser-game(losers=2,ownTricks=11,game=5D,contract=4S)] | (twicerebiddable('D') and losers <= 2) \| (D_compgame) \| (cansacrifice('D')) | T=D |  | 29 |
-| 5D | _(unnamed — the Requires expression is the definition)_ | (D >= 7 and hcp >= 16) \| (D >= 7 and loserlevel >= 5) | minhcp=15 |  | 30 |
-| 5S | Hand: .AKQJT9653.K3.62 (GameEval) | (cansacrifice('S')) |  |  | 43 |
-| X | _(unnamed — the Requires expression is the definition)_ | (hcp >= 14 and H <= 2 and S >= 4) \| (hcp >= 15 and H <= 1 and S >= 3) \| (hcp >= 18) \| (takeout('H')) |  |  | 24 |
-
-#### `P-4S`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (makessense) |  |  |  |
-| 4N* | Takeout of spades - hearts and both minors | ((D >= 5 and C >= 5 and loserlevel >= 4) or (S <= 1 and hcp >= 13 and H >= 3 and D >= 3 and C >= 3)) | F1 | Takeout4NOver4S | 120 |
-| 5C | Board: 880009, Hand: .AKT983.AK9853.A [MS=3a-loser-game(losers=2,ownTricks=11,game=5D,contract=4S)] | (twicerebiddable('C') and losers <= 2) \| (C_compgame) \| (cansacrifice('C')) | T=C |  | 29 |
-| 5C | _(unnamed — the Requires expression is the definition)_ | (C >= 7 and hcp >= 16) \| (C >= 7 and loserlevel >= 5) | minhcp=15 |  | 30 |
-| 5D | Board: 880009, Hand: .AKT983.AK9853.A [MS=3a-loser-game(losers=2,ownTricks=11,game=5D,contract=4S)] | (twicerebiddable('D') and losers <= 2) \| (D_compgame) \| (cansacrifice('D')) | T=D |  | 29 |
-| 5D | _(unnamed — the Requires expression is the definition)_ | (D >= 7 and hcp >= 16) \| (D >= 7 and loserlevel >= 5) | minhcp=15 |  | 30 |
-| 5H | Hand: .AKQJT9653.K3.62 (GameEval) | (cansacrifice('H')) |  |  | 43 |
-| X | Penalty | (penalty) |  | Takeout4NOver4S | 23 |
-| X | Penalty - strong balanced hand with spade length | (hcp >= 16 and S >= 2 and S <= 3 and balanced) | minhcp = 16, penaltyInterest | Takeout4NOver4S | 120 |
-
-#### `P-5C`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| 5H | Hand: AK87.AKQ76542.3. (GameEval) | (cansacrifice('H')) |  |  | 44 |
-| 5S | Hand: AK87.AKQ76542.3. (GameEval) | (cansacrifice('S')) |  |  | 44 |
-| X | Hand: 973.A52.AKT83.93 (PenaltyDouble) | (penalty) |  |  | 90 |
-
-#### `P-5D`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| 5H | Hand: AK87.AKQ76542.3. (GameEval) | (cansacrifice('H')) |  |  | 44 |
-| 5S | Hand: AK87.AKQ76542.3. (GameEval) | (cansacrifice('S')) |  |  | 44 |
-| X | Hand: 973.A52.AKT83.93 (PenaltyDouble) | (penalty) |  |  | 90 |
-
-#### `P-5H`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| 5S | Hand: AKQ76542.A.A62.7 (GameEval) | (S_compgame) |  |  | 44 |
-| X | Hand: AQJ7.95.AK73.K92 (PenaltyDouble) | (penalty) |  |  | 90 |
-
-#### `P-5S`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| X | Hand: AQJ7.95.AK73.K92 (PenaltyDouble) | (penalty) |  |  | 90 |
-
-#### `P-6C`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
-
-#### `P-6D`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
-
-#### `P-6H`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
-
-#### `P-6S`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
-
-#### `P-7C`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
-
-#### `P-7D`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
-
-#### `P-7H`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
-
-#### `P-7S`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
-
-#### `P-1N`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
-| 2C* | Cappelletti - single suited | (totalpoints >= 10 and lengthlongestsuit >= 6 and singlesuited and hcp >= 10) \| (totalpoints >= 10 and lengthlongestsuit >= 7 and hcp >= 10) | minhcp=10,maxhcp=20 | Cappelletti | 50 |
-| 2D* | Cappelletti - majors | (H >= 5 and S >= 5 and hcp >= 10) | maxhcp=20 | Cappelletti | 90 |
-| 2H* | Cappelletti - H and a minor | (H >= 5 and (C >= 4 or D >= 4) and loserlevel >= 2 and totalpoints >= 12 and hcp >= 10) | maxhcp=17 | Cappelletti | 60 |
-| 2S* | Cappelletti - S and a minor | (S >= 5 and (C >= 4 or D >= 4) and loserlevel >= 2 and totalpoints >= 12 and hcp >= 10) | maxhcp=17 | Cappelletti | 60 |
-| 2N* | Cappelletti - minors | (C >= 5 and D >= 5 and totalpoints >= 15 and hcp >= 10) | minhcp=10,maxhcp=17 | Cappelletti | 80 |
-| 3C | Strong rebiddable, 14-16 totalpoints | (rebiddable('C') and C >= 7 and C_Points >= 14 and C_points <= 17) |  |  | 65 |
-| 3D | Strong rebiddable, 14-16 totalpoints | (rebiddable('D') and D >= 7 and D_Points >= 14 and D_points <= 17) |  |  | 65 |
-| 3H | Strong rebiddable, 14-16 totalpoints | (rebiddable('H') and H >= 7 and H_Points >= 14 and H_points <= 17) |  |  | 70 |
-| 3S | Strong rebiddable, 14-16 totalpoints | (rebiddable('S') and S >= 7 and S_Points >= 14 and S_points <= 17) |  |  | 70 |
-| 4C | Preempt | (rebiddable('C') and C >= 7 and hcp<= 10 and loserlevel >= 4) | minhcp = 7 |  | 75 |
-| 4D | Preempt | (rebiddable('D') and D >= 7 and hcp<= 10 and loserlevel >= 4) | minhcp = 7 |  | 75 |
-| 4H | Preempt | (rebiddable('H') and H >= 7 and hcp<= 10 and loserlevel >= 4) | minhcp = 7 |  | 80 |
-| 4S | Preempt | (rebiddable('S') and S >= 7 and hcp<= 10 and loserlevel >= 4) | minhcp = 7 |  | 80 |
-| X* | Penalty | (ispenalty and hcp >= 16) |  | 1NXPenalty | 60 |
-
-#### `P-2N`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| 3C | Hand: .QT764..KQJ76542 (Partscore) | (overcall('C')) |  |  | 21 |
-| 3D | Hand: .QT764..KQJ76542 (Partscore) | (overcall('D')) |  |  | 21 |
-| 3H | Hand: Q.QJT87632.3.AK6 (Partscore) | (overcall('H')) |  |  | 24 |
-| 3S | Hand: Q.QJT87632.3.AK6 (Partscore) | (overcall('S')) |  |  | 24 |
-| 4C | Hand: JT62.7.6.AKQJ863 (Overcall) | (fourlevelovercall('C')) |  |  | 31 |
-| 4D | Hand: JT62.7.6.AKQJ863 (Overcall) | (fourlevelovercall('D')) |  |  | 31 |
-| 4H | Hand: KQJT532.T.6.KQ85 (Overcall) | (fourlevelovercall('H')) |  |  | 54 |
-| 4S | Hand: KQJT532.T.6.KQ85 (Overcall) | (fourlevelovercall('S')) |  |  | 54 |
-| 5C | Hand: .A.KQT97652.QT97 (GameEval) | (C_compgame) |  |  | 51 |
-| 5D | Hand: .A.KQT97652.QT97 (GameEval) | (D_compgame) |  |  | 51 |
-
-#### `P-3N`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| 4C | Hand: KJT3.Q.KJT7653.2 (Overcall) | (fourlevelovercall('C')) |  |  | 31 |
-| 4D | Hand: KJT3.Q.KJT7653.2 (Overcall) | (fourlevelovercall('D')) |  |  | 31 |
-| 4H | Hand: KT642.AKJT832..6 (Overcall) | (fourlevelovercall('H')) |  |  | 54 |
-| 4S | Hand: KT642.AKJT832..6 (Overcall) | (fourlevelovercall('S')) |  |  | 54 |
-
-#### `P-6N`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Default, when no other bid found | (makessense) |  |  | -1000 |
-| X | Penalty | (penalty) |  |  | -900 |
-
-#### `P-7N`
-
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Penalty | (true) |  |  |  |
-| X | _(unnamed — the Requires expression is the definition)_ | (aces >= 1 and willbeonlead) |  |  | 10 |
 
 #### `1C-P`
 
@@ -1484,7 +817,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 | Call | Means | Requires | Post-condition | Convention | Pri |
 |---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 9) \| (hcp <= 6) \| (H >= 5 and hcp >= 10) |  |  | 32 |
+| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 9) \| (hcp <= 6) \| (bestsuit('H') and H >= 5 and hcp >= 10) |  |  | 32 |
 | 1S | Nat | (spadepoints >= 6 and S >= 5) | minhcp=5 |  | 80 |
 | 1N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 7 and H >= 3 and hcp<= 11) \| (hcp >= 7 and stopper('H') and hcp<= 10) |  |  | 21 |
 | 2C | Nat | (Hcp <= 10 and hcp>= 6 and C >= 4) \| (Hcp <= 9 and C_points >= 6 and C >= 4 and hcp >= 5) \| (Hcp <= 9 and hcp>= 6 and C >= 4) |  |  | 15 |
@@ -1511,7 +844,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 | Call | Means | Requires | Post-condition | Convention | Pri |
 |---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 9) \| (hcp <= 6) \| (S >= 5 and hcp >= 10) |  |  | 32 |
+| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 9) \| (hcp <= 6) \| (bestsuit('S') and S >= 5 and hcp >= 10) |  |  | 32 |
 | 1N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 7 and S >= 3 and hcp<= 11) \| (hcp >= 7 and stopper('S') and hcp<= 10) |  |  | 21 |
 | 2C | Nat | (Hcp <= 10 and hcp>= 6 and C >= 4) \| (Hcp <= 9 and C_points >= 6 and C >= 4 and hcp >= 5) \| (Hcp <= 9 and hcp>= 6 and C >= 4) |  |  | 15 |
 | 2D | Nat | (Hcp >= 9 and D >= 5) \| (Hcp >= 9 and D >= 5 and HasTopHonors('H', 2, 5)) \| (Hcp >= 12 and D >= 4) \| (D >= 5 and hcp >= 12) |  |  | 55 |
@@ -1765,9 +1098,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `1C-6S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T66527 | (true) |  |  |  |
+_Same rule set as `1C-6H` — the service returns an identical table for this position._
 
 #### `1C-7H`
 
@@ -1777,9 +1108,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `1C-7S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 657508 | (true) |  |  |  |
+_Same rule set as `1C-7H` — the service returns an identical table for this position._
 
 #### `1C-1N`
 
@@ -1873,7 +1202,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 | Call | Means | Requires | Post-condition | Convention | Pri |
 |---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 9) \| (hcp <= 6) \| (H >= 5 and hcp >= 10) |  |  | 32 |
+| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 9) \| (hcp <= 6) \| (bestsuit('H') and H >= 5 and hcp >= 10) |  |  | 32 |
 | 1S | Nat | (spadepoints >= 6 and S >= 5) | minhcp=5 |  | 80 |
 | 1N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 7 and H >= 3 and hcp<= 11) \| (hcp >= 7 and stopper('H') and hcp<= 10) |  |  | 21 |
 | 2C | Nat | (Hcp >= 9 and C >= 5) \| (Hcp >= 9 and C >= 5 and HasTopHonors('H', 2, 5)) \| (Hcp >= 12 and C >= 4) \| (C >= 5 and hcp >= 12) |  |  | 55 |
@@ -1900,7 +1229,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 | Call | Means | Requires | Post-condition | Convention | Pri |
 |---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 9) \| (hcp <= 6) \| (S >= 5 and hcp >= 10) |  |  | 32 |
+| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 9) \| (hcp <= 6) \| (bestsuit('S') and S >= 5 and hcp >= 10) |  |  | 32 |
 | 1N | _(unnamed — the Requires expression is the definition)_ | (hcp >= 7 and S >= 3 and hcp<= 11) \| (hcp >= 7 and stopper('S') and hcp<= 10) |  |  | 21 |
 | 2C | Nat | (Hcp >= 9 and C >= 5) \| (Hcp >= 9 and C >= 5 and HasTopHonors('H', 2, 5)) \| (Hcp >= 12 and C >= 4) \| (C >= 5 and hcp >= 12) |  |  | 55 |
 | 2D | Nat | (Hcp <= 10 and hcp>= 6 and D >= 4) \| (Hcp <= 9 and D_points >= 6 and D >= 4 and hcp >= 5) \| (Hcp <= 9 and hcp>= 6 and D >= 4) |  |  | 15 |
@@ -2158,33 +1487,23 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `1D-6C`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 162038 | (true) |  |  |  |
+_Same rule set as `1C-6D` — the service returns an identical table for this position._
 
 #### `1D-6H`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T66527 | (true) |  |  |  |
+_Same rule set as `1C-6H` — the service returns an identical table for this position._
 
 #### `1D-6S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T66527 | (true) |  |  |  |
+_Same rule set as `1C-6H` — the service returns an identical table for this position._
 
 #### `1D-7H`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 657508 | (true) |  |  |  |
+_Same rule set as `1C-7H` — the service returns an identical table for this position._
 
 #### `1D-7S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 657508 | (true) |  |  |  |
+_Same rule set as `1C-7H` — the service returns an identical table for this position._
 
 #### `1D-1N`
 
@@ -2524,9 +1843,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `1H-6D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 463710 | (true) |  |  |  |
+_Same rule set as `1H-6C` — the service returns an identical table for this position._
 
 #### `1H-6S`
 
@@ -2836,21 +2153,15 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `1S-6C`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 463710 | (true) |  |  |  |
+_Same rule set as `1H-6C` — the service returns an identical table for this position._
 
 #### `1S-6D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 463710 | (true) |  |  |  |
+_Same rule set as `1H-6C` — the service returns an identical table for this position._
 
 #### `1S-6H`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T4915 | (true) |  |  |  |
+_Same rule set as `1H-6S` — the service returns an identical table for this position._
 
 #### `1S-1N`
 
@@ -2982,10 +2293,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `2C-4S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp >= 8) |  |  | 20 |
-| X | Negative | (hcp <= 7) |  |  | 10 |
+_Same rule set as `2C-4H` — the service returns an identical table for this position._
 
 #### `2C-5D`
 
@@ -3288,9 +2596,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `2D-6S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T842822 | (true) |  |  |  |
+_Same rule set as `2D-6H` — the service returns an identical table for this position._
 
 #### `2D-2N`
 
@@ -3351,7 +2657,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 |---|---|---|---|---|---|
 | P | _(unnamed — the Requires expression is the definition)_ | (not game) |  |  |  |
 | 2S | _(unnamed — the Requires expression is the definition)_ | (hcp >= 13 and spades >= 5 and spadelongest and H <= 1) | F1 |  | 68 |
-| 2N* | FeatureAsk, 15+ hcp | (hcp >= 15) |  | FeatureAskMajor | 60 |
+| 2N* | FeatureAsk, 15+ hcp | (hcp >= 15) \| (hcp >= 13 and controls >= 5) |  | FeatureAskMajor | 60 |
 | 3C | _(unnamed — the Requires expression is the definition)_ | (bestminor('C') and C >= 5 and hcp >= 17 ) |  |  | 22 |
 | 3D | _(unnamed — the Requires expression is the definition)_ | (bestminor('D') and D >= 5 and hcp >= 17 ) |  |  | 22 |
 | 3H | Preemptive | (H_points >= 6 and hcp <= 9 and H >= 3) \| (competitive('H')) | minhcp=6,maxhcp=11 |  | 40 |
@@ -3371,27 +2677,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `2H-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (not game) |  |  |  |
-| 2S | _(unnamed — the Requires expression is the definition)_ | (hcp >= 13 and spades >= 5 and spadelongest and H <= 1) | F1 |  | 68 |
-| 2N* | FeatureAsk, 15+ hcp | (hcp >= 15) |  | FeatureAskMajor | 60 |
-| 3C | _(unnamed — the Requires expression is the definition)_ | (bestminor('C') and C >= 5 and hcp >= 17 ) |  |  | 22 |
-| 3D | _(unnamed — the Requires expression is the definition)_ | (bestminor('D') and D >= 5 and hcp >= 17 ) |  |  | 22 |
-| 3H | Preemptive | (H_points >= 6 and hcp <= 9 and H >= 3) \| (competitive('H')) | minhcp=6,maxhcp=11 |  | 40 |
-| 3S | _(unnamed — the Requires expression is the definition)_ | (spadepoints >= 20 and spades >= 6 and singlesuited) | GF |  | 20 |
-| 3N | Nat | (H <= 1 and hcp >= 18 and not slammish) |  |  | 30 |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (H_compgame) \| (preemptgame('H')) |  |  | 70 |
-| 4H | Nat | (preemptgame('H') or covergame('H')) \| (H_compgame and H >= 3 and hcp <= 17) \| (hcp >= 12 and hcp <= 17 and H >= 3 and not slammish) \| (hcp >= 10 and hcp <= 17 and H >= 4 and not slammish) | minhcp=2,maxhcp=17 |  | 80 |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (twicerebiddable('S') and H <= 1 and not slammish and losers <= 4) \| (S_points >= 20 and S >= 6 and singlesuited and H <= 1 and not slammish) |  |  | 79 |
-| 4N* | RKC | ((H >= 2) AND (CanAsk_H_RKC)) \| ((H >= 2) AND (H_slam)) | T=H | RKC0314_H | 120 |
-| 5N* | GSForce | ((H >= 2) AND (CanAsk_H_GSF)) | T=H | GSForce | 175 |
-| 6H | To Play | ((H >= 2) AND (CanBid6_H)) |  |  | 100 |
-| 6H | Playing strength: one loser with a real solid suit or an agreed fit | ((H >= 2) AND ((realsolid('H') or trump('H')) and losers == 1)) | T=H |  | 105 |
-| 6H | Slam: own playing strength -- our hand alone rates to take twelve tricks | ((H >= 2) AND (monsterslam('H'))) | T=H |  | 173 |
-| 7H | Playing strength: no losers with a real solid suit or an agreed fit | ((H >= 2) AND ((realsolid('H') or trump('H')) and losers <= 0)) | T=H |  | 106 |
-| 7H | Grand slam: own playing strength -- our hand alone rates to take thirteen tricks | ((H >= 2) AND (monstergrand('H'))) | T=H |  | 174 |
-| 7N | To Play | ((H >= 2) AND (CanBid7NT)) |  |  | 170 |
+_Same rule set as `2H-P` — the service returns an identical table for this position._
 
 #### `2H-2S`
 
@@ -3503,10 +2789,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `2H-4D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (H >= 4 and hcp >= 6) \| (H_compgame) \| (preemptgame('H')) |  |  | 70 |
+_Same rule set as `2H-4C` — the service returns an identical table for this position._
 
 #### `2H-4H`
 
@@ -3540,9 +2823,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `2H-6D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 58436 | (true) |  |  |  |
+_Same rule set as `2H-6C` — the service returns an identical table for this position._
 
 #### `2H-6S`
 
@@ -3558,9 +2839,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `2H-7D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T158849 | (true) |  |  |  |
+_Same rule set as `2H-7C` — the service returns an identical table for this position._
 
 #### `2H-2N`
 
@@ -3602,7 +2881,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 | Call | Means | Requires | Post-condition | Convention | Pri |
 |---|---|---|---|---|---|
 | P | _(unnamed — the Requires expression is the definition)_ | (not game) |  |  |  |
-| 2N* | FeatureAsk, 15+ hcp | (hcp >= 15) |  | FeatureAskMajor | 60 |
+| 2N* | FeatureAsk, 15+ hcp | (hcp >= 15) \| (hcp >= 13 and controls >= 5) |  | FeatureAskMajor | 60 |
 | 3C | _(unnamed — the Requires expression is the definition)_ | (bestminor('C') and C >= 5 and hcp >= 17 ) |  |  | 22 |
 | 3D | _(unnamed — the Requires expression is the definition)_ | (bestminor('D') and D >= 5 and hcp >= 17 ) |  |  | 22 |
 | 3H | _(unnamed — the Requires expression is the definition)_ | (hcp >= 17 and hearts >= 6) | F1 |  | 69 |
@@ -3622,26 +2901,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `2S-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (not game) |  |  |  |
-| 2N* | FeatureAsk, 15+ hcp | (hcp >= 15) |  | FeatureAskMajor | 60 |
-| 3C | _(unnamed — the Requires expression is the definition)_ | (bestminor('C') and C >= 5 and hcp >= 17 ) |  |  | 22 |
-| 3D | _(unnamed — the Requires expression is the definition)_ | (bestminor('D') and D >= 5 and hcp >= 17 ) |  |  | 22 |
-| 3H | _(unnamed — the Requires expression is the definition)_ | (hcp >= 17 and hearts >= 6) | F1 |  | 69 |
-| 3S | Preemptive | (S_points >= 6 and hcp <= 9 and S >= 3) \| (competitive('S')) | minhcp=6,maxhcp=11 |  | 40 |
-| 3N | Nat | (S <= 1 and hcp >= 18 and not slammish) |  |  | 30 |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (twicerebiddable('H') and S <= 1 and not slammish and losers <= 4) \| (H_points >= 20 and H >= 6 and singlesuited and S <= 1 and not slammish) |  |  | 79 |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (S_compgame) \| (preemptgame('S')) |  |  | 70 |
-| 4S | Nat | (preemptgame('S') or covergame('S')) \| (S_compgame and S >= 3 and hcp <= 17) \| (hcp >= 12 and hcp <= 17 and S >= 3 and not slammish) \| (hcp >= 10 and hcp <= 17 and S >= 4 and not slammish) | minhcp=2,maxhcp=17 |  | 80 |
-| 4N* | RKC | ((S >= 2) AND (CanAsk_S_RKC)) \| ((S >= 2) AND (S_slam)) | T=S | RKC0314_S | 120 |
-| 5N* | GSForce | ((S >= 2) AND (CanAsk_S_GSF)) | T=S | GSForce | 175 |
-| 6S | To Play | ((S >= 2) AND (CanBid6_S)) |  |  | 100 |
-| 6S | Playing strength: one loser with a real solid suit or an agreed fit | ((S >= 2) AND ((realsolid('S') or trump('S')) and losers == 1)) | T=S |  | 105 |
-| 6S | Slam: own playing strength -- our hand alone rates to take twelve tricks | ((S >= 2) AND (monsterslam('S'))) | T=S |  | 173 |
-| 7S | Playing strength: no losers with a real solid suit or an agreed fit | ((S >= 2) AND ((realsolid('S') or trump('S')) and losers <= 0)) | T=S |  | 106 |
-| 7S | Grand slam: own playing strength -- our hand alone rates to take thirteen tricks | ((S >= 2) AND (monstergrand('S'))) | T=S |  | 174 |
-| 7N | To Play | ((S >= 2) AND (CanBid7NT)) |  |  | 170 |
+_Same rule set as `2S-P` — the service returns an identical table for this position._
 
 #### `2S-3C`
 
@@ -3743,10 +3003,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `2S-4D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (S >= 4 and hcp >= 6) \| (S_compgame) \| (preemptgame('S')) |  |  | 70 |
+_Same rule set as `2S-4C` — the service returns an identical table for this position._
 
 #### `2S-4H`
 
@@ -3770,39 +3027,27 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `2S-4S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  | MichaelsCuebid2XDefence |  |
+_Same rule set as `2H-4H` — the service returns an identical table for this position._
 
 #### `2S-6C`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 58436 | (true) |  |  |  |
+_Same rule set as `2H-6C` — the service returns an identical table for this position._
 
 #### `2S-6D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 58436 | (true) |  |  |  |
+_Same rule set as `2H-6C` — the service returns an identical table for this position._
 
 #### `2S-6H`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 572905 | (true) |  |  |  |
+_Same rule set as `2H-6S` — the service returns an identical table for this position._
 
 #### `2S-7C`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T158849 | (true) |  |  |  |
+_Same rule set as `2H-7C` — the service returns an identical table for this position._
 
 #### `2S-7D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T158849 | (true) |  |  |  |
+_Same rule set as `2H-7C` — the service returns an identical table for this position._
 
 #### `2S-2N`
 
@@ -4000,9 +3245,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `3C-6S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T182276 | (true) |  |  |  |
+_Same rule set as `3C-6H` — the service returns an identical table for this position._
 
 #### `3C-3N`
 
@@ -4200,15 +3443,11 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `3D-6H`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T182276 | (true) |  |  |  |
+_Same rule set as `3C-6H` — the service returns an identical table for this position._
 
 #### `3D-6S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T182276 | (true) |  |  |  |
+_Same rule set as `3C-6H` — the service returns an identical table for this position._
 
 #### `3D-3N`
 
@@ -4254,33 +3493,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `3H-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| 3N | To play, good hand opposite preempt | (hcp >= 15) \| (hcp >= 15 and stoppersOK) |  |  | 40 |
-| 4C | Board: T586803, Hand: ..AK9874.AK98765 [MS=3a-loser-game(losers=2,ownTricks=11,game=5D,contract=3S)] | (fourlevelovercall('C')) |  |  | 29 |
-| 4C | _(unnamed — the Requires expression is the definition)_ | (strongrebiddable('C') and H < 1 and losers <= 3) | F1 |  | 30 |
-| 4D | Board: T586803, Hand: ..AK9874.AK98765 [MS=3a-loser-game(losers=2,ownTricks=11,game=5D,contract=3S)] | (fourlevelovercall('D')) |  |  | 29 |
-| 4D | _(unnamed — the Requires expression is the definition)_ | (strongrebiddable('D') and H < 1 and losers <= 3) | F1 |  | 30 |
-| 4H | Board: 859922, Hand: AQJ87.4..AKT9732 [MS=3a-loser-game(losers=3,ownTricks=10,game=4S,contract=3H)] | (preemptgame('H') or covergame('H')) |  |  | 58 |
-| 4H | Board: 2991, Hand: 853.KQ6.KT32.T74 | (H >= 3 and totalpoints >= 7) |  |  | 59 |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (H >= 2 and totalpoints >= 9) | minhcp=9,maxhcp=18 |  | 60 |
-| 4S | Board: 909468, Hand: .AKJ9852.AQ986.2 [MS=3a-loser-game(losers=3,ownTricks=10,game=4H,contract=3S)] | (losers <= 3 and (Fit('S') or S >= 6)) | T=S |  | 47 |
-| 4S | Board: 881780, Hand: .AQJ9854.AK7643. | (S_game) |  |  | 48 |
-| 4S | Board: 759309, Hand: AQJ8643..A7632.Q | (S_game and rebiddable('S')) |  |  | 49 |
-| 4S | Board: 134768, Hand: KQJ8742.2.AQJ7.9 | (strongrebiddable('S') and losers <= 4) |  |  | 52 |
-| 4N* | RKC | (CanAsk_H_RKC) \| (H_slam) | T=H | RKC0314_H | 90 |
-| 5C | Board: 142180, Hand: .8.AKQJT8432.A72 | (cansacrifice('C', false)) |  |  | 50 |
-| 5C | Hand: .8.AKQJT8432.A72 (GameEval) | (C_game) |  |  | 51 |
-| 5D | Board: 142180, Hand: .8.AKQJT8432.A72 | (cansacrifice('D', false)) |  |  | 50 |
-| 5D | Hand: .8.AKQJT8432.A72 (GameEval) | (D_game) |  |  | 51 |
-| 5N* | GSForce | (CanAsk_H_GSF) | T=H | GSForce | 145 |
-| 6H | To Play | (CanBid6_H) |  |  | 70 |
-| 6H | Playing strength: one loser with a real solid suit or an agreed fit | ((realsolid('H') or trump('H')) and losers == 1) | T=H |  | 75 |
-| 6H | Slam: own playing strength -- our hand alone rates to take twelve tricks | (monsterslam('H')) | T=H |  | 143 |
-| 7H | Playing strength: no losers with a real solid suit or an agreed fit | ((realsolid('H') or trump('H')) and losers <= 0) | T=H |  | 76 |
-| 7H | Grand slam: own playing strength -- our hand alone rates to take thirteen tricks | (monstergrand('H')) | T=H |  | 144 |
-| 7N | To Play | (CanBid7NT) |  |  | 140 |
+_Same rule set as `3H-P` — the service returns an identical table for this position._
 
 #### `3H-3S`
 
@@ -4310,10 +3523,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `3H-4D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (not game) |  |  |  |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (H >= 3 and H_points >= 10) \| (H_compgame) \| (preemptgame('H')) |  |  | 70 |
+_Same rule set as `3H-4C` — the service returns an identical table for this position._
 
 #### `3H-4H`
 
@@ -4337,9 +3547,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `3H-6D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T66026 | (true) |  |  |  |
+_Same rule set as `3H-6C` — the service returns an identical table for this position._
 
 #### `3H-6S`
 
@@ -4432,10 +3640,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `3S-4D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (not game) |  |  |  |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (S >= 3 and S_points >= 10) \| (S_compgame) \| (preemptgame('S')) |  |  | 70 |
+_Same rule set as `3S-4C` — the service returns an identical table for this position._
 
 #### `3S-4H`
 
@@ -4449,27 +3654,19 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `3S-4S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (not game) |  | MichaelsCuebid3XDefence |  |
+_Same rule set as `3H-4H` — the service returns an identical table for this position._
 
 #### `3S-6C`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T66026 | (true) |  |  |  |
+_Same rule set as `3H-6C` — the service returns an identical table for this position._
 
 #### `3S-6D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T66026 | (true) |  |  |  |
+_Same rule set as `3H-6C` — the service returns an identical table for this position._
 
 #### `3S-6H`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: T926820 | (true) |  |  |  |
+_Same rule set as `3H-6S` — the service returns an identical table for this position._
 
 #### `3S-3N`
 
@@ -4482,9 +3679,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `3S-4N`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (not game) |  |  |  |
+_Same rule set as `3H-4N` — the service returns an identical table for this position._
 
 #### `4C-P`
 
@@ -4508,23 +3703,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `4C-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 16 or aces <= 1) |  |  |  |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (H >= 7 and totalpoints >= 17) |  |  | 70 |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (S >= 7 and totalpoints >= 17) |  |  | 70 |
-| 4N* | _(unnamed — the Requires expression is the definition)_ | (coverslam('C')) | T=C | RKC0314_C | 76 |
-| 4N* | RKC | (CanAsk_C_RKC) \| (C_slam) | T=C | RKC0314_C | 80 |
-| 5C | _(unnamed — the Requires expression is the definition)_ | (C >= 3 and not slammish ) \| (aces == 2 and hcp>= 16 or aces == 3 and hcp<= 17) \| (C_compgame) \| (preemptgame('C') or covergame('C')) | minhcp=5, maxhcp=18 |  | 69 |
-| 5N* | GSForce | (CanAsk_C_GSF) | T=C | GSForce | 135 |
-| 6C | _(unnamed — the Requires expression is the definition)_ | (C >= 1 and aces >= 4 ) \| (C >= 2 and aces >= 4 ) \| (C >= 2 and hcp>= 20 ) \| (aces == 3 and hcp>= 18 ) |  |  | 55 |
-| 6C | To Play | (CanBid6_C) |  |  | 60 |
-| 6C | Playing strength: one loser with a real solid suit or an agreed fit | ((realsolid('C') or trump('C')) and losers == 1) | T=C |  | 65 |
-| 6C | Slam: own playing strength -- our hand alone rates to take twelve tricks | (monsterslam('C')) | T=C |  | 133 |
-| 7C | _(unnamed — the Requires expression is the definition)_ | (aces == 4 and hcp>= 20 ) |  |  | 58 |
-| 7C | Playing strength: no losers with a real solid suit or an agreed fit | ((realsolid('C') or trump('C')) and losers <= 0) | T=C |  | 66 |
-| 7C | Grand slam: own playing strength -- our hand alone rates to take thirteen tricks | (monstergrand('C')) | T=C |  | 134 |
-| 7N | To Play | (CanBid7NT) |  |  | 130 |
+_Same rule set as `4C-P` — the service returns an identical table for this position._
 
 #### `4C-4H`
 
@@ -4578,23 +3757,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `4D-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (hcp <= 16 or aces <= 1) |  |  |  |
-| 4H | _(unnamed — the Requires expression is the definition)_ | (H >= 7 and totalpoints >= 17) |  |  | 70 |
-| 4S | _(unnamed — the Requires expression is the definition)_ | (S >= 7 and totalpoints >= 17) |  |  | 70 |
-| 4N* | _(unnamed — the Requires expression is the definition)_ | (coverslam('D')) | T=D | RKC0314_D | 76 |
-| 4N* | RKC | (CanAsk_D_RKC) \| (D_slam) | T=D | RKC0314_D | 80 |
-| 5D | _(unnamed — the Requires expression is the definition)_ | (D >= 3 and not slammish ) \| (aces == 2 and hcp>= 16 or aces == 3 and hcp<= 17) \| (D_compgame) \| (preemptgame('D') or covergame('D')) | minhcp=5, maxhcp=18 |  | 69 |
-| 5N* | GSForce | (CanAsk_D_GSF) | T=D | GSForce | 135 |
-| 6D | _(unnamed — the Requires expression is the definition)_ | (D >= 1 and aces >= 4 ) \| (D >= 2 and aces >= 4 ) \| (D >= 2 and hcp>= 20 ) \| (aces == 3 and hcp>= 18 ) |  |  | 55 |
-| 6D | To Play | (CanBid6_D) |  |  | 60 |
-| 6D | Playing strength: one loser with a real solid suit or an agreed fit | ((realsolid('D') or trump('D')) and losers == 1) | T=D |  | 65 |
-| 6D | Slam: own playing strength -- our hand alone rates to take twelve tricks | (monsterslam('D')) | T=D |  | 133 |
-| 7D | _(unnamed — the Requires expression is the definition)_ | (aces == 4 and hcp>= 20 ) |  |  | 58 |
-| 7D | Playing strength: no losers with a real solid suit or an agreed fit | ((realsolid('D') or trump('D')) and losers <= 0) | T=D |  | 66 |
-| 7D | Grand slam: own playing strength -- our hand alone rates to take thirteen tricks | (monstergrand('D')) | T=D |  | 134 |
-| 7N | To Play | (CanBid7NT) |  |  | 130 |
+_Same rule set as `4D-P` — the service returns an identical table for this position._
 
 #### `4D-4H`
 
@@ -4632,9 +3795,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `4D-5D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Let partner decide | (true) |  | MichaelsCuebid4XDefence |  |
+_Same rule set as `4C-5C` — the service returns an identical table for this position._
 
 #### `4H-P`
 
@@ -4655,20 +3816,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `4H-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (aces <= 2 or hcp <= 16) |  |  | 20 |
-| 4N* | RKC | (CanAsk_H_RKC) \| (H_slam) | T=H | RKC0314_H | 30 |
-| 4N* | RKC -- cover cards absorb partner's losers to twelve tricks | (coverslam('H')) | T=H | RKC0314_H | 76 |
-| 5N* | GSForce | (CanAsk_H_GSF) | T=H | GSForce | 85 |
-| 6H | To Play | (CanBid6_H) |  |  | 10 |
-| 6H | Playing strength: one loser with a real solid suit or an agreed fit | ((realsolid('H') or trump('H')) and losers == 1) | T=H |  | 15 |
-| 6H | _(unnamed — the Requires expression is the definition)_ | (aces >= 3 and hcp>= 17) | minhcp=17, maxhcp=20 |  | 30 |
-| 6H | Slam: own playing strength -- our hand alone rates to take twelve tricks | (monsterslam('H')) | T=H |  | 83 |
-| 7H | Playing strength: no losers with a real solid suit or an agreed fit | ((realsolid('H') or trump('H')) and losers <= 0) | T=H |  | 16 |
-| 7H | _(unnamed — the Requires expression is the definition)_ | (aces == 4 and hcp>= 17) | minhcp=17, maxhcp=24 |  | 40 |
-| 7H | Grand slam: own playing strength -- our hand alone rates to take thirteen tricks | (monstergrand('H')) | T=H |  | 84 |
-| 7N | To Play | (CanBid7NT) |  |  | 80 |
+_Same rule set as `4H-P` — the service returns an identical table for this position._
 
 #### `4H-4S`
 
@@ -4688,11 +3836,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `4H-5D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| 5H | Board: 633303, Hand: KT5.A963..AJT732 | (cansacrifice('H')) |  |  | 44 |
-| X | Hand: AQ764.84.Q852.K2 (PenaltyDouble) | (penalty) |  |  | 90 |
+_Same rule set as `4H-5C` — the service returns an identical table for this position._
 
 #### `4H-5S`
 
@@ -4753,18 +3897,11 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `4S-5D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| 5S | Board: 633303, Hand: KT5.A963..AJT732 | (cansacrifice('S')) |  |  | 44 |
-| X | Hand: AQ764.84.Q852.K2 (PenaltyDouble) | (penalty) |  |  | 90 |
+_Same rule set as `4S-5C` — the service returns an identical table for this position._
 
 #### `4S-5H`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| X | Hand: A543.86.JT652.J5 (PenaltyDouble) | (penalty) |  |  | 90 |
+_Same rule set as `4H-5S` — the service returns an identical table for this position._
 
 #### `4S-4N`
 
@@ -4784,11 +3921,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `5C-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 866835, Hand: AK95.AKJ..AKQ752 | (true) |  |  |  |
-| 6C | Board: 866835, Hand: AK95.AKJ..AKQ752 | (CanBid6_C) |  |  | 10 |
-| 6N | Board: 866835, Hand: AK95.AKJ..AKQ752 | (CanBid6Nt) |  |  | 5 |
+_Same rule set as `5C-P` — the service returns an identical table for this position._
 
 #### `5C-5H`
 
@@ -4799,10 +3932,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `5C-5S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| X | Board: 124877, Hand: AT8.AJT7.J972.A9 | (penalty) |  |  | 90 |
+_Same rule set as `5C-5H` — the service returns an identical table for this position._
 
 #### `5D-P`
 
@@ -4814,25 +3944,15 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `5D-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 866835, Hand: AK95.AKJ..AKQ752 | (true) |  |  |  |
-| 6D | Board: 866835, Hand: AK95.AKJ..AKQ752 | (CanBid6_D) |  |  | 10 |
-| 6N | Board: 866835, Hand: AK95.AKJ..AKQ752 | (CanBid6Nt) |  |  | 5 |
+_Same rule set as `5D-P` — the service returns an identical table for this position._
 
 #### `5D-5H`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| X | Board: 124877, Hand: AT8.AJT7.J972.A9 | (penalty) |  |  | 90 |
+_Same rule set as `5C-5H` — the service returns an identical table for this position._
 
 #### `5D-5S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| X | Board: 124877, Hand: AT8.AJT7.J972.A9 | (penalty) |  |  | 90 |
+_Same rule set as `5C-5H` — the service returns an identical table for this position._
 
 #### `5H-P`
 
@@ -4844,11 +3964,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `5H-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 866835, Hand: AK95.AKJ..AKQ752 | (true) |  |  |  |
-| 6C | Board: 866835, Hand: AK95.AKJ..AKQ752 | (CanBid6_C) |  |  | 10 |
-| 6D | Board: 866835, Hand: AK95.AKJ..AKQ752 | (CanBid6_D) |  |  | 10 |
+_Same rule set as `5H-P` — the service returns an identical table for this position._
 
 #### `5H-5S`
 
@@ -4858,19 +3974,11 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `5S-P`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 866835, Hand: AK95.AKJ..AKQ752 | (true) |  |  |  |
-| 6C | Board: 866835, Hand: AK95.AKJ..AKQ752 | (CanBid6_C) |  |  | 10 |
-| 6D | Board: 866835, Hand: AK95.AKJ..AKQ752 | (CanBid6_D) |  |  | 10 |
+_Same rule set as `5H-P` — the service returns an identical table for this position._
 
 #### `5S-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 866835, Hand: AK95.AKJ..AKQ752 | (true) |  |  |  |
-| 6C | Board: 866835, Hand: AK95.AKJ..AKQ752 | (CanBid6_C) |  |  | 10 |
-| 6D | Board: 866835, Hand: AK95.AKJ..AKQ752 | (CanBid6_D) |  |  | 10 |
+_Same rule set as `5H-P` — the service returns an identical table for this position._
 
 #### `6C-P`
 
@@ -4880,93 +3988,63 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `6C-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `6D-P`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `6D-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `6H-P`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `6H-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `6S-P`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `6S-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `7C-P`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `7C-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `7D-P`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `7D-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `7H-P`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `7H-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `7S-P`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `7S-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `1N-P`
 
@@ -5030,15 +4108,11 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `6N-P`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `7N-P`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `1N-X`
 
@@ -5069,9 +4143,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `6N-X`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  | 10 |
+_Same rule set as `6C-P` — the service returns an identical table for this position._
 
 #### `7N-X`
 
@@ -5333,9 +4405,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `3N-4C`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
+_Same rule set as `2C-4D` — the service returns an identical table for this position._
 
 #### `1N-4D`
 
@@ -5355,17 +4425,11 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `2N-4D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
-| 4H | Hand: T985432.K64.2.53 (GameEval) | (H_game) |  |  | 54 |
-| 4S | Hand: T985432.K64.2.53 (GameEval) | (S_game) |  |  | 54 |
+_Same rule set as `2N-4C` — the service returns an identical table for this position._
 
 #### `3N-4D`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | _(unnamed — the Requires expression is the definition)_ | (true) |  |  |  |
+_Same rule set as `2C-4D` — the service returns an identical table for this position._
 
 #### `1N-4H`
 
@@ -5423,9 +4487,7 @@ So both seats appear at every level: the bare sequence is the competitive one, a
 
 #### `3N-4S`
 
-| Call | Means | Requires | Post-condition | Convention | Pri |
-|---|---|---|---|---|---|
-| P | Board: 120423 | (true) |  |  |  |
+_Same rule set as `3N-4H` — the service returns an identical table for this position._
 
 #### `1N-2N`
 

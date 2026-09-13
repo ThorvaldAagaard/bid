@@ -2,11 +2,11 @@
 # BRILL BIDDING SYSTEM — converted from system/brill.md
 #
 # Source : https://brillsystem.aalborgdata.dk/
-#         Brill 0.1.0+20260912.0835.g9eb75e9-dirty
-#         (1,037,464 rules in the live engine)
+#         Brill 0.1.0+20260913.1018.g5039e2b-dirty
+#         (1,040,694 rules in the live engine)
 # Convert: python3 research/brill_to_dsl.py
 #
-# 3515 Brill call definitions -> 1830 DSL rules.
+# 3052 Brill call definitions -> 1552 DSL rules.
 #
 # CAVEATS — read before trusting this file:
 #   * Only the tree 2 calls deep was captured.
@@ -44,239 +44,7 @@
 # strength of the captured tree lies.
 # ==========================================================
 
-RULE B_P_1C_1_5:
-  CALL: 1C
-  PRIORITY: 60
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: hcp >= 12
-  CONDITION: hcp <= 21
-  CONDITION: shape_pattern == 4333
-  CONDITION: spade_len == 4
-  CONDITION: heart_len == 3
-  CONDITION: diamond_len == 3
-  CONDITION: club_len == 3
-
-RULE B_P_1C_1_6:
-  CALL: 1C
-  PRIORITY: 60
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: hcp >= 12
-  CONDITION: hcp <= 21
-  CONDITION: shape_pattern == 4333
-  CONDITION: spade_len == 3
-  CONDITION: heart_len == 4
-  CONDITION: diamond_len == 3
-  CONDITION: club_len == 3
-
-RULE B_P_1C_1_7:
-  CALL: 1C
-  PRIORITY: 60
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: hcp >= 12
-  CONDITION: hcp <= 21
-  CONDITION: shape_pattern == 4432
-  CONDITION: spade_len == 4
-  CONDITION: heart_len == 4
-  CONDITION: diamond_len == 2
-  CONDITION: club_len == 3
-
-RULE B_P_1D_2_3:
-  CALL: 1D
-  PRIORITY: 65
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: hcp >= 12
-  CONDITION: hcp <= 21
-  CONDITION: shape_pattern == 4432
-  CONDITION: spade_len == 4
-  CONDITION: heart_len == 4
-  CONDITION: diamond_len == 3
-  CONDITION: club_len == 2
-
-RULE B_P_1NT_9_3:
-  CALL: 1NT
-  PRIORITY: 120
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: is_semi_balanced == True
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: spade_len <= 4
-  CONDITION: heart_len <= 4
-
-RULE B_P_2C_10_0:
-  CALL: 2C
-  PRIORITY: 112
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: losing_trick_count <= 1
-  CONDITION: hcp >= 16
-
-RULE B_P_2C_11_0:
-  CALL: 2C
-  PRIORITY: 113
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: losing_trick_count <= 2
-  CONDITION: hcp >= 16
-  CONDITION: longest_suit_len >= 5
-
-RULE B_P_2C_12_8:
-  CALL: 2C
-  PRIORITY: 118
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: hcp >= 22
-  CONDITION: is_balanced == True
-
-RULE B_P_2C_12_9:
-  CALL: 2C
-  PRIORITY: 118
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: hcp >= 22
-  CONDITION: is_semi_balanced == True
-
-RULE B_P_2C_12_10:
-  CALL: 2C
-  PRIORITY: 118
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: hcp >= 22
-  CONDITION: losing_trick_count <= 5
-
-RULE B_P_2NT_16_0:
-  CALL: 2NT
-  PRIORITY: 122
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: is_semi_balanced == True
-  CONDITION: hcp >= 20
-  CONDITION: hcp <= 21
-
-RULE B_P_3NT_25_0:
-  CALL: 3NT
-  PRIORITY: 130
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: is_semi_balanced == True
-  CONDITION: hcp >= 25
-  CONDITION: hcp <= 27
-  CONDITION: heart_len <= 4
-  CONDITION: spade_len <= 4
-
-RULE B_P_6C_34_0:
-  CALL: 6C
-  PRIORITY: 10
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: club_len >= 9
-  CONDITION: total_points >= 32
-
-RULE B_P_6D_35_0:
-  CALL: 6D
-  PRIORITY: 11
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: diamond_len >= 9
-  CONDITION: total_points >= 32
-
-RULE B_P_6H_36_0:
-  CALL: 6H
-  PRIORITY: 12
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: heart_len >= 9
-  CONDITION: total_points >= 32
-
-RULE B_P_6S_37_0:
-  CALL: 6S
-  PRIORITY: 13
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: spade_len >= 9
-  CONDITION: total_points >= 32
-
-RULE B_P_6NT_38_0:
-  CALL: 6NT
-  PRIORITY: 14
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: is_balanced == True
-  CONDITION: hcp >= 33
-  CONDITION: hcp <= 34
-
-RULE B_P_7C_39_0:
-  CALL: 7C
-  PRIORITY: 15
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: club_len >= 9
-  CONDITION: hcp >= 31
-  CONDITION: total_points >= 35
-
-RULE B_P_7D_40_0:
-  CALL: 7D
-  PRIORITY: 23
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: diamond_len >= 9
-  CONDITION: hcp >= 31
-  CONDITION: total_points >= 35
-
-RULE B_P_7H_41_0:
-  CALL: 7H
-  PRIORITY: 24
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: heart_len >= 9
-  CONDITION: hcp >= 31
-  CONDITION: total_points >= 35
-
-RULE B_P_7S_42_0:
-  CALL: 7S
-  PRIORITY: 25
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: spade_len >= 9
-  CONDITION: hcp >= 31
-  CONDITION: total_points >= 35
-
-RULE B_P_7NT_43_0:
-  CALL: 7NT
-  PRIORITY: 26
-  CONDITION: is_opening == True
-  CONDITION: partner_last_call == 'NONE'
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: is_balanced == True
-  CONDITION: hcp >= 36
-  CONDITION: total_points >= 35
-
-RULE B_1C_PASS_44_0:
+RULE B_1C_PASS_0_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -284,7 +52,7 @@ RULE B_1C_PASS_44_0:
   CONDITION: opp_last_call == '1C'
   CONDITION: partner_last_call == 'NONE'
 
-RULE B_1C_PASS_44_1:
+RULE B_1C_PASS_0_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -293,7 +61,7 @@ RULE B_1C_PASS_44_1:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: club_len >= 7
 
-RULE B_1C_1NT_48_0:
+RULE B_1C_1NT_4_0:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -305,7 +73,7 @@ RULE B_1C_1NT_48_0:
   CONDITION: hcp <= 17
   CONDITION: is_balanced == True
 
-RULE B_1C_1NT_48_1:
+RULE B_1C_1NT_4_1:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -317,7 +85,7 @@ RULE B_1C_1NT_48_1:
   CONDITION: hcp <= 17
   CONDITION: is_semi_balanced == True
 
-RULE B_1C_1NT_48_2:
+RULE B_1C_1NT_4_2:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -329,7 +97,7 @@ RULE B_1C_1NT_48_2:
   CONDITION: hcp <= 18
   CONDITION: is_balanced == True
 
-RULE B_1C_1NT_48_3:
+RULE B_1C_1NT_4_3:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -341,7 +109,7 @@ RULE B_1C_1NT_48_3:
   CONDITION: hcp <= 18
   CONDITION: is_semi_balanced == True
 
-RULE B_1C_1NT_48_4:
+RULE B_1C_1NT_4_4:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -353,7 +121,7 @@ RULE B_1C_1NT_48_4:
   CONDITION: hcp <= 17
   CONDITION: is_balanced == True
 
-RULE B_1C_1NT_48_5:
+RULE B_1C_1NT_4_5:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -365,7 +133,7 @@ RULE B_1C_1NT_48_5:
   CONDITION: hcp <= 17
   CONDITION: is_semi_balanced == True
 
-RULE B_1C_4H_64_0_0:
+RULE B_1C_4H_20_0_0:
   CALL: 4H
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -376,7 +144,7 @@ RULE B_1C_4H_64_0_0:
   CONDITION: hcp <= 10
   CONDITION: h_has_ace == True
 
-RULE B_1C_4H_64_0_1:
+RULE B_1C_4H_20_0_1:
   CALL: 4H
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -387,7 +155,7 @@ RULE B_1C_4H_64_0_1:
   CONDITION: hcp <= 10
   CONDITION: h_has_king == True
 
-RULE B_1C_4H_64_0_2:
+RULE B_1C_4H_20_0_2:
   CALL: 4H
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -398,7 +166,7 @@ RULE B_1C_4H_64_0_2:
   CONDITION: hcp <= 10
   CONDITION: h_has_queen == True
 
-RULE B_1C_4H_64_0_3:
+RULE B_1C_4H_20_0_3:
   CALL: 4H
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -409,7 +177,7 @@ RULE B_1C_4H_64_0_3:
   CONDITION: hcp <= 10
   CONDITION: h_has_jack == True
 
-RULE B_1C_4H_64_0_4:
+RULE B_1C_4H_20_0_4:
   CALL: 4H
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -420,7 +188,7 @@ RULE B_1C_4H_64_0_4:
   CONDITION: hcp <= 10
   CONDITION: h_has_ten == True
 
-RULE B_1C_4S_68_0_0:
+RULE B_1C_4S_24_0_0:
   CALL: 4S
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -431,7 +199,7 @@ RULE B_1C_4S_68_0_0:
   CONDITION: hcp <= 10
   CONDITION: s_has_ace == True
 
-RULE B_1C_4S_68_0_1:
+RULE B_1C_4S_24_0_1:
   CALL: 4S
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -442,7 +210,7 @@ RULE B_1C_4S_68_0_1:
   CONDITION: hcp <= 10
   CONDITION: s_has_king == True
 
-RULE B_1C_4S_68_0_2:
+RULE B_1C_4S_24_0_2:
   CALL: 4S
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -453,7 +221,7 @@ RULE B_1C_4S_68_0_2:
   CONDITION: hcp <= 10
   CONDITION: s_has_queen == True
 
-RULE B_1C_4S_68_0_3:
+RULE B_1C_4S_24_0_3:
   CALL: 4S
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -464,7 +232,7 @@ RULE B_1C_4S_68_0_3:
   CONDITION: hcp <= 10
   CONDITION: s_has_jack == True
 
-RULE B_1C_4S_68_0_4:
+RULE B_1C_4S_24_0_4:
   CALL: 4S
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -475,7 +243,7 @@ RULE B_1C_4S_68_0_4:
   CONDITION: hcp <= 10
   CONDITION: s_has_ten == True
 
-RULE B_1C_X_78_1:
+RULE B_1C_X_34_1:
   CALL: X
   PRIORITY: 74
   CONDITION: is_opening == False
@@ -484,7 +252,7 @@ RULE B_1C_X_78_1:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp >= 18
 
-RULE B_1C_X_78_3:
+RULE B_1C_X_34_3:
   CALL: X
   PRIORITY: 74
   CONDITION: is_opening == False
@@ -497,7 +265,7 @@ RULE B_1C_X_78_3:
   CONDITION: diamond_len >= 3
   CONDITION: club_len <= 1
 
-RULE B_1D_PASS_79_0:
+RULE B_1D_PASS_35_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -505,7 +273,7 @@ RULE B_1D_PASS_79_0:
   CONDITION: opp_last_call == '1D'
   CONDITION: partner_last_call == 'NONE'
 
-RULE B_1D_PASS_79_1:
+RULE B_1D_PASS_35_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -514,7 +282,7 @@ RULE B_1D_PASS_79_1:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: diamond_len >= 7
 
-RULE B_1D_1NT_82_0:
+RULE B_1D_1NT_38_0:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -526,7 +294,7 @@ RULE B_1D_1NT_82_0:
   CONDITION: hcp <= 17
   CONDITION: is_balanced == True
 
-RULE B_1D_1NT_82_1:
+RULE B_1D_1NT_38_1:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -538,7 +306,7 @@ RULE B_1D_1NT_82_1:
   CONDITION: hcp <= 17
   CONDITION: is_semi_balanced == True
 
-RULE B_1D_1NT_82_2:
+RULE B_1D_1NT_38_2:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -550,7 +318,7 @@ RULE B_1D_1NT_82_2:
   CONDITION: hcp <= 18
   CONDITION: is_balanced == True
 
-RULE B_1D_1NT_82_3:
+RULE B_1D_1NT_38_3:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -562,7 +330,7 @@ RULE B_1D_1NT_82_3:
   CONDITION: hcp <= 18
   CONDITION: is_semi_balanced == True
 
-RULE B_1D_1NT_82_4:
+RULE B_1D_1NT_38_4:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -574,7 +342,7 @@ RULE B_1D_1NT_82_4:
   CONDITION: hcp <= 17
   CONDITION: is_balanced == True
 
-RULE B_1D_1NT_82_5:
+RULE B_1D_1NT_38_5:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -586,7 +354,7 @@ RULE B_1D_1NT_82_5:
   CONDITION: hcp <= 17
   CONDITION: is_semi_balanced == True
 
-RULE B_1D_4H_98_0_0:
+RULE B_1D_4H_54_0_0:
   CALL: 4H
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -597,7 +365,7 @@ RULE B_1D_4H_98_0_0:
   CONDITION: hcp <= 10
   CONDITION: h_has_ace == True
 
-RULE B_1D_4H_98_0_1:
+RULE B_1D_4H_54_0_1:
   CALL: 4H
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -608,7 +376,7 @@ RULE B_1D_4H_98_0_1:
   CONDITION: hcp <= 10
   CONDITION: h_has_king == True
 
-RULE B_1D_4H_98_0_2:
+RULE B_1D_4H_54_0_2:
   CALL: 4H
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -619,7 +387,7 @@ RULE B_1D_4H_98_0_2:
   CONDITION: hcp <= 10
   CONDITION: h_has_queen == True
 
-RULE B_1D_4H_98_0_3:
+RULE B_1D_4H_54_0_3:
   CALL: 4H
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -630,7 +398,7 @@ RULE B_1D_4H_98_0_3:
   CONDITION: hcp <= 10
   CONDITION: h_has_jack == True
 
-RULE B_1D_4H_98_0_4:
+RULE B_1D_4H_54_0_4:
   CALL: 4H
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -641,7 +409,7 @@ RULE B_1D_4H_98_0_4:
   CONDITION: hcp <= 10
   CONDITION: h_has_ten == True
 
-RULE B_1D_4S_102_0_0:
+RULE B_1D_4S_58_0_0:
   CALL: 4S
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -652,7 +420,7 @@ RULE B_1D_4S_102_0_0:
   CONDITION: hcp <= 10
   CONDITION: s_has_ace == True
 
-RULE B_1D_4S_102_0_1:
+RULE B_1D_4S_58_0_1:
   CALL: 4S
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -663,7 +431,7 @@ RULE B_1D_4S_102_0_1:
   CONDITION: hcp <= 10
   CONDITION: s_has_king == True
 
-RULE B_1D_4S_102_0_2:
+RULE B_1D_4S_58_0_2:
   CALL: 4S
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -674,7 +442,7 @@ RULE B_1D_4S_102_0_2:
   CONDITION: hcp <= 10
   CONDITION: s_has_queen == True
 
-RULE B_1D_4S_102_0_3:
+RULE B_1D_4S_58_0_3:
   CALL: 4S
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -685,7 +453,7 @@ RULE B_1D_4S_102_0_3:
   CONDITION: hcp <= 10
   CONDITION: s_has_jack == True
 
-RULE B_1D_4S_102_0_4:
+RULE B_1D_4S_58_0_4:
   CALL: 4S
   PRIORITY: 91
   CONDITION: is_opening == False
@@ -696,7 +464,7 @@ RULE B_1D_4S_102_0_4:
   CONDITION: hcp <= 10
   CONDITION: s_has_ten == True
 
-RULE B_1D_X_112_1:
+RULE B_1D_X_68_1:
   CALL: X
   PRIORITY: 74
   CONDITION: is_opening == False
@@ -705,7 +473,7 @@ RULE B_1D_X_112_1:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp >= 18
 
-RULE B_1D_X_112_3:
+RULE B_1D_X_68_3:
   CALL: X
   PRIORITY: 74
   CONDITION: is_opening == False
@@ -718,7 +486,7 @@ RULE B_1D_X_112_3:
   CONDITION: club_len >= 3
   CONDITION: diamond_len <= 1
 
-RULE B_1H_PASS_113_0:
+RULE B_1H_PASS_69_0:
   CALL: PASS
   PRIORITY: 1
   CONDITION: is_opening == False
@@ -726,7 +494,7 @@ RULE B_1H_PASS_113_0:
   CONDITION: opp_last_call == '1H'
   CONDITION: partner_last_call == 'NONE'
 
-RULE B_1H_PASS_113_1:
+RULE B_1H_PASS_69_1:
   CALL: PASS
   PRIORITY: 1
   CONDITION: is_opening == False
@@ -735,7 +503,7 @@ RULE B_1H_PASS_113_1:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: heart_len >= 6
 
-RULE B_1H_1S_114_0:
+RULE B_1H_1S_70_0:
   CALL: 1S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -746,7 +514,7 @@ RULE B_1H_1S_114_0:
   CONDITION: hcp >= 8
   CONDITION: hcp <= 17
 
-RULE B_1H_1NT_115_0:
+RULE B_1H_1NT_71_0:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -758,7 +526,7 @@ RULE B_1H_1NT_115_0:
   CONDITION: hcp <= 17
   CONDITION: is_balanced == True
 
-RULE B_1H_1NT_115_1:
+RULE B_1H_1NT_71_1:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -770,7 +538,7 @@ RULE B_1H_1NT_115_1:
   CONDITION: hcp <= 17
   CONDITION: is_semi_balanced == True
 
-RULE B_1H_X_143_0:
+RULE B_1H_X_99_0:
   CALL: X
   PRIORITY: 76
   CONDITION: is_opening == False
@@ -780,7 +548,7 @@ RULE B_1H_X_143_0:
   CONDITION: hcp >= 18
   CONDITION: heart_len <= 4
 
-RULE B_1H_X_143_1:
+RULE B_1H_X_99_1:
   CALL: X
   PRIORITY: 76
   CONDITION: is_opening == False
@@ -790,7 +558,7 @@ RULE B_1H_X_143_1:
   CONDITION: hcp >= 18
   CONDITION: is_balanced == True
 
-RULE B_1H_X_143_2:
+RULE B_1H_X_99_2:
   CALL: X
   PRIORITY: 76
   CONDITION: is_opening == False
@@ -804,7 +572,7 @@ RULE B_1H_X_143_2:
   CONDITION: club_len >= 3
   CONDITION: diamond_len >= 3
 
-RULE B_1S_PASS_144_0:
+RULE B_1S_PASS_100_0:
   CALL: PASS
   PRIORITY: 1
   CONDITION: is_opening == False
@@ -812,7 +580,7 @@ RULE B_1S_PASS_144_0:
   CONDITION: opp_last_call == '1S'
   CONDITION: partner_last_call == 'NONE'
 
-RULE B_1S_PASS_144_1:
+RULE B_1S_PASS_100_1:
   CALL: PASS
   PRIORITY: 1
   CONDITION: is_opening == False
@@ -821,7 +589,7 @@ RULE B_1S_PASS_144_1:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: spade_len >= 6
 
-RULE B_1S_1NT_145_0:
+RULE B_1S_1NT_101_0:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -833,7 +601,7 @@ RULE B_1S_1NT_145_0:
   CONDITION: hcp <= 17
   CONDITION: is_balanced == True
 
-RULE B_1S_1NT_145_1:
+RULE B_1S_1NT_101_1:
   CALL: 1NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -845,7 +613,7 @@ RULE B_1S_1NT_145_1:
   CONDITION: hcp <= 17
   CONDITION: is_semi_balanced == True
 
-RULE B_1S_X_173_0:
+RULE B_1S_X_129_0:
   CALL: X
   PRIORITY: 76
   CONDITION: is_opening == False
@@ -855,7 +623,7 @@ RULE B_1S_X_173_0:
   CONDITION: hcp >= 18
   CONDITION: spade_len <= 4
 
-RULE B_1S_X_173_1:
+RULE B_1S_X_129_1:
   CALL: X
   PRIORITY: 76
   CONDITION: is_opening == False
@@ -865,7 +633,7 @@ RULE B_1S_X_173_1:
   CONDITION: hcp >= 18
   CONDITION: is_balanced == True
 
-RULE B_1S_X_173_2:
+RULE B_1S_X_129_2:
   CALL: X
   PRIORITY: 76
   CONDITION: is_opening == False
@@ -879,7 +647,7 @@ RULE B_1S_X_173_2:
   CONDITION: club_len >= 3
   CONDITION: diamond_len >= 3
 
-RULE B_2C_PASS_174_0:
+RULE B_2C_PASS_130_0:
   CALL: PASS
   PRIORITY: -1
   CONDITION: is_opening == False
@@ -887,7 +655,7 @@ RULE B_2C_PASS_174_0:
   CONDITION: opp_last_call == '2C'
   CONDITION: partner_last_call == 'NONE'
 
-RULE B_2D_PASS_189_0:
+RULE B_2D_PASS_145_0:
   CALL: PASS
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -896,7 +664,7 @@ RULE B_2D_PASS_189_0:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp <= 15
 
-RULE B_2D_PASS_189_1:
+RULE B_2D_PASS_145_1:
   CALL: PASS
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -905,7 +673,7 @@ RULE B_2D_PASS_189_1:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: diamond_len >= 5
 
-RULE B_2D_2NT_192_0:
+RULE B_2D_2NT_148_0:
   CALL: 2NT
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -917,7 +685,7 @@ RULE B_2D_2NT_192_0:
   CONDITION: is_semi_balanced == True
   CONDITION: d_stopper >= 2
 
-RULE B_2D_3H_195_0:
+RULE B_2D_3H_151_0:
   CALL: 3H
   PRIORITY: 93
   CONDITION: is_opening == False
@@ -927,7 +695,7 @@ RULE B_2D_3H_195_0:
   CONDITION: heart_len >= 7
   CONDITION: hcp >= 19
 
-RULE B_2D_3S_196_0:
+RULE B_2D_3S_152_0:
   CALL: 3S
   PRIORITY: 93
   CONDITION: is_opening == False
@@ -937,7 +705,7 @@ RULE B_2D_3S_196_0:
   CONDITION: spade_len >= 7
   CONDITION: hcp >= 19
 
-RULE B_2D_3NT_197_0:
+RULE B_2D_3NT_153_0:
   CALL: 3NT
   PRIORITY: 82
   CONDITION: is_opening == False
@@ -949,7 +717,7 @@ RULE B_2D_3NT_197_0:
   CONDITION: is_semi_balanced == True
   CONDITION: d_stopper >= 2
 
-RULE B_2D_4C_198_0:
+RULE B_2D_4C_154_0:
   CALL: 4C
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -960,7 +728,7 @@ RULE B_2D_4C_198_0:
   CONDITION: hcp >= 19
   CONDITION: hcp <= 24
 
-RULE B_2D_4H_199_0:
+RULE B_2D_4H_155_0:
   CALL: 4H
   PRIORITY: 97
   CONDITION: is_opening == False
@@ -971,7 +739,7 @@ RULE B_2D_4H_199_0:
   CONDITION: hcp >= 12
   CONDITION: hcp <= 14
 
-RULE B_2D_4H_199_1:
+RULE B_2D_4H_155_1:
   CALL: 4H
   PRIORITY: 97
   CONDITION: is_opening == False
@@ -982,7 +750,7 @@ RULE B_2D_4H_199_1:
   CONDITION: losing_trick_count <= 3
   CONDITION: hcp <= 15
 
-RULE B_2D_4S_200_0:
+RULE B_2D_4S_156_0:
   CALL: 4S
   PRIORITY: 97
   CONDITION: is_opening == False
@@ -993,7 +761,7 @@ RULE B_2D_4S_200_0:
   CONDITION: hcp >= 12
   CONDITION: hcp <= 14
 
-RULE B_2D_4S_200_1:
+RULE B_2D_4S_156_1:
   CALL: 4S
   PRIORITY: 97
   CONDITION: is_opening == False
@@ -1004,7 +772,7 @@ RULE B_2D_4S_200_1:
   CONDITION: losing_trick_count <= 3
   CONDITION: hcp <= 15
 
-RULE B_2D_X_207_0:
+RULE B_2D_X_163_0:
   CALL: X
   PRIORITY: 105
   CONDITION: is_opening == False
@@ -1017,7 +785,7 @@ RULE B_2D_X_207_0:
   CONDITION: heart_len >= 3
   CONDITION: club_len <= 5
 
-RULE B_2D_X_207_1:
+RULE B_2D_X_163_1:
   CALL: X
   PRIORITY: 105
   CONDITION: is_opening == False
@@ -1028,7 +796,7 @@ RULE B_2D_X_207_1:
   CONDITION: spade_len >= 3
   CONDITION: heart_len >= 4
 
-RULE B_2D_X_207_2:
+RULE B_2D_X_163_2:
   CALL: X
   PRIORITY: 105
   CONDITION: is_opening == False
@@ -1039,7 +807,7 @@ RULE B_2D_X_207_2:
   CONDITION: spade_len >= 4
   CONDITION: heart_len >= 3
 
-RULE B_2D_X_207_3:
+RULE B_2D_X_163_3:
   CALL: X
   PRIORITY: 105
   CONDITION: is_opening == False
@@ -1048,7 +816,7 @@ RULE B_2D_X_207_3:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp >= 16
 
-RULE B_2D_X_207_4:
+RULE B_2D_X_163_4:
   CALL: X
   PRIORITY: 105
   CONDITION: is_opening == False
@@ -1059,7 +827,7 @@ RULE B_2D_X_207_4:
   CONDITION: hcp >= 18
   CONDITION: losing_trick_count <= 4
 
-RULE B_2D_X_207_5:
+RULE B_2D_X_163_5:
   CALL: X
   PRIORITY: 105
   CONDITION: is_opening == False
@@ -1070,7 +838,7 @@ RULE B_2D_X_207_5:
   CONDITION: hcp >= 18
   CONDITION: losing_trick_count <= 4
 
-RULE B_2H_PASS_208_0:
+RULE B_2H_PASS_164_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -1079,7 +847,7 @@ RULE B_2H_PASS_208_0:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp <= 17
 
-RULE B_2H_2S_209_0:
+RULE B_2H_2S_165_0:
   CALL: 2S
   PRIORITY: 18
   CONDITION: is_opening == False
@@ -1091,7 +859,7 @@ RULE B_2H_2S_209_0:
   CONDITION: hcp <= 12
   CONDITION: s_top3_honors >= 2
 
-RULE B_2H_2S_210_0:
+RULE B_2H_2S_166_0:
   CALL: 2S
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -1102,7 +870,7 @@ RULE B_2H_2S_210_0:
   CONDITION: hcp >= 13
   CONDITION: hcp <= 19
 
-RULE B_2H_2NT_211_0:
+RULE B_2H_2NT_167_0:
   CALL: 2NT
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -1114,7 +882,7 @@ RULE B_2H_2NT_211_0:
   CONDITION: is_semi_balanced == True
   CONDITION: h_stopper >= 3
 
-RULE B_2H_2NT_211_1:
+RULE B_2H_2NT_167_1:
   CALL: 2NT
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -1126,7 +894,7 @@ RULE B_2H_2NT_211_1:
   CONDITION: is_semi_balanced == True
   CONDITION: h_stopper >= 2
 
-RULE B_2H_3S_215_0:
+RULE B_2H_3S_171_0:
   CALL: 3S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -1137,7 +905,7 @@ RULE B_2H_3S_215_0:
   CONDITION: hcp >= 19
   CONDITION: losing_trick_count >= 4
 
-RULE B_2H_3NT_216_0:
+RULE B_2H_3NT_172_0:
   CALL: 3NT
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -1149,7 +917,7 @@ RULE B_2H_3NT_216_0:
   CONDITION: is_semi_balanced == True
   CONDITION: h_stopper >= 2
 
-RULE B_2H_3NT_216_1:
+RULE B_2H_3NT_172_1:
   CALL: 3NT
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -1161,7 +929,7 @@ RULE B_2H_3NT_216_1:
   CONDITION: heart_len >= 4
   CONDITION: h_stopper >= 2
 
-RULE B_2H_4H_219_0:
+RULE B_2H_4H_175_0:
   CALL: 4H
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -1173,7 +941,7 @@ RULE B_2H_4H_219_0:
   CONDITION: losing_trick_count <= 4
   CONDITION: hcp >= 17
 
-RULE B_2H_4S_220_0:
+RULE B_2H_4S_176_0:
   CALL: 4S
   PRIORITY: 29
   CONDITION: is_opening == False
@@ -1184,7 +952,7 @@ RULE B_2H_4S_220_0:
   CONDITION: spade_hcp >= 18
   CONDITION: losing_trick_count <= 4
 
-RULE B_2H_X_228_0:
+RULE B_2H_X_184_0:
   CALL: X
   PRIORITY: 24
   CONDITION: is_opening == False
@@ -1195,7 +963,7 @@ RULE B_2H_X_228_0:
   CONDITION: spade_len >= 3
   CONDITION: heart_len <= 3
 
-RULE B_2H_X_228_1:
+RULE B_2H_X_184_1:
   CALL: X
   PRIORITY: 24
   CONDITION: is_opening == False
@@ -1208,7 +976,7 @@ RULE B_2H_X_228_1:
   CONDITION: diamond_len >= 2
   CONDITION: heart_len <= 3
 
-RULE B_2H_X_228_2:
+RULE B_2H_X_184_2:
   CALL: X
   PRIORITY: 24
   CONDITION: is_opening == False
@@ -1217,7 +985,7 @@ RULE B_2H_X_228_2:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp >= 18
 
-RULE B_2S_PASS_229_0:
+RULE B_2S_PASS_185_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -1226,7 +994,7 @@ RULE B_2S_PASS_229_0:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp <= 17
 
-RULE B_2S_2NT_230_0:
+RULE B_2S_2NT_186_0:
   CALL: 2NT
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -1238,7 +1006,7 @@ RULE B_2S_2NT_230_0:
   CONDITION: is_semi_balanced == True
   CONDITION: s_stopper >= 3
 
-RULE B_2S_2NT_230_1:
+RULE B_2S_2NT_186_1:
   CALL: 2NT
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -1250,7 +1018,7 @@ RULE B_2S_2NT_230_1:
   CONDITION: is_semi_balanced == True
   CONDITION: s_stopper >= 2
 
-RULE B_2S_3H_233_0:
+RULE B_2S_3H_189_0:
   CALL: 3H
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -1261,7 +1029,7 @@ RULE B_2S_3H_233_0:
   CONDITION: hcp >= 13
   CONDITION: hcp <= 19
 
-RULE B_2S_3NT_235_0:
+RULE B_2S_3NT_191_0:
   CALL: 3NT
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -1273,7 +1041,7 @@ RULE B_2S_3NT_235_0:
   CONDITION: is_semi_balanced == True
   CONDITION: s_stopper >= 2
 
-RULE B_2S_3NT_235_1:
+RULE B_2S_3NT_191_1:
   CALL: 3NT
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -1285,7 +1053,7 @@ RULE B_2S_3NT_235_1:
   CONDITION: spade_len >= 4
   CONDITION: s_stopper >= 2
 
-RULE B_2S_4H_238_0:
+RULE B_2S_4H_194_0:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -1296,7 +1064,7 @@ RULE B_2S_4H_238_0:
   CONDITION: heart_hcp >= 18
   CONDITION: losing_trick_count <= 4
 
-RULE B_2S_4H_238_1_0:
+RULE B_2S_4H_194_1_0:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -1310,7 +1078,7 @@ RULE B_2S_4H_238_1_0:
   CONDITION: h_has_king == True
   CONDITION: h_has_queen == True
 
-RULE B_2S_4H_238_1_1:
+RULE B_2S_4H_194_1_1:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -1324,7 +1092,7 @@ RULE B_2S_4H_238_1_1:
   CONDITION: h_has_king == True
   CONDITION: h_has_jack == True
 
-RULE B_2S_4H_238_1_2:
+RULE B_2S_4H_194_1_2:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -1338,7 +1106,7 @@ RULE B_2S_4H_238_1_2:
   CONDITION: h_has_king == True
   CONDITION: h_has_ten == True
 
-RULE B_2S_4H_238_1_3:
+RULE B_2S_4H_194_1_3:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -1352,7 +1120,7 @@ RULE B_2S_4H_238_1_3:
   CONDITION: h_has_queen == True
   CONDITION: h_has_jack == True
 
-RULE B_2S_4H_238_1_4:
+RULE B_2S_4H_194_1_4:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -1366,7 +1134,7 @@ RULE B_2S_4H_238_1_4:
   CONDITION: h_has_queen == True
   CONDITION: h_has_ten == True
 
-RULE B_2S_4H_238_1_5:
+RULE B_2S_4H_194_1_5:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -1380,7 +1148,7 @@ RULE B_2S_4H_238_1_5:
   CONDITION: h_has_jack == True
   CONDITION: h_has_ten == True
 
-RULE B_2S_4H_238_1_6:
+RULE B_2S_4H_194_1_6:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -1394,7 +1162,7 @@ RULE B_2S_4H_238_1_6:
   CONDITION: h_has_queen == True
   CONDITION: h_has_jack == True
 
-RULE B_2S_4H_238_1_7:
+RULE B_2S_4H_194_1_7:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -1408,7 +1176,7 @@ RULE B_2S_4H_238_1_7:
   CONDITION: h_has_queen == True
   CONDITION: h_has_ten == True
 
-RULE B_2S_4H_238_1_8:
+RULE B_2S_4H_194_1_8:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -1422,7 +1190,7 @@ RULE B_2S_4H_238_1_8:
   CONDITION: h_has_jack == True
   CONDITION: h_has_ten == True
 
-RULE B_2S_4H_238_1_9:
+RULE B_2S_4H_194_1_9:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -1436,7 +1204,7 @@ RULE B_2S_4H_238_1_9:
   CONDITION: h_has_jack == True
   CONDITION: h_has_ten == True
 
-RULE B_2S_4S_239_0:
+RULE B_2S_4S_195_0:
   CALL: 4S
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -1448,7 +1216,7 @@ RULE B_2S_4S_239_0:
   CONDITION: losing_trick_count <= 4
   CONDITION: hcp >= 17
 
-RULE B_2S_X_247_0:
+RULE B_2S_X_203_0:
   CALL: X
   PRIORITY: 24
   CONDITION: is_opening == False
@@ -1459,7 +1227,7 @@ RULE B_2S_X_247_0:
   CONDITION: heart_len >= 3
   CONDITION: spade_len <= 3
 
-RULE B_2S_X_247_1:
+RULE B_2S_X_203_1:
   CALL: X
   PRIORITY: 24
   CONDITION: is_opening == False
@@ -1472,7 +1240,7 @@ RULE B_2S_X_247_1:
   CONDITION: diamond_len >= 2
   CONDITION: spade_len <= 3
 
-RULE B_2S_X_247_2:
+RULE B_2S_X_203_2:
   CALL: X
   PRIORITY: 24
   CONDITION: is_opening == False
@@ -1481,7 +1249,7 @@ RULE B_2S_X_247_2:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp >= 18
 
-RULE B_3C_PASS_248_0:
+RULE B_3C_PASS_204_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -1491,7 +1259,7 @@ RULE B_3C_PASS_248_0:
   CONDITION: hcp <= 20
   CONDITION: club_len >= 4
 
-RULE B_3C_PASS_248_1:
+RULE B_3C_PASS_204_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -1501,7 +1269,7 @@ RULE B_3C_PASS_248_1:
   CONDITION: hcp <= 17
   CONDITION: spade_len <= 2
 
-RULE B_3C_PASS_248_2:
+RULE B_3C_PASS_204_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -1511,7 +1279,7 @@ RULE B_3C_PASS_248_2:
   CONDITION: hcp <= 17
   CONDITION: heart_len <= 2
 
-RULE B_3C_PASS_248_3:
+RULE B_3C_PASS_204_3:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -1521,7 +1289,7 @@ RULE B_3C_PASS_248_3:
   CONDITION: hcp <= 16
   CONDITION: club_len >= 3
 
-RULE B_3C_PASS_248_4:
+RULE B_3C_PASS_204_4:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -1530,7 +1298,7 @@ RULE B_3C_PASS_248_4:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp <= 14
 
-RULE B_3C_3D_249_0:
+RULE B_3C_3D_205_0:
   CALL: 3D
   PRIORITY: 31
   CONDITION: is_opening == False
@@ -1544,7 +1312,7 @@ RULE B_3C_3D_249_0:
   CONDITION: spade_len <= 4
   CONDITION: heart_len <= 4
 
-RULE B_3C_3D_249_1:
+RULE B_3C_3D_205_1:
   CALL: 3D
   PRIORITY: 31
   CONDITION: is_opening == False
@@ -1558,7 +1326,7 @@ RULE B_3C_3D_249_1:
   CONDITION: spade_len <= 5
   CONDITION: heart_len <= 5
 
-RULE B_3C_3H_250_0:
+RULE B_3C_3H_206_0:
   CALL: 3H
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -1570,7 +1338,7 @@ RULE B_3C_3H_250_0:
   CONDITION: hcp >= 10
   CONDITION: h_top2_honors >= 1
 
-RULE B_3C_3H_251_0:
+RULE B_3C_3H_207_0:
   CALL: 3H
   PRIORITY: 57
   CONDITION: is_opening == False
@@ -1582,7 +1350,7 @@ RULE B_3C_3H_251_0:
   CONDITION: hcp >= 11
   CONDITION: h_top3_honors >= 2
 
-RULE B_3C_3H_252_0:
+RULE B_3C_3H_208_0:
   CALL: 3H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -1593,7 +1361,7 @@ RULE B_3C_3H_252_0:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3C_3H_252_1:
+RULE B_3C_3H_208_1:
   CALL: 3H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -1605,7 +1373,7 @@ RULE B_3C_3H_252_1:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 20
 
-RULE B_3C_3H_252_2:
+RULE B_3C_3H_208_2:
   CALL: 3H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -1616,7 +1384,7 @@ RULE B_3C_3H_252_2:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3C_3S_253_0:
+RULE B_3C_3S_209_0:
   CALL: 3S
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -1628,7 +1396,7 @@ RULE B_3C_3S_253_0:
   CONDITION: hcp >= 10
   CONDITION: s_top2_honors >= 1
 
-RULE B_3C_3S_254_0:
+RULE B_3C_3S_210_0:
   CALL: 3S
   PRIORITY: 57
   CONDITION: is_opening == False
@@ -1640,7 +1408,7 @@ RULE B_3C_3S_254_0:
   CONDITION: hcp >= 11
   CONDITION: s_top3_honors >= 2
 
-RULE B_3C_3S_255_0:
+RULE B_3C_3S_211_0:
   CALL: 3S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -1651,7 +1419,7 @@ RULE B_3C_3S_255_0:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3C_3S_255_1:
+RULE B_3C_3S_211_1:
   CALL: 3S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -1663,7 +1431,7 @@ RULE B_3C_3S_255_1:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 20
 
-RULE B_3C_3S_255_2:
+RULE B_3C_3S_211_2:
   CALL: 3S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -1674,7 +1442,7 @@ RULE B_3C_3S_255_2:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3C_3NT_256_0:
+RULE B_3C_3NT_212_0:
   CALL: 3NT
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -1684,7 +1452,7 @@ RULE B_3C_3NT_256_0:
   CONDITION: hcp >= 16
   CONDITION: c_stopper >= 2
 
-RULE B_3C_3NT_256_1:
+RULE B_3C_3NT_212_1:
   CALL: 3NT
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -1694,7 +1462,7 @@ RULE B_3C_3NT_256_1:
   CONDITION: hcp >= 17
   CONDITION: c_stopper >= 2
 
-RULE B_3C_4C_257_0:
+RULE B_3C_4C_213_0:
   CALL: 4C
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -1707,7 +1475,7 @@ RULE B_3C_4C_257_0:
   CONDITION: club_len <= 4
   CONDITION: controls >= 5
 
-RULE B_3C_4H_258_0:
+RULE B_3C_4H_214_0:
   CALL: 4H
   PRIORITY: 72
   CONDITION: is_opening == False
@@ -1719,7 +1487,7 @@ RULE B_3C_4H_258_0:
   CONDITION: hcp >= 12
   CONDITION: h_top3_honors >= 2
 
-RULE B_3C_4H_259_0:
+RULE B_3C_4H_215_0:
   CALL: 4H
   PRIORITY: 73
   CONDITION: is_opening == False
@@ -1731,7 +1499,7 @@ RULE B_3C_4H_259_0:
   CONDITION: hcp >= 14
   CONDITION: h_top3_honors >= 2
 
-RULE B_3C_4H_260_0:
+RULE B_3C_4H_216_0:
   CALL: 4H
   PRIORITY: 74
   CONDITION: is_opening == False
@@ -1741,7 +1509,7 @@ RULE B_3C_4H_260_0:
   CONDITION: heart_len >= 6
   CONDITION: hcp >= 17
 
-RULE B_3C_4S_261_0:
+RULE B_3C_4S_217_0:
   CALL: 4S
   PRIORITY: 72
   CONDITION: is_opening == False
@@ -1753,7 +1521,7 @@ RULE B_3C_4S_261_0:
   CONDITION: hcp >= 12
   CONDITION: s_top3_honors >= 2
 
-RULE B_3C_4S_262_0:
+RULE B_3C_4S_218_0:
   CALL: 4S
   PRIORITY: 73
   CONDITION: is_opening == False
@@ -1765,7 +1533,7 @@ RULE B_3C_4S_262_0:
   CONDITION: hcp >= 14
   CONDITION: s_top3_honors >= 2
 
-RULE B_3C_4S_263_0:
+RULE B_3C_4S_219_0:
   CALL: 4S
   PRIORITY: 74
   CONDITION: is_opening == False
@@ -1775,7 +1543,7 @@ RULE B_3C_4S_263_0:
   CONDITION: spade_len >= 6
   CONDITION: hcp >= 17
 
-RULE B_3C_X_271_1:
+RULE B_3C_X_227_1:
   CALL: X
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -1786,7 +1554,7 @@ RULE B_3C_X_271_1:
   CONDITION: heart_len >= 4
   CONDITION: spade_len >= 4
 
-RULE B_3C_X_271_3:
+RULE B_3C_X_227_3:
   CALL: X
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -1795,7 +1563,7 @@ RULE B_3C_X_271_3:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp >= 20
 
-RULE B_3D_PASS_272_0:
+RULE B_3D_PASS_228_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -1805,7 +1573,7 @@ RULE B_3D_PASS_272_0:
   CONDITION: hcp <= 20
   CONDITION: diamond_len >= 4
 
-RULE B_3D_PASS_272_1:
+RULE B_3D_PASS_228_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -1815,7 +1583,7 @@ RULE B_3D_PASS_272_1:
   CONDITION: hcp <= 17
   CONDITION: spade_len <= 2
 
-RULE B_3D_PASS_272_2:
+RULE B_3D_PASS_228_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -1825,7 +1593,7 @@ RULE B_3D_PASS_272_2:
   CONDITION: hcp <= 17
   CONDITION: heart_len <= 2
 
-RULE B_3D_PASS_272_3:
+RULE B_3D_PASS_228_3:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -1835,7 +1603,7 @@ RULE B_3D_PASS_272_3:
   CONDITION: hcp <= 16
   CONDITION: diamond_len >= 3
 
-RULE B_3D_PASS_272_4:
+RULE B_3D_PASS_228_4:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -1844,7 +1612,7 @@ RULE B_3D_PASS_272_4:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp <= 14
 
-RULE B_3D_3H_273_0:
+RULE B_3D_3H_229_0:
   CALL: 3H
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -1856,7 +1624,7 @@ RULE B_3D_3H_273_0:
   CONDITION: hcp >= 10
   CONDITION: h_top2_honors >= 1
 
-RULE B_3D_3H_274_0:
+RULE B_3D_3H_230_0:
   CALL: 3H
   PRIORITY: 57
   CONDITION: is_opening == False
@@ -1868,7 +1636,7 @@ RULE B_3D_3H_274_0:
   CONDITION: hcp >= 11
   CONDITION: h_top3_honors >= 2
 
-RULE B_3D_3H_275_0:
+RULE B_3D_3H_231_0:
   CALL: 3H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -1879,7 +1647,7 @@ RULE B_3D_3H_275_0:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3D_3H_275_1:
+RULE B_3D_3H_231_1:
   CALL: 3H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -1891,7 +1659,7 @@ RULE B_3D_3H_275_1:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 20
 
-RULE B_3D_3H_275_2:
+RULE B_3D_3H_231_2:
   CALL: 3H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -1902,7 +1670,7 @@ RULE B_3D_3H_275_2:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3D_3S_276_0:
+RULE B_3D_3S_232_0:
   CALL: 3S
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -1914,7 +1682,7 @@ RULE B_3D_3S_276_0:
   CONDITION: hcp >= 10
   CONDITION: s_top2_honors >= 1
 
-RULE B_3D_3S_277_0:
+RULE B_3D_3S_233_0:
   CALL: 3S
   PRIORITY: 57
   CONDITION: is_opening == False
@@ -1926,7 +1694,7 @@ RULE B_3D_3S_277_0:
   CONDITION: hcp >= 11
   CONDITION: s_top3_honors >= 2
 
-RULE B_3D_3S_278_0:
+RULE B_3D_3S_234_0:
   CALL: 3S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -1937,7 +1705,7 @@ RULE B_3D_3S_278_0:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3D_3S_278_1:
+RULE B_3D_3S_234_1:
   CALL: 3S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -1949,7 +1717,7 @@ RULE B_3D_3S_278_1:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 20
 
-RULE B_3D_3S_278_2:
+RULE B_3D_3S_234_2:
   CALL: 3S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -1960,7 +1728,7 @@ RULE B_3D_3S_278_2:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3D_3NT_279_0:
+RULE B_3D_3NT_235_0:
   CALL: 3NT
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -1970,7 +1738,7 @@ RULE B_3D_3NT_279_0:
   CONDITION: hcp >= 16
   CONDITION: d_stopper >= 2
 
-RULE B_3D_3NT_279_1:
+RULE B_3D_3NT_235_1:
   CALL: 3NT
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -1980,7 +1748,7 @@ RULE B_3D_3NT_279_1:
   CONDITION: hcp >= 17
   CONDITION: d_stopper >= 2
 
-RULE B_3D_4C_280_0:
+RULE B_3D_4C_236_0:
   CALL: 4C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -1994,7 +1762,7 @@ RULE B_3D_4C_280_0:
   CONDITION: spade_len <= 4
   CONDITION: heart_len <= 4
 
-RULE B_3D_4C_280_1:
+RULE B_3D_4C_236_1:
   CALL: 4C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -2008,7 +1776,7 @@ RULE B_3D_4C_280_1:
   CONDITION: spade_len <= 5
   CONDITION: heart_len <= 5
 
-RULE B_3D_4D_281_0:
+RULE B_3D_4D_237_0:
   CALL: 4D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -2021,7 +1789,7 @@ RULE B_3D_4D_281_0:
   CONDITION: diamond_len <= 4
   CONDITION: controls >= 5
 
-RULE B_3D_4H_282_0:
+RULE B_3D_4H_238_0:
   CALL: 4H
   PRIORITY: 72
   CONDITION: is_opening == False
@@ -2033,7 +1801,7 @@ RULE B_3D_4H_282_0:
   CONDITION: hcp >= 12
   CONDITION: h_top3_honors >= 2
 
-RULE B_3D_4H_283_0:
+RULE B_3D_4H_239_0:
   CALL: 4H
   PRIORITY: 73
   CONDITION: is_opening == False
@@ -2045,7 +1813,7 @@ RULE B_3D_4H_283_0:
   CONDITION: hcp >= 14
   CONDITION: h_top3_honors >= 2
 
-RULE B_3D_4H_284_0:
+RULE B_3D_4H_240_0:
   CALL: 4H
   PRIORITY: 74
   CONDITION: is_opening == False
@@ -2055,7 +1823,7 @@ RULE B_3D_4H_284_0:
   CONDITION: heart_len >= 6
   CONDITION: hcp >= 17
 
-RULE B_3D_4S_285_0:
+RULE B_3D_4S_241_0:
   CALL: 4S
   PRIORITY: 72
   CONDITION: is_opening == False
@@ -2067,7 +1835,7 @@ RULE B_3D_4S_285_0:
   CONDITION: hcp >= 12
   CONDITION: s_top3_honors >= 2
 
-RULE B_3D_4S_286_0:
+RULE B_3D_4S_242_0:
   CALL: 4S
   PRIORITY: 73
   CONDITION: is_opening == False
@@ -2079,7 +1847,7 @@ RULE B_3D_4S_286_0:
   CONDITION: hcp >= 14
   CONDITION: s_top3_honors >= 2
 
-RULE B_3D_4S_287_0:
+RULE B_3D_4S_243_0:
   CALL: 4S
   PRIORITY: 74
   CONDITION: is_opening == False
@@ -2089,7 +1857,7 @@ RULE B_3D_4S_287_0:
   CONDITION: spade_len >= 6
   CONDITION: hcp >= 17
 
-RULE B_3D_X_295_1:
+RULE B_3D_X_251_1:
   CALL: X
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -2100,7 +1868,7 @@ RULE B_3D_X_295_1:
   CONDITION: heart_len >= 4
   CONDITION: spade_len >= 4
 
-RULE B_3D_X_295_3:
+RULE B_3D_X_251_3:
   CALL: X
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -2109,7 +1877,7 @@ RULE B_3D_X_295_3:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp >= 20
 
-RULE B_3H_PASS_296_0:
+RULE B_3H_PASS_252_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -2119,7 +1887,7 @@ RULE B_3H_PASS_296_0:
   CONDITION: hcp <= 20
   CONDITION: heart_len >= 4
 
-RULE B_3H_PASS_296_1:
+RULE B_3H_PASS_252_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -2128,7 +1896,7 @@ RULE B_3H_PASS_296_1:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp <= 17
 
-RULE B_3H_3S_297_0:
+RULE B_3H_3S_253_0:
   CALL: 3S
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -2138,7 +1906,7 @@ RULE B_3H_3S_297_0:
   CONDITION: spade_len >= 5
   CONDITION: hcp >= 12
 
-RULE B_3H_3S_297_1:
+RULE B_3H_3S_253_1:
   CALL: 3S
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -2149,7 +1917,7 @@ RULE B_3H_3S_297_1:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3H_3NT_298_0:
+RULE B_3H_3NT_254_0:
   CALL: 3NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -2159,7 +1927,7 @@ RULE B_3H_3NT_298_0:
   CONDITION: hcp >= 17
   CONDITION: h_stopper >= 2
 
-RULE B_3H_3NT_298_1:
+RULE B_3H_3NT_254_1:
   CALL: 3NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -2169,7 +1937,7 @@ RULE B_3H_3NT_298_1:
   CONDITION: hcp >= 17
   CONDITION: h_stopper >= 3
 
-RULE B_3H_4C_299_0:
+RULE B_3H_4C_255_0:
   CALL: 4C
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -2180,7 +1948,7 @@ RULE B_3H_4C_299_0:
   CONDITION: hcp >= 16
   CONDITION: hcp <= 19
 
-RULE B_3H_4C_299_1:
+RULE B_3H_4C_255_1:
   CALL: 4C
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -2191,7 +1959,7 @@ RULE B_3H_4C_299_1:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3H_4D_300_0:
+RULE B_3H_4D_256_0:
   CALL: 4D
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -2202,7 +1970,7 @@ RULE B_3H_4D_300_0:
   CONDITION: hcp >= 16
   CONDITION: hcp <= 19
 
-RULE B_3H_4D_300_1:
+RULE B_3H_4D_256_1:
   CALL: 4D
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -2213,7 +1981,7 @@ RULE B_3H_4D_300_1:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3H_4H_301_0:
+RULE B_3H_4H_257_0:
   CALL: 4H
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -2226,7 +1994,7 @@ RULE B_3H_4H_301_0:
   CONDITION: heart_len <= 3
   CONDITION: hcp >= 15
 
-RULE B_3H_4H_301_1:
+RULE B_3H_4H_257_1:
   CALL: 4H
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -2239,7 +2007,7 @@ RULE B_3H_4H_301_1:
   CONDITION: heart_len <= 3
   CONDITION: hcp >= 15
 
-RULE B_3H_4S_302_0:
+RULE B_3H_4S_258_0:
   CALL: 4S
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -2250,7 +2018,7 @@ RULE B_3H_4S_302_0:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3H_4S_302_1:
+RULE B_3H_4S_258_1:
   CALL: 4S
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -2260,7 +2028,7 @@ RULE B_3H_4S_302_1:
   CONDITION: spade_len >= 6
   CONDITION: losing_trick_count <= 4
 
-RULE B_3H_4S_302_2:
+RULE B_3H_4S_258_2:
   CALL: 4S
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -2270,7 +2038,7 @@ RULE B_3H_4S_302_2:
   CONDITION: spade_len >= 7
   CONDITION: losing_trick_count <= 3
 
-RULE B_3H_X_310_0:
+RULE B_3H_X_266_0:
   CALL: X
   PRIORITY: 18
   CONDITION: is_opening == False
@@ -2279,7 +2047,7 @@ RULE B_3H_X_310_0:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp >= 18
 
-RULE B_3H_X_310_1:
+RULE B_3H_X_266_1:
   CALL: X
   PRIORITY: 18
   CONDITION: is_opening == False
@@ -2291,7 +2059,7 @@ RULE B_3H_X_310_1:
   CONDITION: club_len >= 3
   CONDITION: diamond_len >= 3
 
-RULE B_3H_X_310_2:
+RULE B_3H_X_266_2:
   CALL: X
   PRIORITY: 18
   CONDITION: is_opening == False
@@ -2303,7 +2071,7 @@ RULE B_3H_X_310_2:
   CONDITION: club_len >= 3
   CONDITION: diamond_len >= 3
 
-RULE B_3S_PASS_311_0:
+RULE B_3S_PASS_267_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -2313,7 +2081,7 @@ RULE B_3S_PASS_311_0:
   CONDITION: hcp <= 20
   CONDITION: spade_len >= 4
 
-RULE B_3S_PASS_311_1:
+RULE B_3S_PASS_267_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -2322,7 +2090,7 @@ RULE B_3S_PASS_311_1:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp <= 17
 
-RULE B_3S_3NT_312_0:
+RULE B_3S_3NT_268_0:
   CALL: 3NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -2332,7 +2100,7 @@ RULE B_3S_3NT_312_0:
   CONDITION: hcp >= 17
   CONDITION: s_stopper >= 2
 
-RULE B_3S_3NT_312_1:
+RULE B_3S_3NT_268_1:
   CALL: 3NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -2342,7 +2110,7 @@ RULE B_3S_3NT_312_1:
   CONDITION: hcp >= 17
   CONDITION: s_stopper >= 3
 
-RULE B_3S_4C_313_0:
+RULE B_3S_4C_269_0:
   CALL: 4C
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -2353,7 +2121,7 @@ RULE B_3S_4C_313_0:
   CONDITION: hcp >= 16
   CONDITION: hcp <= 19
 
-RULE B_3S_4C_313_1:
+RULE B_3S_4C_269_1:
   CALL: 4C
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -2364,7 +2132,7 @@ RULE B_3S_4C_313_1:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3S_4D_314_0:
+RULE B_3S_4D_270_0:
   CALL: 4D
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -2375,7 +2143,7 @@ RULE B_3S_4D_314_0:
   CONDITION: hcp >= 16
   CONDITION: hcp <= 19
 
-RULE B_3S_4D_314_1:
+RULE B_3S_4D_270_1:
   CALL: 4D
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -2386,7 +2154,7 @@ RULE B_3S_4D_314_1:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3S_4H_315_0:
+RULE B_3S_4H_271_0:
   CALL: 4H
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -2397,7 +2165,7 @@ RULE B_3S_4H_315_0:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_3S_4H_315_1:
+RULE B_3S_4H_271_1:
   CALL: 4H
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -2407,7 +2175,7 @@ RULE B_3S_4H_315_1:
   CONDITION: heart_len >= 6
   CONDITION: losing_trick_count <= 4
 
-RULE B_3S_4H_315_2:
+RULE B_3S_4H_271_2:
   CALL: 4H
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -2417,7 +2185,7 @@ RULE B_3S_4H_315_2:
   CONDITION: heart_len >= 7
   CONDITION: losing_trick_count <= 3
 
-RULE B_3S_4S_316_0:
+RULE B_3S_4S_272_0:
   CALL: 4S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -2430,7 +2198,7 @@ RULE B_3S_4S_316_0:
   CONDITION: spade_len <= 3
   CONDITION: hcp >= 15
 
-RULE B_3S_4S_316_1:
+RULE B_3S_4S_272_1:
   CALL: 4S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -2443,7 +2211,7 @@ RULE B_3S_4S_316_1:
   CONDITION: spade_len <= 3
   CONDITION: hcp >= 15
 
-RULE B_3S_X_324_0:
+RULE B_3S_X_280_0:
   CALL: X
   PRIORITY: 18
   CONDITION: is_opening == False
@@ -2452,7 +2220,7 @@ RULE B_3S_X_324_0:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp >= 18
 
-RULE B_3S_X_324_1:
+RULE B_3S_X_280_1:
   CALL: X
   PRIORITY: 18
   CONDITION: is_opening == False
@@ -2464,7 +2232,7 @@ RULE B_3S_X_324_1:
   CONDITION: club_len >= 3
   CONDITION: diamond_len >= 3
 
-RULE B_3S_X_324_2:
+RULE B_3S_X_280_2:
   CALL: X
   PRIORITY: 18
   CONDITION: is_opening == False
@@ -2476,7 +2244,7 @@ RULE B_3S_X_324_2:
   CONDITION: club_len >= 3
   CONDITION: diamond_len >= 3
 
-RULE B_4C_PASS_325_0:
+RULE B_4C_PASS_281_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -2486,7 +2254,7 @@ RULE B_4C_PASS_325_0:
   CONDITION: hcp <= 16
   CONDITION: spade_len <= 2
 
-RULE B_4C_PASS_325_1:
+RULE B_4C_PASS_281_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -2496,7 +2264,7 @@ RULE B_4C_PASS_325_1:
   CONDITION: hcp <= 16
   CONDITION: heart_len <= 2
 
-RULE B_4C_PASS_325_2:
+RULE B_4C_PASS_281_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -2505,7 +2273,7 @@ RULE B_4C_PASS_325_2:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp <= 18
 
-RULE B_4C_4D_326_0:
+RULE B_4C_4D_282_0:
   CALL: 4D
   PRIORITY: -1
   CONDITION: is_opening == False
@@ -2516,7 +2284,7 @@ RULE B_4C_4D_326_0:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
-RULE B_4C_5C_329_0:
+RULE B_4C_5C_285_0:
   CALL: 5C
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -2528,7 +2296,7 @@ RULE B_4C_5C_329_0:
   CONDITION: losing_trick_count <= 2
   CONDITION: club_len <= 4
 
-RULE B_4C_X_330_2:
+RULE B_4C_X_286_2:
   CALL: X
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -2539,7 +2307,7 @@ RULE B_4C_X_330_2:
   CONDITION: heart_len >= 2
   CONDITION: spade_len >= 2
 
-RULE B_4C_X_330_3:
+RULE B_4C_X_286_3:
   CALL: X
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -2548,7 +2316,7 @@ RULE B_4C_X_330_3:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp >= 19
 
-RULE B_4D_PASS_331_0:
+RULE B_4D_PASS_287_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -2558,7 +2326,7 @@ RULE B_4D_PASS_331_0:
   CONDITION: hcp <= 16
   CONDITION: spade_len <= 2
 
-RULE B_4D_PASS_331_1:
+RULE B_4D_PASS_287_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -2568,7 +2336,7 @@ RULE B_4D_PASS_331_1:
   CONDITION: hcp <= 16
   CONDITION: heart_len <= 2
 
-RULE B_4D_PASS_331_2:
+RULE B_4D_PASS_287_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -2577,7 +2345,7 @@ RULE B_4D_PASS_331_2:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp <= 18
 
-RULE B_4D_5C_334_0:
+RULE B_4D_5C_290_0:
   CALL: 5C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -2588,7 +2356,7 @@ RULE B_4D_5C_334_0:
   CONDITION: losing_trick_count <= 4
   CONDITION: hcp >= 14
 
-RULE B_4D_5D_335_0:
+RULE B_4D_5D_291_0:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -2600,7 +2368,7 @@ RULE B_4D_5D_335_0:
   CONDITION: losing_trick_count <= 2
   CONDITION: diamond_len <= 4
 
-RULE B_4D_X_336_2:
+RULE B_4D_X_292_2:
   CALL: X
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -2611,7 +2379,7 @@ RULE B_4D_X_336_2:
   CONDITION: heart_len >= 2
   CONDITION: spade_len >= 2
 
-RULE B_4D_X_336_3:
+RULE B_4D_X_292_3:
   CALL: X
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -2620,7 +2388,7 @@ RULE B_4D_X_336_3:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp >= 19
 
-RULE B_4H_4S_338_0:
+RULE B_4H_4S_294_0:
   CALL: 4S
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -2631,7 +2399,7 @@ RULE B_4H_4S_338_0:
   CONDITION: spade_len >= 5
   CONDITION: losing_trick_count <= 4
 
-RULE B_4H_4S_338_1:
+RULE B_4H_4S_294_1:
   CALL: 4S
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -2642,7 +2410,7 @@ RULE B_4H_4S_338_1:
   CONDITION: spade_len >= 6
   CONDITION: losing_trick_count <= 5
 
-RULE B_4H_4S_338_2:
+RULE B_4H_4S_294_2:
   CALL: 4S
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -2652,7 +2420,7 @@ RULE B_4H_4S_338_2:
   CONDITION: hcp >= 14
   CONDITION: spade_len >= 6
 
-RULE B_4H_5C_341_0:
+RULE B_4H_5C_297_0:
   CALL: 5C
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -2662,7 +2430,7 @@ RULE B_4H_5C_341_0:
   CONDITION: club_len >= 7
   CONDITION: hcp >= 16
 
-RULE B_4H_5D_343_0:
+RULE B_4H_5D_299_0:
   CALL: 5D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -2672,7 +2440,7 @@ RULE B_4H_5D_343_0:
   CONDITION: diamond_len >= 7
   CONDITION: hcp >= 16
 
-RULE B_4H_X_345_0:
+RULE B_4H_X_301_0:
   CALL: X
   PRIORITY: 24
   CONDITION: is_opening == False
@@ -2683,7 +2451,7 @@ RULE B_4H_X_345_0:
   CONDITION: heart_len <= 2
   CONDITION: spade_len >= 4
 
-RULE B_4H_X_345_1:
+RULE B_4H_X_301_1:
   CALL: X
   PRIORITY: 24
   CONDITION: is_opening == False
@@ -2694,7 +2462,7 @@ RULE B_4H_X_345_1:
   CONDITION: heart_len <= 1
   CONDITION: spade_len >= 3
 
-RULE B_4H_X_345_2:
+RULE B_4H_X_301_2:
   CALL: X
   PRIORITY: 24
   CONDITION: is_opening == False
@@ -2703,7 +2471,7 @@ RULE B_4H_X_345_2:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp >= 18
 
-RULE B_4S_4NT_347_1:
+RULE B_4S_4NT_303_1:
   CALL: 4NT
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -2716,7 +2484,7 @@ RULE B_4S_4NT_347_1:
   CONDITION: diamond_len >= 3
   CONDITION: club_len >= 3
 
-RULE B_4S_5C_349_0:
+RULE B_4S_5C_305_0:
   CALL: 5C
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -2726,7 +2494,7 @@ RULE B_4S_5C_349_0:
   CONDITION: club_len >= 7
   CONDITION: hcp >= 16
 
-RULE B_4S_5D_351_0:
+RULE B_4S_5D_307_0:
   CALL: 5D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -2736,7 +2504,7 @@ RULE B_4S_5D_351_0:
   CONDITION: diamond_len >= 7
   CONDITION: hcp >= 16
 
-RULE B_4S_X_354_0:
+RULE B_4S_X_310_0:
   CALL: X
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -2748,7 +2516,7 @@ RULE B_4S_X_354_0:
   CONDITION: spade_len <= 3
   CONDITION: is_balanced == True
 
-RULE B_5C_PASS_355_0:
+RULE B_5C_PASS_311_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -2756,15 +2524,7 @@ RULE B_5C_PASS_355_0:
   CONDITION: opp_last_call == '5C'
   CONDITION: partner_last_call == 'NONE'
 
-RULE B_5D_PASS_359_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == '5D'
-  CONDITION: partner_last_call == 'NONE'
-
-RULE B_5H_PASS_363_0:
+RULE B_5H_PASS_315_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -2772,7 +2532,7 @@ RULE B_5H_PASS_363_0:
   CONDITION: opp_last_call == '5H'
   CONDITION: partner_last_call == 'NONE'
 
-RULE B_5S_PASS_366_0:
+RULE B_5S_PASS_318_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -2780,13 +2540,12 @@ RULE B_5S_PASS_366_0:
   CONDITION: opp_last_call == '5S'
   CONDITION: partner_last_call == 'NONE'
 
-RULE B___1C_385_5:
+RULE B___1C_323_5:
   CALL: 1C
   PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: hcp >= 12
   CONDITION: hcp <= 21
   CONDITION: shape_pattern == 4333
@@ -2795,13 +2554,12 @@ RULE B___1C_385_5:
   CONDITION: diamond_len == 3
   CONDITION: club_len == 3
 
-RULE B___1C_385_6:
+RULE B___1C_323_6:
   CALL: 1C
   PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: hcp >= 12
   CONDITION: hcp <= 21
   CONDITION: shape_pattern == 4333
@@ -2810,13 +2568,12 @@ RULE B___1C_385_6:
   CONDITION: diamond_len == 3
   CONDITION: club_len == 3
 
-RULE B___1C_385_7:
+RULE B___1C_323_7:
   CALL: 1C
   PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: hcp >= 12
   CONDITION: hcp <= 21
   CONDITION: shape_pattern == 4432
@@ -2825,13 +2582,12 @@ RULE B___1C_385_7:
   CONDITION: diamond_len == 2
   CONDITION: club_len == 3
 
-RULE B___1D_386_3:
+RULE B___1D_324_3:
   CALL: 1D
   PRIORITY: 65
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: hcp >= 12
   CONDITION: hcp <= 21
   CONDITION: shape_pattern == 4432
@@ -2840,201 +2596,183 @@ RULE B___1D_386_3:
   CONDITION: diamond_len == 3
   CONDITION: club_len == 2
 
-RULE B___1NT_393_3:
+RULE B___1NT_331_3:
   CALL: 1NT
   PRIORITY: 120
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: is_semi_balanced == True
   CONDITION: hcp >= 15
   CONDITION: hcp <= 17
   CONDITION: spade_len <= 4
   CONDITION: heart_len <= 4
 
-RULE B___2C_394_0:
+RULE B___2C_332_0:
   CALL: 2C
   PRIORITY: 112
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: losing_trick_count <= 1
   CONDITION: hcp >= 16
 
-RULE B___2C_395_0:
+RULE B___2C_333_0:
   CALL: 2C
   PRIORITY: 113
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: losing_trick_count <= 2
   CONDITION: hcp >= 16
   CONDITION: longest_suit_len >= 5
 
-RULE B___2C_396_8:
+RULE B___2C_334_8:
   CALL: 2C
   PRIORITY: 118
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: hcp >= 22
   CONDITION: is_balanced == True
 
-RULE B___2C_396_9:
+RULE B___2C_334_9:
   CALL: 2C
   PRIORITY: 118
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: hcp >= 22
   CONDITION: is_semi_balanced == True
 
-RULE B___2C_396_10:
+RULE B___2C_334_10:
   CALL: 2C
   PRIORITY: 118
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: hcp >= 22
   CONDITION: losing_trick_count <= 5
 
-RULE B___2NT_400_0:
+RULE B___2NT_338_0:
   CALL: 2NT
   PRIORITY: 122
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: is_semi_balanced == True
   CONDITION: hcp >= 20
   CONDITION: hcp <= 21
 
-RULE B___3NT_409_0:
+RULE B___3NT_347_0:
   CALL: 3NT
   PRIORITY: 130
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: is_semi_balanced == True
   CONDITION: hcp >= 25
   CONDITION: hcp <= 27
   CONDITION: heart_len <= 4
   CONDITION: spade_len <= 4
 
-RULE B___6C_418_0:
+RULE B___6C_356_0:
   CALL: 6C
   PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: club_len >= 9
   CONDITION: total_points >= 32
 
-RULE B___6D_419_0:
+RULE B___6D_357_0:
   CALL: 6D
   PRIORITY: 11
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: diamond_len >= 9
   CONDITION: total_points >= 32
 
-RULE B___6H_420_0:
+RULE B___6H_358_0:
   CALL: 6H
   PRIORITY: 12
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: heart_len >= 9
   CONDITION: total_points >= 32
 
-RULE B___6S_421_0:
+RULE B___6S_359_0:
   CALL: 6S
   PRIORITY: 13
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: spade_len >= 9
   CONDITION: total_points >= 32
 
-RULE B___6NT_422_0:
+RULE B___6NT_360_0:
   CALL: 6NT
   PRIORITY: 14
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: is_balanced == True
   CONDITION: hcp >= 33
   CONDITION: hcp <= 34
 
-RULE B___7C_423_0:
+RULE B___7C_361_0:
   CALL: 7C
   PRIORITY: 15
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: club_len >= 9
   CONDITION: hcp >= 31
   CONDITION: total_points >= 35
 
-RULE B___7D_424_0:
+RULE B___7D_362_0:
   CALL: 7D
   PRIORITY: 23
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: diamond_len >= 9
   CONDITION: hcp >= 31
   CONDITION: total_points >= 35
 
-RULE B___7H_425_0:
+RULE B___7H_363_0:
   CALL: 7H
   PRIORITY: 24
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: heart_len >= 9
   CONDITION: hcp >= 31
   CONDITION: total_points >= 35
 
-RULE B___7S_426_0:
+RULE B___7S_364_0:
   CALL: 7S
   PRIORITY: 25
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: spade_len >= 9
   CONDITION: hcp >= 31
   CONDITION: total_points >= 35
 
-RULE B___7NT_427_0:
+RULE B___7NT_365_0:
   CALL: 7NT
   PRIORITY: 26
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: opp_last_call == ''
+  CONDITION: is_opening == True
   CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
   CONDITION: is_balanced == True
   CONDITION: hcp >= 36
   CONDITION: total_points >= 35
 
-RULE B_1N_PASS_428_0:
+RULE B_1N_PASS_366_0:
   CALL: PASS
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -3042,7 +2780,7 @@ RULE B_1N_PASS_428_0:
   CONDITION: opp_last_call == '1NT'
   CONDITION: partner_last_call == 'NONE'
 
-RULE B_1N_2C_429_1:
+RULE B_1N_2C_367_1:
   CALL: 2C
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -3053,7 +2791,7 @@ RULE B_1N_2C_429_1:
   CONDITION: longest_suit_len >= 7
   CONDITION: hcp >= 10
 
-RULE B_1N_2D_430_0:
+RULE B_1N_2D_368_0:
   CALL: 2D
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -3064,7 +2802,7 @@ RULE B_1N_2D_430_0:
   CONDITION: spade_len >= 5
   CONDITION: hcp >= 10
 
-RULE B_1N_2NT_433_0:
+RULE B_1N_2NT_371_0:
   CALL: 2NT
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -3076,7 +2814,7 @@ RULE B_1N_2NT_433_0:
   CONDITION: total_points >= 15
   CONDITION: hcp >= 10
 
-RULE B_2N_PASS_443_0:
+RULE B_2N_PASS_381_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -3084,7 +2822,7 @@ RULE B_2N_PASS_443_0:
   CONDITION: opp_last_call == '2NT'
   CONDITION: partner_last_call == 'NONE'
 
-RULE B_3N_PASS_454_0:
+RULE B_3N_PASS_392_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -3092,7 +2830,7 @@ RULE B_3N_PASS_454_0:
   CONDITION: opp_last_call == '3NT'
   CONDITION: partner_last_call == 'NONE'
 
-RULE B_7N_PASS_461_0:
+RULE B_7N_PASS_397_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -3100,3087 +2838,7 @@ RULE B_7N_PASS_461_0:
   CONDITION: opp_last_call == '7NT'
   CONDITION: partner_last_call == 'NONE'
 
-RULE B_P_P_1C_464_5:
-  CALL: 1C
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: hcp >= 12
-  CONDITION: hcp <= 21
-  CONDITION: shape_pattern == 4333
-  CONDITION: spade_len == 4
-  CONDITION: heart_len == 3
-  CONDITION: diamond_len == 3
-  CONDITION: club_len == 3
-
-RULE B_P_P_1C_464_6:
-  CALL: 1C
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: hcp >= 12
-  CONDITION: hcp <= 21
-  CONDITION: shape_pattern == 4333
-  CONDITION: spade_len == 3
-  CONDITION: heart_len == 4
-  CONDITION: diamond_len == 3
-  CONDITION: club_len == 3
-
-RULE B_P_P_1C_464_7:
-  CALL: 1C
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: hcp >= 12
-  CONDITION: hcp <= 21
-  CONDITION: shape_pattern == 4432
-  CONDITION: spade_len == 4
-  CONDITION: heart_len == 4
-  CONDITION: diamond_len == 2
-  CONDITION: club_len == 3
-
-RULE B_P_P_1D_465_3:
-  CALL: 1D
-  PRIORITY: 65
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: hcp >= 12
-  CONDITION: hcp <= 21
-  CONDITION: shape_pattern == 4432
-  CONDITION: spade_len == 4
-  CONDITION: heart_len == 4
-  CONDITION: diamond_len == 3
-  CONDITION: club_len == 2
-
-RULE B_P_P_1NT_472_3:
-  CALL: 1NT
-  PRIORITY: 120
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: is_semi_balanced == True
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: spade_len <= 4
-  CONDITION: heart_len <= 4
-
-RULE B_P_P_2C_473_0:
-  CALL: 2C
-  PRIORITY: 112
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: losing_trick_count <= 1
-  CONDITION: hcp >= 16
-
-RULE B_P_P_2C_474_0:
-  CALL: 2C
-  PRIORITY: 113
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: losing_trick_count <= 2
-  CONDITION: hcp >= 16
-  CONDITION: longest_suit_len >= 5
-
-RULE B_P_P_2C_475_8:
-  CALL: 2C
-  PRIORITY: 118
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: hcp >= 22
-  CONDITION: is_balanced == True
-
-RULE B_P_P_2C_475_9:
-  CALL: 2C
-  PRIORITY: 118
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: hcp >= 22
-  CONDITION: is_semi_balanced == True
-
-RULE B_P_P_2C_475_10:
-  CALL: 2C
-  PRIORITY: 118
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: hcp >= 22
-  CONDITION: losing_trick_count <= 5
-
-RULE B_P_P_2NT_479_0:
-  CALL: 2NT
-  PRIORITY: 122
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: is_semi_balanced == True
-  CONDITION: hcp >= 20
-  CONDITION: hcp <= 21
-
-RULE B_P_P_3NT_488_0:
-  CALL: 3NT
-  PRIORITY: 130
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: is_semi_balanced == True
-  CONDITION: hcp >= 25
-  CONDITION: hcp <= 27
-  CONDITION: heart_len <= 4
-  CONDITION: spade_len <= 4
-
-RULE B_P_P_6C_497_0:
-  CALL: 6C
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: club_len >= 9
-  CONDITION: total_points >= 32
-
-RULE B_P_P_6D_498_0:
-  CALL: 6D
-  PRIORITY: 11
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: diamond_len >= 9
-  CONDITION: total_points >= 32
-
-RULE B_P_P_6H_499_0:
-  CALL: 6H
-  PRIORITY: 12
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: heart_len >= 9
-  CONDITION: total_points >= 32
-
-RULE B_P_P_6S_500_0:
-  CALL: 6S
-  PRIORITY: 13
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: spade_len >= 9
-  CONDITION: total_points >= 32
-
-RULE B_P_P_6NT_501_0:
-  CALL: 6NT
-  PRIORITY: 14
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: is_balanced == True
-  CONDITION: hcp >= 33
-  CONDITION: hcp <= 34
-
-RULE B_P_P_7C_502_0:
-  CALL: 7C
-  PRIORITY: 15
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: club_len >= 9
-  CONDITION: hcp >= 31
-  CONDITION: total_points >= 35
-
-RULE B_P_P_7D_503_0:
-  CALL: 7D
-  PRIORITY: 23
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: diamond_len >= 9
-  CONDITION: hcp >= 31
-  CONDITION: total_points >= 35
-
-RULE B_P_P_7H_504_0:
-  CALL: 7H
-  PRIORITY: 24
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: heart_len >= 9
-  CONDITION: hcp >= 31
-  CONDITION: total_points >= 35
-
-RULE B_P_P_7S_505_0:
-  CALL: 7S
-  PRIORITY: 25
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: spade_len >= 9
-  CONDITION: hcp >= 31
-  CONDITION: total_points >= 35
-
-RULE B_P_P_7NT_506_0:
-  CALL: 7NT
-  PRIORITY: 26
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-  CONDITION: is_balanced == True
-  CONDITION: hcp >= 36
-  CONDITION: total_points >= 35
-
-RULE B_P_1C_PASS_507_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_P_1C_PASS_507_1:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 7
-
-RULE B_P_1C_1NT_511_0:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 4
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: is_balanced == True
-
-RULE B_P_1C_1NT_511_1:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 4
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: is_semi_balanced == True
-
-RULE B_P_1C_1NT_511_2:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 5
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 18
-  CONDITION: is_balanced == True
-
-RULE B_P_1C_1NT_511_3:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 5
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 18
-  CONDITION: is_semi_balanced == True
-
-RULE B_P_1C_1NT_511_4:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: c_stopper >= 2
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: is_balanced == True
-
-RULE B_P_1C_1NT_511_5:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: c_stopper >= 2
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: is_semi_balanced == True
-
-RULE B_P_1C_4H_527_0_0:
-  CALL: 4H
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: h_has_ace == True
-
-RULE B_P_1C_4H_527_0_1:
-  CALL: 4H
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: h_has_king == True
-
-RULE B_P_1C_4H_527_0_2:
-  CALL: 4H
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: h_has_queen == True
-
-RULE B_P_1C_4H_527_0_3:
-  CALL: 4H
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: h_has_jack == True
-
-RULE B_P_1C_4H_527_0_4:
-  CALL: 4H
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: h_has_ten == True
-
-RULE B_P_1C_4S_531_0_0:
-  CALL: 4S
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: s_has_ace == True
-
-RULE B_P_1C_4S_531_0_1:
-  CALL: 4S
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: s_has_king == True
-
-RULE B_P_1C_4S_531_0_2:
-  CALL: 4S
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: s_has_queen == True
-
-RULE B_P_1C_4S_531_0_3:
-  CALL: 4S
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: s_has_jack == True
-
-RULE B_P_1C_4S_531_0_4:
-  CALL: 4S
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: s_has_ten == True
-
-RULE B_P_1C_X_541_1:
-  CALL: X
-  PRIORITY: 74
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 18
-
-RULE B_P_1C_X_541_3:
-  CALL: X
-  PRIORITY: 74
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 10
-  CONDITION: spade_len >= 4
-  CONDITION: heart_len >= 4
-  CONDITION: diamond_len >= 3
-  CONDITION: club_len <= 1
-
-RULE B_P_1D_PASS_542_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_P_1D_PASS_542_1:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 7
-
-RULE B_P_1D_1NT_545_0:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 4
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: is_balanced == True
-
-RULE B_P_1D_1NT_545_1:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 4
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: is_semi_balanced == True
-
-RULE B_P_1D_1NT_545_2:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 5
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 18
-  CONDITION: is_balanced == True
-
-RULE B_P_1D_1NT_545_3:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 5
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 18
-  CONDITION: is_semi_balanced == True
-
-RULE B_P_1D_1NT_545_4:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: d_stopper >= 2
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: is_balanced == True
-
-RULE B_P_1D_1NT_545_5:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: d_stopper >= 2
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: is_semi_balanced == True
-
-RULE B_P_1D_4H_561_0_0:
-  CALL: 4H
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: h_has_ace == True
-
-RULE B_P_1D_4H_561_0_1:
-  CALL: 4H
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: h_has_king == True
-
-RULE B_P_1D_4H_561_0_2:
-  CALL: 4H
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: h_has_queen == True
-
-RULE B_P_1D_4H_561_0_3:
-  CALL: 4H
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: h_has_jack == True
-
-RULE B_P_1D_4H_561_0_4:
-  CALL: 4H
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: h_has_ten == True
-
-RULE B_P_1D_4S_565_0_0:
-  CALL: 4S
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: s_has_ace == True
-
-RULE B_P_1D_4S_565_0_1:
-  CALL: 4S
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: s_has_king == True
-
-RULE B_P_1D_4S_565_0_2:
-  CALL: 4S
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: s_has_queen == True
-
-RULE B_P_1D_4S_565_0_3:
-  CALL: 4S
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: s_has_jack == True
-
-RULE B_P_1D_4S_565_0_4:
-  CALL: 4S
-  PRIORITY: 91
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 8
-  CONDITION: hcp <= 10
-  CONDITION: s_has_ten == True
-
-RULE B_P_1D_X_575_1:
-  CALL: X
-  PRIORITY: 74
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 18
-
-RULE B_P_1D_X_575_3:
-  CALL: X
-  PRIORITY: 74
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 10
-  CONDITION: spade_len >= 4
-  CONDITION: heart_len >= 4
-  CONDITION: club_len >= 3
-  CONDITION: diamond_len <= 1
-
-RULE B_P_1H_PASS_576_0:
-  CALL: PASS
-  PRIORITY: 1
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1H'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_P_1H_PASS_576_1:
-  CALL: PASS
-  PRIORITY: 1
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-
-RULE B_P_1H_1S_577_0:
-  CALL: 1S
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 5
-  CONDITION: hcp >= 8
-  CONDITION: hcp <= 17
-
-RULE B_P_1H_1NT_578_0:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: h_stopper >= 2
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: is_balanced == True
-
-RULE B_P_1H_1NT_578_1:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: h_stopper >= 2
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: is_semi_balanced == True
-
-RULE B_P_1H_X_606_0:
-  CALL: X
-  PRIORITY: 76
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 18
-  CONDITION: heart_len <= 4
-
-RULE B_P_1H_X_606_1:
-  CALL: X
-  PRIORITY: 76
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 18
-  CONDITION: is_balanced == True
-
-RULE B_P_1H_X_606_2:
-  CALL: X
-  PRIORITY: 76
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 10
-  CONDITION: hcp <= 17
-  CONDITION: heart_len <= 1
-  CONDITION: spade_len >= 3
-  CONDITION: club_len >= 3
-  CONDITION: diamond_len >= 3
-
-RULE B_P_1S_PASS_607_0:
-  CALL: PASS
-  PRIORITY: 1
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1S'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_P_1S_PASS_607_1:
-  CALL: PASS
-  PRIORITY: 1
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-
-RULE B_P_1S_1NT_608_0:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: s_stopper >= 2
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: is_balanced == True
-
-RULE B_P_1S_1NT_608_1:
-  CALL: 1NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: s_stopper >= 2
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 17
-  CONDITION: is_semi_balanced == True
-
-RULE B_P_1S_X_636_0:
-  CALL: X
-  PRIORITY: 76
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 18
-  CONDITION: spade_len <= 4
-
-RULE B_P_1S_X_636_1:
-  CALL: X
-  PRIORITY: 76
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 18
-  CONDITION: is_balanced == True
-
-RULE B_P_1S_X_636_2:
-  CALL: X
-  PRIORITY: 76
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 10
-  CONDITION: hcp <= 17
-  CONDITION: spade_len <= 1
-  CONDITION: heart_len >= 3
-  CONDITION: club_len >= 3
-  CONDITION: diamond_len >= 3
-
-RULE B_P_2C_PASS_637_0:
-  CALL: PASS
-  PRIORITY: -1
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2C'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_P_2D_PASS_652_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 15
-
-RULE B_P_2D_PASS_652_1:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 5
-
-RULE B_P_2D_2NT_655_0:
-  CALL: 2NT
-  PRIORITY: 80
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 18
-  CONDITION: is_semi_balanced == True
-  CONDITION: d_stopper >= 2
-
-RULE B_P_2D_3H_658_0:
-  CALL: 3H
-  PRIORITY: 93
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 7
-  CONDITION: hcp >= 19
-
-RULE B_P_2D_3S_659_0:
-  CALL: 3S
-  PRIORITY: 93
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 7
-  CONDITION: hcp >= 19
-
-RULE B_P_2D_3NT_660_0:
-  CALL: 3NT
-  PRIORITY: 82
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 19
-  CONDITION: hcp <= 24
-  CONDITION: is_semi_balanced == True
-  CONDITION: d_stopper >= 2
-
-RULE B_P_2D_4C_661_0:
-  CALL: 4C
-  PRIORITY: 95
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 7
-  CONDITION: hcp >= 19
-  CONDITION: hcp <= 24
-
-RULE B_P_2D_4H_662_0:
-  CALL: 4H
-  PRIORITY: 97
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 7
-  CONDITION: hcp >= 12
-  CONDITION: hcp <= 14
-
-RULE B_P_2D_4H_662_1:
-  CALL: 4H
-  PRIORITY: 97
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 7
-  CONDITION: losing_trick_count <= 3
-  CONDITION: hcp <= 15
-
-RULE B_P_2D_4S_663_0:
-  CALL: 4S
-  PRIORITY: 97
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 7
-  CONDITION: hcp >= 12
-  CONDITION: hcp <= 14
-
-RULE B_P_2D_4S_663_1:
-  CALL: 4S
-  PRIORITY: 97
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 7
-  CONDITION: losing_trick_count <= 3
-  CONDITION: hcp <= 15
-
-RULE B_P_2D_X_670_0:
-  CALL: X
-  PRIORITY: 105
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 12
-  CONDITION: diamond_len <= 1
-  CONDITION: spade_len >= 3
-  CONDITION: heart_len >= 3
-  CONDITION: club_len <= 5
-
-RULE B_P_2D_X_670_1:
-  CALL: X
-  PRIORITY: 105
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 13
-  CONDITION: spade_len >= 3
-  CONDITION: heart_len >= 4
-
-RULE B_P_2D_X_670_2:
-  CALL: X
-  PRIORITY: 105
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 13
-  CONDITION: spade_len >= 4
-  CONDITION: heart_len >= 3
-
-RULE B_P_2D_X_670_3:
-  CALL: X
-  PRIORITY: 105
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 16
-
-RULE B_P_2D_X_670_4:
-  CALL: X
-  PRIORITY: 105
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: hcp >= 18
-  CONDITION: losing_trick_count <= 4
-
-RULE B_P_2D_X_670_5:
-  CALL: X
-  PRIORITY: 105
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: hcp >= 18
-  CONDITION: losing_trick_count <= 4
-
-RULE B_P_2H_PASS_671_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 17
-
-RULE B_P_2H_2S_672_0:
-  CALL: 2S
-  PRIORITY: 18
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: hcp >= 10
-  CONDITION: hcp <= 12
-  CONDITION: s_top3_honors >= 2
-
-RULE B_P_2H_2S_673_0:
-  CALL: 2S
-  PRIORITY: 20
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 5
-  CONDITION: hcp >= 13
-  CONDITION: hcp <= 19
-
-RULE B_P_2H_2NT_674_0:
-  CALL: 2NT
-  PRIORITY: 100
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 18
-  CONDITION: is_semi_balanced == True
-  CONDITION: h_stopper >= 3
-
-RULE B_P_2H_2NT_674_1:
-  CALL: 2NT
-  PRIORITY: 100
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 16
-  CONDITION: hcp <= 18
-  CONDITION: is_semi_balanced == True
-  CONDITION: h_stopper >= 2
-
-RULE B_P_2H_3S_678_0:
-  CALL: 3S
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: hcp >= 19
-  CONDITION: losing_trick_count >= 4
-
-RULE B_P_2H_3NT_679_0:
-  CALL: 3NT
-  PRIORITY: 50
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 19
-  CONDITION: hcp <= 24
-  CONDITION: is_semi_balanced == True
-  CONDITION: h_stopper >= 2
-
-RULE B_P_2H_3NT_679_1:
-  CALL: 3NT
-  PRIORITY: 50
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 20
-  CONDITION: hcp <= 24
-  CONDITION: heart_len >= 4
-  CONDITION: h_stopper >= 2
-
-RULE B_P_2H_4H_682_0:
-  CALL: 4H
-  PRIORITY: 120
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 5
-  CONDITION: club_len >= 5
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 17
-
-RULE B_P_2H_4S_683_0:
-  CALL: 4S
-  PRIORITY: 29
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 7
-  CONDITION: spade_hcp >= 18
-  CONDITION: losing_trick_count <= 4
-
-RULE B_P_2H_X_691_0:
-  CALL: X
-  PRIORITY: 24
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 15
-  CONDITION: spade_len >= 3
-  CONDITION: heart_len <= 3
-
-RULE B_P_2H_X_691_1:
-  CALL: X
-  PRIORITY: 24
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 13
-  CONDITION: spade_len >= 4
-  CONDITION: club_len >= 2
-  CONDITION: diamond_len >= 2
-  CONDITION: heart_len <= 3
-
-RULE B_P_2H_X_691_2:
-  CALL: X
-  PRIORITY: 24
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 18
-
-RULE B_P_2S_PASS_692_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 17
-
-RULE B_P_2S_2NT_693_0:
-  CALL: 2NT
-  PRIORITY: 100
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 15
-  CONDITION: hcp <= 18
-  CONDITION: is_semi_balanced == True
-  CONDITION: s_stopper >= 3
-
-RULE B_P_2S_2NT_693_1:
-  CALL: 2NT
-  PRIORITY: 100
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 16
-  CONDITION: hcp <= 18
-  CONDITION: is_semi_balanced == True
-  CONDITION: s_stopper >= 2
-
-RULE B_P_2S_3H_696_0:
-  CALL: 3H
-  PRIORITY: 20
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: hcp >= 13
-  CONDITION: hcp <= 19
-
-RULE B_P_2S_3NT_698_0:
-  CALL: 3NT
-  PRIORITY: 50
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 19
-  CONDITION: hcp <= 24
-  CONDITION: is_semi_balanced == True
-  CONDITION: s_stopper >= 2
-
-RULE B_P_2S_3NT_698_1:
-  CALL: 3NT
-  PRIORITY: 50
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 20
-  CONDITION: hcp <= 24
-  CONDITION: spade_len >= 4
-  CONDITION: s_stopper >= 2
-
-RULE B_P_2S_4H_701_0:
-  CALL: 4H
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 7
-  CONDITION: heart_hcp >= 18
-  CONDITION: losing_trick_count <= 4
-
-RULE B_P_2S_4H_701_1_0:
-  CALL: 4H
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 15
-  CONDITION: h_has_ace == True
-  CONDITION: h_has_king == True
-  CONDITION: h_has_queen == True
-
-RULE B_P_2S_4H_701_1_1:
-  CALL: 4H
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 15
-  CONDITION: h_has_ace == True
-  CONDITION: h_has_king == True
-  CONDITION: h_has_jack == True
-
-RULE B_P_2S_4H_701_1_2:
-  CALL: 4H
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 15
-  CONDITION: h_has_ace == True
-  CONDITION: h_has_king == True
-  CONDITION: h_has_ten == True
-
-RULE B_P_2S_4H_701_1_3:
-  CALL: 4H
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 15
-  CONDITION: h_has_ace == True
-  CONDITION: h_has_queen == True
-  CONDITION: h_has_jack == True
-
-RULE B_P_2S_4H_701_1_4:
-  CALL: 4H
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 15
-  CONDITION: h_has_ace == True
-  CONDITION: h_has_queen == True
-  CONDITION: h_has_ten == True
-
-RULE B_P_2S_4H_701_1_5:
-  CALL: 4H
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 15
-  CONDITION: h_has_ace == True
-  CONDITION: h_has_jack == True
-  CONDITION: h_has_ten == True
-
-RULE B_P_2S_4H_701_1_6:
-  CALL: 4H
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 15
-  CONDITION: h_has_king == True
-  CONDITION: h_has_queen == True
-  CONDITION: h_has_jack == True
-
-RULE B_P_2S_4H_701_1_7:
-  CALL: 4H
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 15
-  CONDITION: h_has_king == True
-  CONDITION: h_has_queen == True
-  CONDITION: h_has_ten == True
-
-RULE B_P_2S_4H_701_1_8:
-  CALL: 4H
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 15
-  CONDITION: h_has_king == True
-  CONDITION: h_has_jack == True
-  CONDITION: h_has_ten == True
-
-RULE B_P_2S_4H_701_1_9:
-  CALL: 4H
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 15
-  CONDITION: h_has_queen == True
-  CONDITION: h_has_jack == True
-  CONDITION: h_has_ten == True
-
-RULE B_P_2S_4S_702_0:
-  CALL: 4S
-  PRIORITY: 120
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 5
-  CONDITION: club_len >= 5
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 17
-
-RULE B_P_2S_X_710_0:
-  CALL: X
-  PRIORITY: 24
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 15
-  CONDITION: heart_len >= 3
-  CONDITION: spade_len <= 3
-
-RULE B_P_2S_X_710_1:
-  CALL: X
-  PRIORITY: 24
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 13
-  CONDITION: heart_len >= 4
-  CONDITION: club_len >= 2
-  CONDITION: diamond_len >= 2
-  CONDITION: spade_len <= 3
-
-RULE B_P_2S_X_710_2:
-  CALL: X
-  PRIORITY: 24
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 18
-
-RULE B_P_3C_PASS_711_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 20
-  CONDITION: club_len >= 4
-
-RULE B_P_3C_PASS_711_1:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 17
-  CONDITION: spade_len <= 2
-
-RULE B_P_3C_PASS_711_2:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 17
-  CONDITION: heart_len <= 2
-
-RULE B_P_3C_PASS_711_3:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 16
-  CONDITION: club_len >= 3
-
-RULE B_P_3C_PASS_711_4:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 14
-
-RULE B_P_3C_3D_712_0:
-  CALL: 3D
-  PRIORITY: 31
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 5
-  CONDITION: diamond_hcp >= 13
-  CONDITION: hcp >= 11
-  CONDITION: hcp <= 19
-  CONDITION: spade_len <= 4
-  CONDITION: heart_len <= 4
-
-RULE B_P_3C_3D_712_1:
-  CALL: 3D
-  PRIORITY: 31
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 6
-  CONDITION: diamond_hcp >= 14
-  CONDITION: hcp >= 12
-  CONDITION: hcp <= 19
-  CONDITION: spade_len <= 5
-  CONDITION: heart_len <= 5
-
-RULE B_P_3C_3H_713_0:
-  CALL: 3H
-  PRIORITY: 55
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 7
-  CONDITION: losing_trick_count <= 5
-  CONDITION: hcp >= 10
-  CONDITION: h_top2_honors >= 1
-
-RULE B_P_3C_3H_714_0:
-  CALL: 3H
-  PRIORITY: 57
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 5
-  CONDITION: hcp >= 11
-  CONDITION: h_top3_honors >= 2
-
-RULE B_P_3C_3H_715_0:
-  CALL: 3H
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 5
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3C_3H_715_1:
-  CALL: 3H
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 5
-  CONDITION: spade_len <= 1
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 20
-
-RULE B_P_3C_3H_715_2:
-  CALL: 3H
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3C_3S_716_0:
-  CALL: 3S
-  PRIORITY: 55
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 7
-  CONDITION: losing_trick_count <= 5
-  CONDITION: hcp >= 10
-  CONDITION: s_top2_honors >= 1
-
-RULE B_P_3C_3S_717_0:
-  CALL: 3S
-  PRIORITY: 57
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: losing_trick_count <= 5
-  CONDITION: hcp >= 11
-  CONDITION: s_top3_honors >= 2
-
-RULE B_P_3C_3S_718_0:
-  CALL: 3S
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 5
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3C_3S_718_1:
-  CALL: 3S
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 5
-  CONDITION: heart_len <= 1
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 20
-
-RULE B_P_3C_3S_718_2:
-  CALL: 3S
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3C_3NT_719_0:
-  CALL: 3NT
-  PRIORITY: 50
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 16
-  CONDITION: c_stopper >= 2
-
-RULE B_P_3C_3NT_719_1:
-  CALL: 3NT
-  PRIORITY: 50
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 17
-  CONDITION: c_stopper >= 2
-
-RULE B_P_3C_4C_720_0:
-  CALL: 4C
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 5
-  CONDITION: spade_len >= 5
-  CONDITION: losing_trick_count <= 5
-  CONDITION: club_len <= 4
-  CONDITION: controls >= 5
-
-RULE B_P_3C_4H_721_0:
-  CALL: 4H
-  PRIORITY: 72
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 7
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 12
-  CONDITION: h_top3_honors >= 2
-
-RULE B_P_3C_4H_722_0:
-  CALL: 4H
-  PRIORITY: 73
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 14
-  CONDITION: h_top3_honors >= 2
-
-RULE B_P_3C_4H_723_0:
-  CALL: 4H
-  PRIORITY: 74
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: hcp >= 17
-
-RULE B_P_3C_4S_724_0:
-  CALL: 4S
-  PRIORITY: 72
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 7
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 12
-  CONDITION: s_top3_honors >= 2
-
-RULE B_P_3C_4S_725_0:
-  CALL: 4S
-  PRIORITY: 73
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 14
-  CONDITION: s_top3_honors >= 2
-
-RULE B_P_3C_4S_726_0:
-  CALL: 4S
-  PRIORITY: 74
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: hcp >= 17
-
-RULE B_P_3C_X_734_1:
-  CALL: X
-  PRIORITY: 32
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 14
-  CONDITION: heart_len >= 4
-  CONDITION: spade_len >= 4
-
-RULE B_P_3C_X_734_3:
-  CALL: X
-  PRIORITY: 32
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 20
-
-RULE B_P_3D_PASS_735_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 20
-  CONDITION: diamond_len >= 4
-
-RULE B_P_3D_PASS_735_1:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 17
-  CONDITION: spade_len <= 2
-
-RULE B_P_3D_PASS_735_2:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 17
-  CONDITION: heart_len <= 2
-
-RULE B_P_3D_PASS_735_3:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 16
-  CONDITION: diamond_len >= 3
-
-RULE B_P_3D_PASS_735_4:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 14
-
-RULE B_P_3D_3H_736_0:
-  CALL: 3H
-  PRIORITY: 55
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 7
-  CONDITION: losing_trick_count <= 5
-  CONDITION: hcp >= 10
-  CONDITION: h_top2_honors >= 1
-
-RULE B_P_3D_3H_737_0:
-  CALL: 3H
-  PRIORITY: 57
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 5
-  CONDITION: hcp >= 11
-  CONDITION: h_top3_honors >= 2
-
-RULE B_P_3D_3H_738_0:
-  CALL: 3H
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 5
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3D_3H_738_1:
-  CALL: 3H
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 5
-  CONDITION: spade_len <= 1
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 20
-
-RULE B_P_3D_3H_738_2:
-  CALL: 3H
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3D_3S_739_0:
-  CALL: 3S
-  PRIORITY: 55
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 7
-  CONDITION: losing_trick_count <= 5
-  CONDITION: hcp >= 10
-  CONDITION: s_top2_honors >= 1
-
-RULE B_P_3D_3S_740_0:
-  CALL: 3S
-  PRIORITY: 57
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: losing_trick_count <= 5
-  CONDITION: hcp >= 11
-  CONDITION: s_top3_honors >= 2
-
-RULE B_P_3D_3S_741_0:
-  CALL: 3S
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 5
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3D_3S_741_1:
-  CALL: 3S
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 5
-  CONDITION: heart_len <= 1
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 20
-
-RULE B_P_3D_3S_741_2:
-  CALL: 3S
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3D_3NT_742_0:
-  CALL: 3NT
-  PRIORITY: 50
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 16
-  CONDITION: d_stopper >= 2
-
-RULE B_P_3D_3NT_742_1:
-  CALL: 3NT
-  PRIORITY: 50
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 17
-  CONDITION: d_stopper >= 2
-
-RULE B_P_3D_4C_743_0:
-  CALL: 4C
-  PRIORITY: 20
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 5
-  CONDITION: club_hcp >= 14
-  CONDITION: hcp <= 19
-  CONDITION: hcp >= 14
-  CONDITION: spade_len <= 4
-  CONDITION: heart_len <= 4
-
-RULE B_P_3D_4C_743_1:
-  CALL: 4C
-  PRIORITY: 20
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 6
-  CONDITION: club_hcp >= 14
-  CONDITION: hcp <= 19
-  CONDITION: hcp >= 10
-  CONDITION: spade_len <= 5
-  CONDITION: heart_len <= 5
-
-RULE B_P_3D_4D_744_0:
-  CALL: 4D
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 5
-  CONDITION: spade_len >= 5
-  CONDITION: losing_trick_count <= 5
-  CONDITION: diamond_len <= 4
-  CONDITION: controls >= 5
-
-RULE B_P_3D_4H_745_0:
-  CALL: 4H
-  PRIORITY: 72
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 7
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 12
-  CONDITION: h_top3_honors >= 2
-
-RULE B_P_3D_4H_746_0:
-  CALL: 4H
-  PRIORITY: 73
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 14
-  CONDITION: h_top3_honors >= 2
-
-RULE B_P_3D_4H_747_0:
-  CALL: 4H
-  PRIORITY: 74
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: hcp >= 17
-
-RULE B_P_3D_4S_748_0:
-  CALL: 4S
-  PRIORITY: 72
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 7
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 12
-  CONDITION: s_top3_honors >= 2
-
-RULE B_P_3D_4S_749_0:
-  CALL: 4S
-  PRIORITY: 73
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 14
-  CONDITION: s_top3_honors >= 2
-
-RULE B_P_3D_4S_750_0:
-  CALL: 4S
-  PRIORITY: 74
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: hcp >= 17
-
-RULE B_P_3D_X_758_1:
-  CALL: X
-  PRIORITY: 32
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 14
-  CONDITION: heart_len >= 4
-  CONDITION: spade_len >= 4
-
-RULE B_P_3D_X_758_3:
-  CALL: X
-  PRIORITY: 32
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 20
-
-RULE B_P_3H_PASS_759_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 20
-  CONDITION: heart_len >= 4
-
-RULE B_P_3H_PASS_759_1:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 17
-
-RULE B_P_3H_3S_760_0:
-  CALL: 3S
-  PRIORITY: 25
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 5
-  CONDITION: hcp >= 12
-
-RULE B_P_3H_3S_760_1:
-  CALL: 3S
-  PRIORITY: 25
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3H_3NT_761_0:
-  CALL: 3NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 17
-  CONDITION: h_stopper >= 2
-
-RULE B_P_3H_3NT_761_1:
-  CALL: 3NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 17
-  CONDITION: h_stopper >= 3
-
-RULE B_P_3H_4C_762_0:
-  CALL: 4C
-  PRIORITY: 22
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 5
-  CONDITION: hcp >= 16
-  CONDITION: hcp <= 19
-
-RULE B_P_3H_4C_762_1:
-  CALL: 4C
-  PRIORITY: 22
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 6
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3H_4D_763_0:
-  CALL: 4D
-  PRIORITY: 22
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 5
-  CONDITION: hcp >= 16
-  CONDITION: hcp <= 19
-
-RULE B_P_3H_4D_763_1:
-  CALL: 4D
-  PRIORITY: 22
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 6
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3H_4H_764_0:
-  CALL: 4H
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 5
-  CONDITION: diamond_len >= 5
-  CONDITION: losing_trick_count <= 5
-  CONDITION: heart_len <= 3
-  CONDITION: hcp >= 15
-
-RULE B_P_3H_4H_764_1:
-  CALL: 4H
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 5
-  CONDITION: club_len >= 5
-  CONDITION: losing_trick_count <= 5
-  CONDITION: heart_len <= 3
-  CONDITION: hcp >= 15
-
-RULE B_P_3H_4S_765_0:
-  CALL: 4S
-  PRIORITY: 75
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3H_4S_765_1:
-  CALL: 4S
-  PRIORITY: 75
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 6
-  CONDITION: losing_trick_count <= 4
-
-RULE B_P_3H_4S_765_2:
-  CALL: 4S
-  PRIORITY: 75
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 7
-  CONDITION: losing_trick_count <= 3
-
-RULE B_P_3H_X_773_0:
-  CALL: X
-  PRIORITY: 18
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 18
-
-RULE B_P_3H_X_773_1:
-  CALL: X
-  PRIORITY: 18
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 4
-  CONDITION: hcp >= 14
-  CONDITION: club_len >= 3
-  CONDITION: diamond_len >= 3
-
-RULE B_P_3H_X_773_2:
-  CALL: X
-  PRIORITY: 18
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 3
-  CONDITION: hcp >= 17
-  CONDITION: club_len >= 3
-  CONDITION: diamond_len >= 3
-
-RULE B_P_3S_PASS_774_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 20
-  CONDITION: spade_len >= 4
-
-RULE B_P_3S_PASS_774_1:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 17
-
-RULE B_P_3S_3NT_775_0:
-  CALL: 3NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 17
-  CONDITION: s_stopper >= 2
-
-RULE B_P_3S_3NT_775_1:
-  CALL: 3NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 17
-  CONDITION: s_stopper >= 3
-
-RULE B_P_3S_4C_776_0:
-  CALL: 4C
-  PRIORITY: 22
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 5
-  CONDITION: hcp >= 16
-  CONDITION: hcp <= 19
-
-RULE B_P_3S_4C_776_1:
-  CALL: 4C
-  PRIORITY: 22
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 6
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3S_4D_777_0:
-  CALL: 4D
-  PRIORITY: 22
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 5
-  CONDITION: hcp >= 16
-  CONDITION: hcp <= 19
-
-RULE B_P_3S_4D_777_1:
-  CALL: 4D
-  PRIORITY: 22
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 6
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3S_4H_778_0:
-  CALL: 4H
-  PRIORITY: 75
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_3S_4H_778_1:
-  CALL: 4H
-  PRIORITY: 75
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 6
-  CONDITION: losing_trick_count <= 4
-
-RULE B_P_3S_4H_778_2:
-  CALL: 4H
-  PRIORITY: 75
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 7
-  CONDITION: losing_trick_count <= 3
-
-RULE B_P_3S_4S_779_0:
-  CALL: 4S
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 5
-  CONDITION: diamond_len >= 5
-  CONDITION: losing_trick_count <= 5
-  CONDITION: spade_len <= 3
-  CONDITION: hcp >= 15
-
-RULE B_P_3S_4S_779_1:
-  CALL: 4S
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 5
-  CONDITION: club_len >= 5
-  CONDITION: losing_trick_count <= 5
-  CONDITION: spade_len <= 3
-  CONDITION: hcp >= 15
-
-RULE B_P_3S_X_787_0:
-  CALL: X
-  PRIORITY: 18
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 18
-
-RULE B_P_3S_X_787_1:
-  CALL: X
-  PRIORITY: 18
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 4
-  CONDITION: hcp >= 14
-  CONDITION: club_len >= 3
-  CONDITION: diamond_len >= 3
-
-RULE B_P_3S_X_787_2:
-  CALL: X
-  PRIORITY: 18
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 3
-  CONDITION: hcp >= 17
-  CONDITION: club_len >= 3
-  CONDITION: diamond_len >= 3
-
-RULE B_P_4C_PASS_788_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 16
-  CONDITION: spade_len <= 2
-
-RULE B_P_4C_PASS_788_1:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 16
-  CONDITION: heart_len <= 2
-
-RULE B_P_4C_PASS_788_2:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 18
-
-RULE B_P_4C_4D_789_0:
-  CALL: 4D
-  PRIORITY: -1
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 6
-  CONDITION: hcp >= 14
-  CONDITION: hcp <= 19
-
-RULE B_P_4C_5C_792_0:
-  CALL: 5C
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 5
-  CONDITION: spade_len >= 5
-  CONDITION: losing_trick_count <= 2
-  CONDITION: club_len <= 4
-
-RULE B_P_4C_X_793_2:
-  CALL: X
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 16
-  CONDITION: heart_len >= 2
-  CONDITION: spade_len >= 2
-
-RULE B_P_4C_X_793_3:
-  CALL: X
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4C'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 19
-
-RULE B_P_4D_PASS_794_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 16
-  CONDITION: spade_len <= 2
-
-RULE B_P_4D_PASS_794_1:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 16
-  CONDITION: heart_len <= 2
-
-RULE B_P_4D_PASS_794_2:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 18
-
-RULE B_P_4D_5C_797_0:
-  CALL: 5C
-  PRIORITY: 20
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 7
-  CONDITION: losing_trick_count <= 4
-  CONDITION: hcp >= 14
-
-RULE B_P_4D_5D_798_0:
-  CALL: 5D
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 5
-  CONDITION: spade_len >= 5
-  CONDITION: losing_trick_count <= 2
-  CONDITION: diamond_len <= 4
-
-RULE B_P_4D_X_799_2:
-  CALL: X
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 16
-  CONDITION: heart_len >= 2
-  CONDITION: spade_len >= 2
-
-RULE B_P_4D_X_799_3:
-  CALL: X
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 19
-
-RULE B_P_4H_4S_801_0:
-  CALL: 4S
-  PRIORITY: 25
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 12
-  CONDITION: spade_len >= 5
-  CONDITION: losing_trick_count <= 4
-
-RULE B_P_4H_4S_801_1:
-  CALL: 4S
-  PRIORITY: 25
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 10
-  CONDITION: spade_len >= 6
-  CONDITION: losing_trick_count <= 5
-
-RULE B_P_4H_4S_801_2:
-  CALL: 4S
-  PRIORITY: 25
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 14
-  CONDITION: spade_len >= 6
-
-RULE B_P_4H_5C_804_0:
-  CALL: 5C
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 7
-  CONDITION: hcp >= 16
-
-RULE B_P_4H_5D_806_0:
-  CALL: 5D
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 7
-  CONDITION: hcp >= 16
-
-RULE B_P_4H_X_808_0:
-  CALL: X
-  PRIORITY: 24
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 14
-  CONDITION: heart_len <= 2
-  CONDITION: spade_len >= 4
-
-RULE B_P_4H_X_808_1:
-  CALL: X
-  PRIORITY: 24
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 15
-  CONDITION: heart_len <= 1
-  CONDITION: spade_len >= 3
-
-RULE B_P_4H_X_808_2:
-  CALL: X
-  PRIORITY: 24
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 18
-
-RULE B_P_4S_4NT_810_1:
-  CALL: 4NT
-  PRIORITY: 120
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len <= 1
-  CONDITION: hcp >= 13
-  CONDITION: heart_len >= 3
-  CONDITION: diamond_len >= 3
-  CONDITION: club_len >= 3
-
-RULE B_P_4S_5C_812_0:
-  CALL: 5C
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 7
-  CONDITION: hcp >= 16
-
-RULE B_P_4S_5D_814_0:
-  CALL: 5D
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 7
-  CONDITION: hcp >= 16
-
-RULE B_P_4S_X_817_0:
-  CALL: X
-  PRIORITY: 120
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '4S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 16
-  CONDITION: spade_len >= 2
-  CONDITION: spade_len <= 3
-  CONDITION: is_balanced == True
-
-RULE B_P_5C_PASS_818_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '5C'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_P_5D_PASS_822_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '5D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_P_5H_PASS_826_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '5H'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_P_5S_PASS_829_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '5S'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_P_1N_PASS_847_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1NT'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_P_1N_2C_848_1:
-  CALL: 2C
-  PRIORITY: 50
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1NT'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: total_points >= 10
-  CONDITION: longest_suit_len >= 7
-  CONDITION: hcp >= 10
-
-RULE B_P_1N_2D_849_0:
-  CALL: 2D
-  PRIORITY: 90
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1NT'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 5
-  CONDITION: spade_len >= 5
-  CONDITION: hcp >= 10
-
-RULE B_P_1N_2NT_852_0:
-  CALL: 2NT
-  PRIORITY: 80
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '1NT'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 5
-  CONDITION: diamond_len >= 5
-  CONDITION: total_points >= 15
-  CONDITION: hcp >= 10
-
-RULE B_P_2N_PASS_862_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '2NT'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_P_3N_PASS_873_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '3NT'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_P_7N_PASS_880_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == 'PASS'
-  CONDITION: opp_last_call == '7NT'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1C_P_PASS_882_0:
+RULE B_1C_P_PASS_399_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -6190,7 +2848,7 @@ RULE B_1C_P_PASS_882_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp < 6
 
-RULE B_1C_P_1NT_886_0:
+RULE B_1C_P_1NT_403_0:
   CALL: 1NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -6204,7 +2862,7 @@ RULE B_1C_P_1NT_886_0:
   CONDITION: heart_len < 4
   CONDITION: is_balanced == True
 
-RULE B_1C_P_2D_888_4:
+RULE B_1C_P_2D_405_4:
   CALL: 2D
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -6219,7 +2877,7 @@ RULE B_1C_P_2D_888_4:
   CONDITION: spade_len <= 3
   CONDITION: heart_len <= 3
 
-RULE B_1C_P_2D_888_5:
+RULE B_1C_P_2D_405_5:
   CALL: 2D
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -6232,7 +2890,7 @@ RULE B_1C_P_2D_888_5:
   CONDITION: hcp > 17
   CONDITION: controls >= 4
 
-RULE B_1C_P_2H_889_3:
+RULE B_1C_P_2H_406_3:
   CALL: 2H
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -6245,7 +2903,7 @@ RULE B_1C_P_2H_889_3:
   CONDITION: hcp > 17
   CONDITION: controls >= 4
 
-RULE B_1C_P_2H_889_4:
+RULE B_1C_P_2H_406_4:
   CALL: 2H
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -6258,7 +2916,7 @@ RULE B_1C_P_2H_889_4:
   CONDITION: hcp >= 17
   CONDITION: controls >= 4
 
-RULE B_1C_P_2S_890_3:
+RULE B_1C_P_2S_407_3:
   CALL: 2S
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -6271,7 +2929,7 @@ RULE B_1C_P_2S_890_3:
   CONDITION: hcp > 17
   CONDITION: controls >= 4
 
-RULE B_1C_P_2S_890_4:
+RULE B_1C_P_2S_407_4:
   CALL: 2S
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -6284,7 +2942,7 @@ RULE B_1C_P_2S_890_4:
   CONDITION: hcp >= 17
   CONDITION: controls >= 4
 
-RULE B_1C_P_2NT_891_0:
+RULE B_1C_P_2NT_408_0:
   CALL: 2NT
   PRIORITY: 65
   CONDITION: is_opening == False
@@ -6298,7 +2956,7 @@ RULE B_1C_P_2NT_891_0:
   CONDITION: spade_len < 4
   CONDITION: heart_len < 4
 
-RULE B_1C_P_2NT_891_1:
+RULE B_1C_P_2NT_408_1:
   CALL: 2NT
   PRIORITY: 65
   CONDITION: is_opening == False
@@ -6312,7 +2970,7 @@ RULE B_1C_P_2NT_891_1:
   CONDITION: spade_len < 4
   CONDITION: heart_len < 4
 
-RULE B_1C_P_3D_893_0:
+RULE B_1C_P_3D_410_0:
   CALL: 3D
   PRIORITY: 24
   CONDITION: is_opening == False
@@ -6326,7 +2984,7 @@ RULE B_1C_P_3D_893_0:
   CONDITION: heart_len <= 3
   CONDITION: spade_len <= 3
 
-RULE B_1C_P_3H_894_0:
+RULE B_1C_P_3H_411_0:
   CALL: 3H
   PRIORITY: 150
   CONDITION: is_opening == False
@@ -6339,7 +2997,7 @@ RULE B_1C_P_3H_894_0:
   CONDITION: club_len >= 5
   CONDITION: spade_len <= 3
 
-RULE B_1C_P_3S_895_0:
+RULE B_1C_P_3S_412_0:
   CALL: 3S
   PRIORITY: 150
   CONDITION: is_opening == False
@@ -6352,7 +3010,7 @@ RULE B_1C_P_3S_895_0:
   CONDITION: club_len >= 5
   CONDITION: heart_len <= 3
 
-RULE B_1C_P_3NT_896_0:
+RULE B_1C_P_3NT_413_0:
   CALL: 3NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -6366,7 +3024,7 @@ RULE B_1C_P_3NT_896_0:
   CONDITION: spade_len < 4
   CONDITION: heart_len < 4
 
-RULE B_1C_P_4H_897_0:
+RULE B_1C_P_4H_414_0:
   CALL: 4H
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -6378,7 +3036,7 @@ RULE B_1C_P_4H_897_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 6
 
-RULE B_1C_P_4S_898_0:
+RULE B_1C_P_4S_415_0:
   CALL: 4S
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -6390,7 +3048,7 @@ RULE B_1C_P_4S_898_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 6
 
-RULE B_1C_P_5C_900_0:
+RULE B_1C_P_5C_417_0:
   CALL: 5C
   PRIORITY: 51
   CONDITION: is_opening == False
@@ -6402,7 +3060,7 @@ RULE B_1C_P_5C_900_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 5
 
-RULE B_1C_P_5D_901_0:
+RULE B_1C_P_5D_418_0:
   CALL: 5D
   PRIORITY: 72
   CONDITION: is_opening == False
@@ -6414,7 +3072,7 @@ RULE B_1C_P_5D_901_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 5
 
-RULE B_1C_X_PASS_909_0:
+RULE B_1C_X_PASS_426_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -6424,7 +3082,7 @@ RULE B_1C_X_PASS_909_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 5
 
-RULE B_1C_X_1NT_913_0:
+RULE B_1C_X_1NT_430_0:
   CALL: 1NT
   PRIORITY: 12
   CONDITION: is_opening == False
@@ -6435,7 +3093,7 @@ RULE B_1C_X_1NT_913_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 6
 
-RULE B_1C_X_2C_914_0:
+RULE B_1C_X_2C_431_0:
   CALL: 2C
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -6447,7 +3105,7 @@ RULE B_1C_X_2C_914_0:
   CONDITION: total_points >= 7
   CONDITION: total_points <= 10
 
-RULE B_1C_X_2H_915_0:
+RULE B_1C_X_2H_432_0:
   CALL: 2H
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -6459,7 +3117,7 @@ RULE B_1C_X_2H_915_0:
   CONDITION: hcp < 10
   CONDITION: heart_len >= 6
 
-RULE B_1C_X_2S_916_0:
+RULE B_1C_X_2S_433_0:
   CALL: 2S
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -6471,7 +3129,7 @@ RULE B_1C_X_2S_916_0:
   CONDITION: hcp < 10
   CONDITION: spade_len >= 6
 
-RULE B_1C_X_2NT_917_0:
+RULE B_1C_X_2NT_434_0:
   CALL: 2NT
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -6485,7 +3143,7 @@ RULE B_1C_X_2NT_917_0:
   CONDITION: heart_len <= 4
   CONDITION: spade_len <= 4
 
-RULE B_1C_X_3C_918_0:
+RULE B_1C_X_3C_435_0:
   CALL: 3C
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -6497,7 +3155,7 @@ RULE B_1C_X_3C_918_0:
   CONDITION: hcp <= 10
   CONDITION: club_len >= 5
 
-RULE B_1C_X_3H_919_0:
+RULE B_1C_X_3H_436_0:
   CALL: 3H
   PRIORITY: 94
   CONDITION: is_opening == False
@@ -6509,7 +3167,7 @@ RULE B_1C_X_3H_919_0:
   CONDITION: hcp < 10
   CONDITION: heart_len >= 7
 
-RULE B_1C_X_3S_920_0:
+RULE B_1C_X_3S_437_0:
   CALL: 3S
   PRIORITY: 94
   CONDITION: is_opening == False
@@ -6521,7 +3179,7 @@ RULE B_1C_X_3S_920_0:
   CONDITION: hcp < 10
   CONDITION: spade_len >= 7
 
-RULE B_1C_X_4C_921_0:
+RULE B_1C_X_4C_438_0:
   CALL: 4C
   PRIORITY: 97
   CONDITION: is_opening == False
@@ -6533,7 +3191,7 @@ RULE B_1C_X_4C_921_0:
   CONDITION: hcp <= 6
   CONDITION: club_len >= 7
 
-RULE B_1C_X_4H_922_0:
+RULE B_1C_X_4H_439_0:
   CALL: 4H
   PRIORITY: 98
   CONDITION: is_opening == False
@@ -6545,7 +3203,7 @@ RULE B_1C_X_4H_922_0:
   CONDITION: hcp < 10
   CONDITION: heart_len >= 8
 
-RULE B_1C_X_4S_923_0:
+RULE B_1C_X_4S_440_0:
   CALL: 4S
   PRIORITY: 98
   CONDITION: is_opening == False
@@ -6557,7 +3215,7 @@ RULE B_1C_X_4S_923_0:
   CONDITION: hcp < 10
   CONDITION: spade_len >= 8
 
-RULE B_1C_X_XX_924_0:
+RULE B_1C_X_XX_441_0:
   CALL: XX
   PRIORITY: 42
   CONDITION: is_opening == False
@@ -6569,7 +3227,7 @@ RULE B_1C_X_XX_924_0:
   CONDITION: longest_suit_len <= 5
   CONDITION: controls >= 2
 
-RULE B_1C_X_XX_924_1:
+RULE B_1C_X_XX_441_1:
   CALL: XX
   PRIORITY: 42
   CONDITION: is_opening == False
@@ -6581,7 +3239,7 @@ RULE B_1C_X_XX_924_1:
   CONDITION: longest_suit_len <= 5
   CONDITION: controls >= 3
 
-RULE B_1C_X_XX_924_2:
+RULE B_1C_X_XX_441_2:
   CALL: XX
   PRIORITY: 42
   CONDITION: is_opening == False
@@ -6592,7 +3250,7 @@ RULE B_1C_X_XX_924_2:
   CONDITION: hcp >= 11
   CONDITION: longest_suit_len <= 5
 
-RULE B_1C_X_XX_924_3:
+RULE B_1C_X_XX_441_3:
   CALL: XX
   PRIORITY: 42
   CONDITION: is_opening == False
@@ -6603,7 +3261,7 @@ RULE B_1C_X_XX_924_3:
   CONDITION: hcp >= 12
   CONDITION: diamond_len >= 5
 
-RULE B_1C_1D_PASS_925_0:
+RULE B_1C_1D_PASS_442_0:
   CALL: PASS
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -6613,7 +3271,7 @@ RULE B_1C_1D_PASS_925_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1C_1D_1H_926_0:
+RULE B_1C_1D_1H_443_0:
   CALL: 1H
   PRIORITY: 65
   CONDITION: is_opening == False
@@ -6624,7 +3282,7 @@ RULE B_1C_1D_1H_926_0:
   CONDITION: heart_len == 4
   CONDITION: hcp >= 6
 
-RULE B_1C_1D_1S_927_0:
+RULE B_1C_1D_1S_444_0:
   CALL: 1S
   PRIORITY: 65
   CONDITION: is_opening == False
@@ -6635,7 +3293,7 @@ RULE B_1C_1D_1S_927_0:
   CONDITION: spade_len == 4
   CONDITION: hcp >= 6
 
-RULE B_1C_1D_1NT_928_0:
+RULE B_1C_1D_1NT_445_0:
   CALL: 1NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -6647,7 +3305,7 @@ RULE B_1C_1D_1NT_928_0:
   CONDITION: diamond_len >= 3
   CONDITION: hcp <= 10
 
-RULE B_1C_1D_1NT_928_1:
+RULE B_1C_1D_1NT_445_1:
   CALL: 1NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -6659,7 +3317,7 @@ RULE B_1C_1D_1NT_928_1:
   CONDITION: d_stopper >= 2
   CONDITION: hcp <= 10
 
-RULE B_1C_1D_2C_929_0:
+RULE B_1C_1D_2C_446_0:
   CALL: 2C
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -6671,7 +3329,7 @@ RULE B_1C_1D_2C_929_0:
   CONDITION: hcp >= 6
   CONDITION: club_len >= 4
 
-RULE B_1C_1D_2D_930_0:
+RULE B_1C_1D_2D_447_0:
   CALL: 2D
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -6682,7 +3340,7 @@ RULE B_1C_1D_2D_930_0:
   CONDITION: hcp >= 10
   CONDITION: club_len >= 4
 
-RULE B_1C_1D_2H_931_0:
+RULE B_1C_1D_2H_448_0:
   CALL: 2H
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -6693,7 +3351,7 @@ RULE B_1C_1D_2H_931_0:
   CONDITION: hcp >= 12
   CONDITION: heart_len >= 6
 
-RULE B_1C_1D_2S_932_0:
+RULE B_1C_1D_2S_449_0:
   CALL: 2S
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -6704,7 +3362,7 @@ RULE B_1C_1D_2S_932_0:
   CONDITION: hcp >= 12
   CONDITION: spade_len >= 6
 
-RULE B_1C_1D_2NT_933_0:
+RULE B_1C_1D_2NT_450_0:
   CALL: 2NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -6716,7 +3374,7 @@ RULE B_1C_1D_2NT_933_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 12
 
-RULE B_1C_1D_2NT_933_1:
+RULE B_1C_1D_2NT_450_1:
   CALL: 2NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -6728,7 +3386,7 @@ RULE B_1C_1D_2NT_933_1:
   CONDITION: d_stopper >= 2
   CONDITION: hcp <= 11
 
-RULE B_1C_1D_3C_934_0:
+RULE B_1C_1D_3C_451_0:
   CALL: 3C
   PRIORITY: 16
   CONDITION: is_opening == False
@@ -6740,7 +3398,7 @@ RULE B_1C_1D_3C_934_0:
   CONDITION: club_hcp >= 6
   CONDITION: club_len >= 5
 
-RULE B_1C_1D_3NT_938_0:
+RULE B_1C_1D_3NT_455_0:
   CALL: 3NT
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -6753,7 +3411,7 @@ RULE B_1C_1D_3NT_938_0:
   CONDITION: hcp <= 17
   CONDITION: club_len <= 3
 
-RULE B_1C_1D_3NT_938_1:
+RULE B_1C_1D_3NT_455_1:
   CALL: 3NT
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -6766,7 +3424,7 @@ RULE B_1C_1D_3NT_938_1:
   CONDITION: hcp <= 17
   CONDITION: club_len <= 3
 
-RULE B_1C_1D_4H_939_0:
+RULE B_1C_1D_4H_456_0:
   CALL: 4H
   PRIORITY: 85
   CONDITION: is_opening == False
@@ -6778,7 +3436,7 @@ RULE B_1C_1D_4H_939_0:
   CONDITION: hcp >= 6
   CONDITION: heart_len >= 7
 
-RULE B_1C_1D_4S_940_0:
+RULE B_1C_1D_4S_457_0:
   CALL: 4S
   PRIORITY: 85
   CONDITION: is_opening == False
@@ -6790,7 +3448,7 @@ RULE B_1C_1D_4S_940_0:
   CONDITION: hcp >= 6
   CONDITION: spade_len >= 7
 
-RULE B_1C_1D_X_949_0:
+RULE B_1C_1D_X_466_0:
   CALL: X
   PRIORITY: 54
   CONDITION: is_opening == False
@@ -6802,7 +3460,7 @@ RULE B_1C_1D_X_949_0:
   CONDITION: heart_len == 4
   CONDITION: spade_len == 4
 
-RULE B_1C_1H_PASS_950_0:
+RULE B_1C_1H_PASS_467_0:
   CALL: PASS
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -6812,7 +3470,7 @@ RULE B_1C_1H_PASS_950_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1C_1H_PASS_950_1:
+RULE B_1C_1H_PASS_467_1:
   CALL: PASS
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -6822,18 +3480,7 @@ RULE B_1C_1H_PASS_950_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 6
 
-RULE B_1C_1H_PASS_950_2:
-  CALL: PASS
-  PRIORITY: 32
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1C'
-  CONDITION: opp_last_call == '1H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 5
-  CONDITION: hcp >= 10
-
-RULE B_1C_1H_1S_951_0:
+RULE B_1C_1H_1S_468_0:
   CALL: 1S
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -6844,7 +3491,7 @@ RULE B_1C_1H_1S_951_0:
   CONDITION: spade_hcp >= 6
   CONDITION: spade_len >= 5
 
-RULE B_1C_1H_1NT_952_0:
+RULE B_1C_1H_1NT_469_0:
   CALL: 1NT
   PRIORITY: 21
   CONDITION: is_opening == False
@@ -6856,7 +3503,7 @@ RULE B_1C_1H_1NT_952_0:
   CONDITION: heart_len >= 3
   CONDITION: hcp <= 11
 
-RULE B_1C_1H_1NT_952_1:
+RULE B_1C_1H_1NT_469_1:
   CALL: 1NT
   PRIORITY: 21
   CONDITION: is_opening == False
@@ -6868,7 +3515,7 @@ RULE B_1C_1H_1NT_952_1:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 10
 
-RULE B_1C_1H_2C_953_0:
+RULE B_1C_1H_2C_470_0:
   CALL: 2C
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -6880,7 +3527,7 @@ RULE B_1C_1H_2C_953_0:
   CONDITION: hcp >= 6
   CONDITION: club_len >= 4
 
-RULE B_1C_1H_2C_953_1:
+RULE B_1C_1H_2C_470_1:
   CALL: 2C
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -6893,7 +3540,7 @@ RULE B_1C_1H_2C_953_1:
   CONDITION: club_len >= 4
   CONDITION: hcp >= 5
 
-RULE B_1C_1H_2C_953_2:
+RULE B_1C_1H_2C_470_2:
   CALL: 2C
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -6905,7 +3552,7 @@ RULE B_1C_1H_2C_953_2:
   CONDITION: hcp >= 6
   CONDITION: club_len >= 4
 
-RULE B_1C_1H_2D_954_0:
+RULE B_1C_1H_2D_471_0:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -6916,7 +3563,7 @@ RULE B_1C_1H_2D_954_0:
   CONDITION: hcp >= 9
   CONDITION: diamond_len >= 5
 
-RULE B_1C_1H_2D_954_1_0:
+RULE B_1C_1H_2D_471_1_0:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -6929,7 +3576,7 @@ RULE B_1C_1H_2D_954_1_0:
   CONDITION: h_has_ace == True
   CONDITION: h_has_king == True
 
-RULE B_1C_1H_2D_954_1_1:
+RULE B_1C_1H_2D_471_1_1:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -6942,7 +3589,7 @@ RULE B_1C_1H_2D_954_1_1:
   CONDITION: h_has_ace == True
   CONDITION: h_has_queen == True
 
-RULE B_1C_1H_2D_954_1_2:
+RULE B_1C_1H_2D_471_1_2:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -6955,7 +3602,7 @@ RULE B_1C_1H_2D_954_1_2:
   CONDITION: h_has_ace == True
   CONDITION: h_has_jack == True
 
-RULE B_1C_1H_2D_954_1_3:
+RULE B_1C_1H_2D_471_1_3:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -6968,7 +3615,7 @@ RULE B_1C_1H_2D_954_1_3:
   CONDITION: h_has_ace == True
   CONDITION: h_has_ten == True
 
-RULE B_1C_1H_2D_954_1_4:
+RULE B_1C_1H_2D_471_1_4:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -6981,7 +3628,7 @@ RULE B_1C_1H_2D_954_1_4:
   CONDITION: h_has_king == True
   CONDITION: h_has_queen == True
 
-RULE B_1C_1H_2D_954_1_5:
+RULE B_1C_1H_2D_471_1_5:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -6994,7 +3641,7 @@ RULE B_1C_1H_2D_954_1_5:
   CONDITION: h_has_king == True
   CONDITION: h_has_jack == True
 
-RULE B_1C_1H_2D_954_1_6:
+RULE B_1C_1H_2D_471_1_6:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7007,7 +3654,7 @@ RULE B_1C_1H_2D_954_1_6:
   CONDITION: h_has_king == True
   CONDITION: h_has_ten == True
 
-RULE B_1C_1H_2D_954_1_7:
+RULE B_1C_1H_2D_471_1_7:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7020,7 +3667,7 @@ RULE B_1C_1H_2D_954_1_7:
   CONDITION: h_has_queen == True
   CONDITION: h_has_jack == True
 
-RULE B_1C_1H_2D_954_1_8:
+RULE B_1C_1H_2D_471_1_8:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7033,7 +3680,7 @@ RULE B_1C_1H_2D_954_1_8:
   CONDITION: h_has_queen == True
   CONDITION: h_has_ten == True
 
-RULE B_1C_1H_2D_954_1_9:
+RULE B_1C_1H_2D_471_1_9:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7046,7 +3693,7 @@ RULE B_1C_1H_2D_954_1_9:
   CONDITION: h_has_jack == True
   CONDITION: h_has_ten == True
 
-RULE B_1C_1H_2D_954_2:
+RULE B_1C_1H_2D_471_2:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7057,7 +3704,7 @@ RULE B_1C_1H_2D_954_2:
   CONDITION: hcp >= 12
   CONDITION: diamond_len >= 4
 
-RULE B_1C_1H_2D_954_3:
+RULE B_1C_1H_2D_471_3:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7068,7 +3715,7 @@ RULE B_1C_1H_2D_954_3:
   CONDITION: diamond_len >= 5
   CONDITION: hcp >= 12
 
-RULE B_1C_1H_2H_955_0:
+RULE B_1C_1H_2H_472_0:
   CALL: 2H
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -7080,7 +3727,7 @@ RULE B_1C_1H_2H_955_0:
   CONDITION: club_len >= 3
   CONDITION: spade_len <= 3
 
-RULE B_1C_1H_2H_955_1:
+RULE B_1C_1H_2H_472_1:
   CALL: 2H
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -7093,7 +3740,7 @@ RULE B_1C_1H_2H_955_1:
   CONDITION: hcp >= 9
   CONDITION: spade_len <= 3
 
-RULE B_1C_1H_2NT_956_0:
+RULE B_1C_1H_2NT_473_0:
   CALL: 2NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -7105,7 +3752,7 @@ RULE B_1C_1H_2NT_956_0:
   CONDITION: heart_len >= 4
   CONDITION: hcp <= 12
 
-RULE B_1C_1H_2NT_956_1:
+RULE B_1C_1H_2NT_473_1:
   CALL: 2NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -7117,7 +3764,7 @@ RULE B_1C_1H_2NT_956_1:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 11
 
-RULE B_1C_1H_3C_957_0:
+RULE B_1C_1H_3C_474_0:
   CALL: 3C
   PRIORITY: 47
   CONDITION: is_opening == False
@@ -7129,7 +3776,7 @@ RULE B_1C_1H_3C_957_0:
   CONDITION: hcp >= 4
   CONDITION: club_hcp <= 9
 
-RULE B_1C_1H_3D_958_0:
+RULE B_1C_1H_3D_475_0:
   CALL: 3D
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -7141,7 +3788,7 @@ RULE B_1C_1H_3D_958_0:
   CONDITION: hcp >= 13
   CONDITION: diamond_hcp <= 15
 
-RULE B_1C_1H_3S_959_0:
+RULE B_1C_1H_3S_476_0:
   CALL: 3S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -7152,7 +3799,7 @@ RULE B_1C_1H_3S_959_0:
   CONDITION: hcp >= 15
   CONDITION: spade_len >= 6
 
-RULE B_1C_1H_3NT_960_0:
+RULE B_1C_1H_3NT_477_0:
   CALL: 3NT
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -7165,7 +3812,7 @@ RULE B_1C_1H_3NT_960_0:
   CONDITION: hcp <= 17
   CONDITION: club_len <= 3
 
-RULE B_1C_1H_3NT_960_1:
+RULE B_1C_1H_3NT_477_1:
   CALL: 3NT
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -7180,7 +3827,7 @@ RULE B_1C_1H_3NT_960_1:
   CONDITION: is_semi_balanced == True
   CONDITION: spade_len <= 3
 
-RULE B_1C_1H_4C_961_0:
+RULE B_1C_1H_4C_478_0:
   CALL: 4C
   PRIORITY: 67
   CONDITION: is_opening == False
@@ -7192,7 +3839,7 @@ RULE B_1C_1H_4C_961_0:
   CONDITION: hcp <= 4
   CONDITION: club_hcp >= 7
 
-RULE B_1C_1H_4S_962_0:
+RULE B_1C_1H_4S_479_0:
   CALL: 4S
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -7204,7 +3851,7 @@ RULE B_1C_1H_4S_962_0:
   CONDITION: hcp <= 10
   CONDITION: spade_len >= 7
 
-RULE B_1C_1S_PASS_972_0:
+RULE B_1C_1S_PASS_489_0:
   CALL: PASS
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -7214,7 +3861,7 @@ RULE B_1C_1S_PASS_972_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1C_1S_PASS_972_1:
+RULE B_1C_1S_PASS_489_1:
   CALL: PASS
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -7224,18 +3871,7 @@ RULE B_1C_1S_PASS_972_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 6
 
-RULE B_1C_1S_PASS_972_2:
-  CALL: PASS
-  PRIORITY: 32
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1C'
-  CONDITION: opp_last_call == '1S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 5
-  CONDITION: hcp >= 10
-
-RULE B_1C_1S_1NT_973_0:
+RULE B_1C_1S_1NT_490_0:
   CALL: 1NT
   PRIORITY: 21
   CONDITION: is_opening == False
@@ -7247,7 +3883,7 @@ RULE B_1C_1S_1NT_973_0:
   CONDITION: spade_len >= 3
   CONDITION: hcp <= 11
 
-RULE B_1C_1S_1NT_973_1:
+RULE B_1C_1S_1NT_490_1:
   CALL: 1NT
   PRIORITY: 21
   CONDITION: is_opening == False
@@ -7259,7 +3895,7 @@ RULE B_1C_1S_1NT_973_1:
   CONDITION: s_stopper >= 2
   CONDITION: hcp <= 10
 
-RULE B_1C_1S_2C_974_0:
+RULE B_1C_1S_2C_491_0:
   CALL: 2C
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -7271,7 +3907,7 @@ RULE B_1C_1S_2C_974_0:
   CONDITION: hcp >= 6
   CONDITION: club_len >= 4
 
-RULE B_1C_1S_2C_974_1:
+RULE B_1C_1S_2C_491_1:
   CALL: 2C
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -7284,7 +3920,7 @@ RULE B_1C_1S_2C_974_1:
   CONDITION: club_len >= 4
   CONDITION: hcp >= 5
 
-RULE B_1C_1S_2C_974_2:
+RULE B_1C_1S_2C_491_2:
   CALL: 2C
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -7296,7 +3932,7 @@ RULE B_1C_1S_2C_974_2:
   CONDITION: hcp >= 6
   CONDITION: club_len >= 4
 
-RULE B_1C_1S_2D_975_0:
+RULE B_1C_1S_2D_492_0:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7307,7 +3943,7 @@ RULE B_1C_1S_2D_975_0:
   CONDITION: hcp >= 9
   CONDITION: diamond_len >= 5
 
-RULE B_1C_1S_2D_975_1_0:
+RULE B_1C_1S_2D_492_1_0:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7320,7 +3956,7 @@ RULE B_1C_1S_2D_975_1_0:
   CONDITION: h_has_ace == True
   CONDITION: h_has_king == True
 
-RULE B_1C_1S_2D_975_1_1:
+RULE B_1C_1S_2D_492_1_1:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7333,7 +3969,7 @@ RULE B_1C_1S_2D_975_1_1:
   CONDITION: h_has_ace == True
   CONDITION: h_has_queen == True
 
-RULE B_1C_1S_2D_975_1_2:
+RULE B_1C_1S_2D_492_1_2:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7346,7 +3982,7 @@ RULE B_1C_1S_2D_975_1_2:
   CONDITION: h_has_ace == True
   CONDITION: h_has_jack == True
 
-RULE B_1C_1S_2D_975_1_3:
+RULE B_1C_1S_2D_492_1_3:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7359,7 +3995,7 @@ RULE B_1C_1S_2D_975_1_3:
   CONDITION: h_has_ace == True
   CONDITION: h_has_ten == True
 
-RULE B_1C_1S_2D_975_1_4:
+RULE B_1C_1S_2D_492_1_4:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7372,7 +4008,7 @@ RULE B_1C_1S_2D_975_1_4:
   CONDITION: h_has_king == True
   CONDITION: h_has_queen == True
 
-RULE B_1C_1S_2D_975_1_5:
+RULE B_1C_1S_2D_492_1_5:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7385,7 +4021,7 @@ RULE B_1C_1S_2D_975_1_5:
   CONDITION: h_has_king == True
   CONDITION: h_has_jack == True
 
-RULE B_1C_1S_2D_975_1_6:
+RULE B_1C_1S_2D_492_1_6:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7398,7 +4034,7 @@ RULE B_1C_1S_2D_975_1_6:
   CONDITION: h_has_king == True
   CONDITION: h_has_ten == True
 
-RULE B_1C_1S_2D_975_1_7:
+RULE B_1C_1S_2D_492_1_7:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7411,7 +4047,7 @@ RULE B_1C_1S_2D_975_1_7:
   CONDITION: h_has_queen == True
   CONDITION: h_has_jack == True
 
-RULE B_1C_1S_2D_975_1_8:
+RULE B_1C_1S_2D_492_1_8:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7424,7 +4060,7 @@ RULE B_1C_1S_2D_975_1_8:
   CONDITION: h_has_queen == True
   CONDITION: h_has_ten == True
 
-RULE B_1C_1S_2D_975_1_9:
+RULE B_1C_1S_2D_492_1_9:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7437,7 +4073,7 @@ RULE B_1C_1S_2D_975_1_9:
   CONDITION: h_has_jack == True
   CONDITION: h_has_ten == True
 
-RULE B_1C_1S_2D_975_2:
+RULE B_1C_1S_2D_492_2:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7448,7 +4084,7 @@ RULE B_1C_1S_2D_975_2:
   CONDITION: hcp >= 12
   CONDITION: diamond_len >= 4
 
-RULE B_1C_1S_2D_975_3:
+RULE B_1C_1S_2D_492_3:
   CALL: 2D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7459,7 +4095,7 @@ RULE B_1C_1S_2D_975_3:
   CONDITION: diamond_len >= 5
   CONDITION: hcp >= 12
 
-RULE B_1C_1S_2H_976_0:
+RULE B_1C_1S_2H_493_0:
   CALL: 2H
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -7470,7 +4106,7 @@ RULE B_1C_1S_2H_976_0:
   CONDITION: heart_len >= 6
   CONDITION: hcp >= 8
 
-RULE B_1C_1S_2H_976_1:
+RULE B_1C_1S_2H_493_1:
   CALL: 2H
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -7481,7 +4117,7 @@ RULE B_1C_1S_2H_976_1:
   CONDITION: heart_len >= 5
   CONDITION: hcp >= 10
 
-RULE B_1C_1S_2S_977_0:
+RULE B_1C_1S_2S_494_0:
   CALL: 2S
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -7493,7 +4129,7 @@ RULE B_1C_1S_2S_977_0:
   CONDITION: club_len >= 3
   CONDITION: heart_len <= 3
 
-RULE B_1C_1S_2S_977_1:
+RULE B_1C_1S_2S_494_1:
   CALL: 2S
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -7506,7 +4142,7 @@ RULE B_1C_1S_2S_977_1:
   CONDITION: hcp >= 9
   CONDITION: heart_len <= 3
 
-RULE B_1C_1S_2NT_978_0:
+RULE B_1C_1S_2NT_495_0:
   CALL: 2NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -7518,7 +4154,7 @@ RULE B_1C_1S_2NT_978_0:
   CONDITION: spade_len >= 4
   CONDITION: hcp <= 12
 
-RULE B_1C_1S_2NT_978_1:
+RULE B_1C_1S_2NT_495_1:
   CALL: 2NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -7530,7 +4166,7 @@ RULE B_1C_1S_2NT_978_1:
   CONDITION: s_stopper >= 2
   CONDITION: hcp <= 11
 
-RULE B_1C_1S_3C_979_0:
+RULE B_1C_1S_3C_496_0:
   CALL: 3C
   PRIORITY: 47
   CONDITION: is_opening == False
@@ -7542,7 +4178,7 @@ RULE B_1C_1S_3C_979_0:
   CONDITION: hcp >= 4
   CONDITION: club_hcp <= 9
 
-RULE B_1C_1S_3D_980_0:
+RULE B_1C_1S_3D_497_0:
   CALL: 3D
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -7554,7 +4190,7 @@ RULE B_1C_1S_3D_980_0:
   CONDITION: hcp >= 13
   CONDITION: diamond_hcp <= 15
 
-RULE B_1C_1S_3H_981_0:
+RULE B_1C_1S_3H_498_0:
   CALL: 3H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -7565,7 +4201,7 @@ RULE B_1C_1S_3H_981_0:
   CONDITION: hcp >= 15
   CONDITION: heart_len >= 6
 
-RULE B_1C_1S_3NT_982_0:
+RULE B_1C_1S_3NT_499_0:
   CALL: 3NT
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -7578,7 +4214,7 @@ RULE B_1C_1S_3NT_982_0:
   CONDITION: hcp <= 17
   CONDITION: club_len <= 3
 
-RULE B_1C_1S_3NT_982_1:
+RULE B_1C_1S_3NT_499_1:
   CALL: 3NT
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -7593,7 +4229,7 @@ RULE B_1C_1S_3NT_982_1:
   CONDITION: is_semi_balanced == True
   CONDITION: heart_len <= 3
 
-RULE B_1C_1S_4C_983_0:
+RULE B_1C_1S_4C_500_0:
   CALL: 4C
   PRIORITY: 67
   CONDITION: is_opening == False
@@ -7605,7 +4241,7 @@ RULE B_1C_1S_4C_983_0:
   CONDITION: hcp <= 4
   CONDITION: club_hcp >= 7
 
-RULE B_1C_1S_4H_984_0:
+RULE B_1C_1S_4H_501_0:
   CALL: 4H
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -7617,7 +4253,7 @@ RULE B_1C_1S_4H_984_0:
   CONDITION: hcp <= 10
   CONDITION: heart_len >= 7
 
-RULE B_1C_2C_PASS_994_0:
+RULE B_1C_2C_PASS_511_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -7627,7 +4263,7 @@ RULE B_1C_2C_PASS_994_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1C_2C_2D_995_0:
+RULE B_1C_2C_2D_512_0:
   CALL: 2D
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -7639,7 +4275,7 @@ RULE B_1C_2C_2D_995_0:
   CONDITION: hcp >= 7
   CONDITION: hcp <= 9
 
-RULE B_1C_2C_2H_996_0:
+RULE B_1C_2C_2H_513_0:
   CALL: 2H
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -7650,7 +4286,7 @@ RULE B_1C_2C_2H_996_0:
   CONDITION: hcp >= 10
   CONDITION: club_len >= 4
 
-RULE B_1C_2C_2S_997_0:
+RULE B_1C_2C_2S_514_0:
   CALL: 2S
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -7661,7 +4297,7 @@ RULE B_1C_2C_2S_997_0:
   CONDITION: hcp >= 10
   CONDITION: diamond_len >= 5
 
-RULE B_1C_2C_2S_997_1:
+RULE B_1C_2C_2S_514_1:
   CALL: 2S
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -7673,7 +4309,7 @@ RULE B_1C_2C_2S_997_1:
   CONDITION: diamond_len >= 5
   CONDITION: club_len <= 4
 
-RULE B_1C_2C_2NT_998_0:
+RULE B_1C_2C_2NT_515_0:
   CALL: 2NT
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -7686,7 +4322,7 @@ RULE B_1C_2C_2NT_998_0:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 12
 
-RULE B_1C_2C_3C_999_0:
+RULE B_1C_2C_3C_516_0:
   CALL: 3C
   PRIORITY: 52
   CONDITION: is_opening == False
@@ -7698,7 +4334,7 @@ RULE B_1C_2C_3C_999_0:
   CONDITION: club_len >= 4
   CONDITION: hcp <= 9
 
-RULE B_1C_2C_3H_1000_0:
+RULE B_1C_2C_3H_517_0:
   CALL: 3H
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -7710,7 +4346,7 @@ RULE B_1C_2C_3H_1000_0:
   CONDITION: club_len >= 4
   CONDITION: hcp <= 9
 
-RULE B_1C_2C_3S_1001_0:
+RULE B_1C_2C_3S_518_0:
   CALL: 3S
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -7721,7 +4357,7 @@ RULE B_1C_2C_3S_1001_0:
   CONDITION: hcp >= 11
   CONDITION: club_len >= 5
 
-RULE B_1C_2C_3NT_1002_0:
+RULE B_1C_2C_3NT_519_0:
   CALL: 3NT
   PRIORITY: 57
   CONDITION: is_opening == False
@@ -7734,7 +4370,7 @@ RULE B_1C_2C_3NT_1002_0:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 20
 
-RULE B_1C_2C_4C_1003_0:
+RULE B_1C_2C_4C_520_0:
   CALL: 4C
   PRIORITY: 53
   CONDITION: is_opening == False
@@ -7746,7 +4382,7 @@ RULE B_1C_2C_4C_1003_0:
   CONDITION: club_len >= 6
   CONDITION: hcp <= 9
 
-RULE B_1C_2C_4H_1004_0:
+RULE B_1C_2C_4H_521_0:
   CALL: 4H
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -7758,7 +4394,7 @@ RULE B_1C_2C_4H_1004_0:
   CONDITION: club_hcp >= 17
   CONDITION: heart_len <= 1
 
-RULE B_1C_2C_4S_1005_0:
+RULE B_1C_2C_4S_522_0:
   CALL: 4S
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -7770,7 +4406,7 @@ RULE B_1C_2C_4S_1005_0:
   CONDITION: club_hcp >= 17
   CONDITION: spade_len <= 1
 
-RULE B_1C_2C_X_1015_0:
+RULE B_1C_2C_X_532_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -7780,7 +4416,7 @@ RULE B_1C_2C_X_1015_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 12
 
-RULE B_1C_2D_PASS_1016_0:
+RULE B_1C_2D_PASS_533_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -7790,7 +4426,7 @@ RULE B_1C_2D_PASS_1016_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1C_2D_PASS_1016_1:
+RULE B_1C_2D_PASS_533_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -7800,7 +4436,7 @@ RULE B_1C_2D_PASS_1016_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: diamond_len >= 4
 
-RULE B_1C_2D_PASS_1016_2:
+RULE B_1C_2D_PASS_533_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -7810,7 +4446,7 @@ RULE B_1C_2D_PASS_1016_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1C_2D_2NT_1019_0:
+RULE B_1C_2D_2NT_536_0:
   CALL: 2NT
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -7822,7 +4458,7 @@ RULE B_1C_2D_2NT_1019_0:
   CONDITION: hcp <= 12
   CONDITION: d_stopper >= 2
 
-RULE B_1C_2D_3C_1020_0:
+RULE B_1C_2D_3C_537_0:
   CALL: 3C
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -7834,7 +4470,7 @@ RULE B_1C_2D_3C_1020_0:
   CONDITION: hcp <= 11
   CONDITION: club_len >= 4
 
-RULE B_1C_2D_3D_1021_0:
+RULE B_1C_2D_3D_538_0:
   CALL: 3D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -7845,7 +4481,7 @@ RULE B_1C_2D_3D_1021_0:
   CONDITION: hcp >= 12
   CONDITION: club_len >= 4
 
-RULE B_1C_2D_3D_1021_1:
+RULE B_1C_2D_3D_538_1:
   CALL: 3D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -7856,7 +4492,7 @@ RULE B_1C_2D_3D_1021_1:
   CONDITION: hcp >= 11
   CONDITION: club_len >= 5
 
-RULE B_1C_2D_3NT_1022_0:
+RULE B_1C_2D_3NT_539_0:
   CALL: 3NT
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -7867,7 +4503,7 @@ RULE B_1C_2D_3NT_1022_0:
   CONDITION: hcp >= 12
   CONDITION: d_stopper >= 2
 
-RULE B_1C_2D_X_1023_0:
+RULE B_1C_2D_X_540_0:
   CALL: X
   PRIORITY: 51
   CONDITION: is_opening == False
@@ -7879,7 +4515,7 @@ RULE B_1C_2D_X_1023_0:
   CONDITION: spade_len >= 3
   CONDITION: heart_len >= 4
 
-RULE B_1C_2D_X_1023_1:
+RULE B_1C_2D_X_540_1:
   CALL: X
   PRIORITY: 51
   CONDITION: is_opening == False
@@ -7891,7 +4527,7 @@ RULE B_1C_2D_X_1023_1:
   CONDITION: spade_len >= 4
   CONDITION: heart_len >= 3
 
-RULE B_1C_2D_X_1023_2:
+RULE B_1C_2D_X_540_2:
   CALL: X
   PRIORITY: 51
   CONDITION: is_opening == False
@@ -7903,7 +4539,7 @@ RULE B_1C_2D_X_1023_2:
   CONDITION: spade_len >= 3
   CONDITION: heart_len >= 3
 
-RULE B_1C_2D_X_1023_3:
+RULE B_1C_2D_X_540_3:
   CALL: X
   PRIORITY: 51
   CONDITION: is_opening == False
@@ -7915,7 +4551,7 @@ RULE B_1C_2D_X_1023_3:
   CONDITION: spade_len >= 5
   CONDITION: heart_len >= 5
 
-RULE B_1C_2D_X_1023_4:
+RULE B_1C_2D_X_540_4:
   CALL: X
   PRIORITY: 51
   CONDITION: is_opening == False
@@ -7927,7 +4563,7 @@ RULE B_1C_2D_X_1023_4:
   CONDITION: spade_len >= 4
   CONDITION: heart_len >= 4
 
-RULE B_1C_2H_PASS_1024_0:
+RULE B_1C_2H_PASS_541_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -7937,7 +4573,7 @@ RULE B_1C_2H_PASS_1024_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1C_2H_PASS_1024_2:
+RULE B_1C_2H_PASS_541_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -7947,7 +4583,7 @@ RULE B_1C_2H_PASS_1024_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1C_2H_2S_1025_0:
+RULE B_1C_2H_2S_542_0:
   CALL: 2S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -7958,7 +4594,7 @@ RULE B_1C_2H_2S_1025_0:
   CONDITION: spade_hcp >= 11
   CONDITION: spade_len >= 5
 
-RULE B_1C_2H_2NT_1026_0:
+RULE B_1C_2H_2NT_543_0:
   CALL: 2NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -7970,7 +4606,7 @@ RULE B_1C_2H_2NT_1026_0:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 12
 
-RULE B_1C_2H_3C_1027_0:
+RULE B_1C_2H_3C_544_0:
   CALL: 3C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -7982,7 +4618,7 @@ RULE B_1C_2H_3C_1027_0:
   CONDITION: hcp <= 11
   CONDITION: club_len >= 5
 
-RULE B_1C_2H_3C_1027_1:
+RULE B_1C_2H_3C_544_1:
   CALL: 3C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -7994,7 +4630,7 @@ RULE B_1C_2H_3C_1027_1:
   CONDITION: hcp <= 11
   CONDITION: club_len >= 4
 
-RULE B_1C_2H_3D_1028_0:
+RULE B_1C_2H_3D_545_0:
   CALL: 3D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -8005,7 +4641,7 @@ RULE B_1C_2H_3D_1028_0:
   CONDITION: hcp >= 10
   CONDITION: diamond_len >= 5
 
-RULE B_1C_2H_3D_1028_1:
+RULE B_1C_2H_3D_545_1:
   CALL: 3D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -8016,7 +4652,7 @@ RULE B_1C_2H_3D_1028_1:
   CONDITION: hcp >= 11
   CONDITION: diamond_len >= 5
 
-RULE B_1C_2H_3H_1030_0:
+RULE B_1C_2H_3H_547_0:
   CALL: 3H
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -8027,7 +4663,7 @@ RULE B_1C_2H_3H_1030_0:
   CONDITION: hcp >= 12
   CONDITION: club_len >= 3
 
-RULE B_1C_2H_3H_1030_1:
+RULE B_1C_2H_3H_547_1:
   CALL: 3H
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -8038,7 +4674,7 @@ RULE B_1C_2H_3H_1030_1:
   CONDITION: hcp >= 11
   CONDITION: club_len >= 4
 
-RULE B_1C_2H_X_1042_0:
+RULE B_1C_2H_X_559_0:
   CALL: X
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -8049,7 +4685,7 @@ RULE B_1C_2H_X_1042_0:
   CONDITION: hcp >= 13
   CONDITION: spade_len >= 3
 
-RULE B_1C_2H_X_1042_1:
+RULE B_1C_2H_X_559_1:
   CALL: X
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -8060,7 +4696,7 @@ RULE B_1C_2H_X_1042_1:
   CONDITION: total_points >= 9
   CONDITION: spade_len >= 4
 
-RULE B_1C_2S_PASS_1043_0:
+RULE B_1C_2S_PASS_560_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8070,7 +4706,7 @@ RULE B_1C_2S_PASS_1043_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1C_2S_PASS_1043_2:
+RULE B_1C_2S_PASS_560_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8080,7 +4716,7 @@ RULE B_1C_2S_PASS_1043_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1C_2S_2NT_1044_0:
+RULE B_1C_2S_2NT_561_0:
   CALL: 2NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -8092,7 +4728,7 @@ RULE B_1C_2S_2NT_1044_0:
   CONDITION: s_stopper >= 2
   CONDITION: hcp <= 12
 
-RULE B_1C_2S_3C_1045_0:
+RULE B_1C_2S_3C_562_0:
   CALL: 3C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -8104,7 +4740,7 @@ RULE B_1C_2S_3C_1045_0:
   CONDITION: hcp <= 11
   CONDITION: club_len >= 5
 
-RULE B_1C_2S_3C_1045_1:
+RULE B_1C_2S_3C_562_1:
   CALL: 3C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -8116,7 +4752,7 @@ RULE B_1C_2S_3C_1045_1:
   CONDITION: hcp <= 11
   CONDITION: club_len >= 4
 
-RULE B_1C_2S_3D_1046_0:
+RULE B_1C_2S_3D_563_0:
   CALL: 3D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -8127,7 +4763,7 @@ RULE B_1C_2S_3D_1046_0:
   CONDITION: hcp >= 10
   CONDITION: diamond_len >= 5
 
-RULE B_1C_2S_3D_1046_1:
+RULE B_1C_2S_3D_563_1:
   CALL: 3D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -8138,7 +4774,7 @@ RULE B_1C_2S_3D_1046_1:
   CONDITION: hcp >= 11
   CONDITION: diamond_len >= 5
 
-RULE B_1C_2S_3S_1049_0:
+RULE B_1C_2S_3S_566_0:
   CALL: 3S
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -8149,7 +4785,7 @@ RULE B_1C_2S_3S_1049_0:
   CONDITION: hcp >= 12
   CONDITION: club_len >= 3
 
-RULE B_1C_2S_3S_1049_1:
+RULE B_1C_2S_3S_566_1:
   CALL: 3S
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -8160,7 +4796,7 @@ RULE B_1C_2S_3S_1049_1:
   CONDITION: hcp >= 11
   CONDITION: club_len >= 4
 
-RULE B_1C_2S_X_1060_0:
+RULE B_1C_2S_X_577_0:
   CALL: X
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -8171,7 +4807,7 @@ RULE B_1C_2S_X_1060_0:
   CONDITION: hcp >= 13
   CONDITION: heart_len >= 3
 
-RULE B_1C_2S_X_1060_1:
+RULE B_1C_2S_X_577_1:
   CALL: X
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -8182,7 +4818,7 @@ RULE B_1C_2S_X_1060_1:
   CONDITION: total_points >= 9
   CONDITION: heart_len >= 4
 
-RULE B_1C_3C_PASS_1061_0:
+RULE B_1C_3C_PASS_578_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8192,7 +4828,7 @@ RULE B_1C_3C_PASS_1061_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1C_3C_X_1063_0:
+RULE B_1C_3C_X_580_0:
   CALL: X
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8202,7 +4838,7 @@ RULE B_1C_3C_X_1063_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_1C_3D_PASS_1064_0:
+RULE B_1C_3D_PASS_581_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8212,7 +4848,7 @@ RULE B_1C_3D_PASS_1064_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1C_3D_3NT_1067_0:
+RULE B_1C_3D_3NT_584_0:
   CALL: 3NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -8223,7 +4859,7 @@ RULE B_1C_3D_3NT_1067_0:
   CONDITION: hcp >= 12
   CONDITION: d_stopper >= 2
 
-RULE B_1C_3D_X_1070_0:
+RULE B_1C_3D_X_587_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -8233,7 +4869,7 @@ RULE B_1C_3D_X_1070_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_1C_3H_PASS_1071_0:
+RULE B_1C_3H_PASS_588_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8243,7 +4879,7 @@ RULE B_1C_3H_PASS_1071_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 12
 
-RULE B_1C_3H_PASS_1071_1:
+RULE B_1C_3H_PASS_588_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8253,7 +4889,7 @@ RULE B_1C_3H_PASS_1071_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: heart_len >= 4
 
-RULE B_1C_3H_PASS_1071_2:
+RULE B_1C_3H_PASS_588_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8263,7 +4899,7 @@ RULE B_1C_3H_PASS_1071_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1C_3H_3S_1072_0:
+RULE B_1C_3H_3S_589_0:
   CALL: 3S
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -8275,7 +4911,7 @@ RULE B_1C_3H_3S_1072_0:
   CONDITION: hcp >= 12
   CONDITION: s_top2_honors >= 1
 
-RULE B_1C_3H_3S_1072_1:
+RULE B_1C_3H_3S_589_1:
   CALL: 3S
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -8286,7 +4922,7 @@ RULE B_1C_3H_3S_1072_1:
   CONDITION: spade_len >= 6
   CONDITION: hcp >= 12
 
-RULE B_1C_3H_4C_1074_0:
+RULE B_1C_3H_4C_591_0:
   CALL: 4C
   PRIORITY: 12
   CONDITION: is_opening == False
@@ -8298,7 +4934,7 @@ RULE B_1C_3H_4C_1074_0:
   CONDITION: club_len >= 4
   CONDITION: hcp <= 14
 
-RULE B_1C_3H_4D_1075_0:
+RULE B_1C_3H_4D_592_0:
   CALL: 4D
   PRIORITY: 16
   CONDITION: is_opening == False
@@ -8309,7 +4945,7 @@ RULE B_1C_3H_4D_1075_0:
   CONDITION: hcp >= 12
   CONDITION: diamond_len >= 6
 
-RULE B_1C_3H_4H_1076_0:
+RULE B_1C_3H_4H_593_0:
   CALL: 4H
   PRIORITY: 52
   CONDITION: is_opening == False
@@ -8321,7 +4957,7 @@ RULE B_1C_3H_4H_1076_0:
   CONDITION: club_len >= 4
   CONDITION: club_hcp >= 14
 
-RULE B_1C_3H_4S_1077_0:
+RULE B_1C_3H_4S_594_0:
   CALL: 4S
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -8333,7 +4969,7 @@ RULE B_1C_3H_4S_1077_0:
   CONDITION: spade_len >= 6
   CONDITION: club_hcp >= 14
 
-RULE B_1C_3H_5C_1079_0:
+RULE B_1C_3H_5C_596_0:
   CALL: 5C
   PRIORITY: 27
   CONDITION: is_opening == False
@@ -8345,7 +4981,7 @@ RULE B_1C_3H_5C_1079_0:
   CONDITION: club_len >= 4
   CONDITION: hcp <= 18
 
-RULE B_1C_3H_6S_1084_0:
+RULE B_1C_3H_6S_601_0:
   CALL: 6S
   PRIORITY: 66
   CONDITION: is_opening == False
@@ -8356,7 +4992,7 @@ RULE B_1C_3H_6S_1084_0:
   CONDITION: spade_len >= 8
   CONDITION: losing_trick_count <= 3
 
-RULE B_1C_3H_X_1088_0:
+RULE B_1C_3H_X_605_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -8366,7 +5002,7 @@ RULE B_1C_3H_X_1088_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 12
 
-RULE B_1C_3H_X_1088_1:
+RULE B_1C_3H_X_605_1:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -8377,7 +5013,7 @@ RULE B_1C_3H_X_1088_1:
   CONDITION: hcp >= 10
   CONDITION: heart_len <= 2
 
-RULE B_1C_3S_PASS_1089_0:
+RULE B_1C_3S_PASS_606_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8387,7 +5023,7 @@ RULE B_1C_3S_PASS_1089_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 12
 
-RULE B_1C_3S_PASS_1089_1:
+RULE B_1C_3S_PASS_606_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8397,7 +5033,7 @@ RULE B_1C_3S_PASS_1089_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: spade_len >= 4
 
-RULE B_1C_3S_PASS_1089_2:
+RULE B_1C_3S_PASS_606_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8407,7 +5043,7 @@ RULE B_1C_3S_PASS_1089_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1C_3S_4C_1091_0:
+RULE B_1C_3S_4C_608_0:
   CALL: 4C
   PRIORITY: 12
   CONDITION: is_opening == False
@@ -8419,7 +5055,7 @@ RULE B_1C_3S_4C_1091_0:
   CONDITION: club_len >= 4
   CONDITION: hcp <= 14
 
-RULE B_1C_3S_4D_1092_0:
+RULE B_1C_3S_4D_609_0:
   CALL: 4D
   PRIORITY: 16
   CONDITION: is_opening == False
@@ -8430,7 +5066,7 @@ RULE B_1C_3S_4D_1092_0:
   CONDITION: hcp >= 12
   CONDITION: diamond_len >= 6
 
-RULE B_1C_3S_4H_1093_0:
+RULE B_1C_3S_4H_610_0:
   CALL: 4H
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -8442,7 +5078,7 @@ RULE B_1C_3S_4H_1093_0:
   CONDITION: heart_len >= 6
   CONDITION: club_hcp >= 14
 
-RULE B_1C_3S_4S_1094_0:
+RULE B_1C_3S_4S_611_0:
   CALL: 4S
   PRIORITY: 52
   CONDITION: is_opening == False
@@ -8454,7 +5090,7 @@ RULE B_1C_3S_4S_1094_0:
   CONDITION: club_len >= 4
   CONDITION: club_hcp >= 14
 
-RULE B_1C_3S_5C_1096_0:
+RULE B_1C_3S_5C_613_0:
   CALL: 5C
   PRIORITY: 27
   CONDITION: is_opening == False
@@ -8466,7 +5102,7 @@ RULE B_1C_3S_5C_1096_0:
   CONDITION: club_len >= 4
   CONDITION: hcp <= 18
 
-RULE B_1C_3S_6H_1101_0:
+RULE B_1C_3S_6H_618_0:
   CALL: 6H
   PRIORITY: 66
   CONDITION: is_opening == False
@@ -8477,7 +5113,7 @@ RULE B_1C_3S_6H_1101_0:
   CONDITION: heart_len >= 8
   CONDITION: losing_trick_count <= 3
 
-RULE B_1C_3S_X_1105_0:
+RULE B_1C_3S_X_622_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -8487,7 +5123,7 @@ RULE B_1C_3S_X_1105_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 12
 
-RULE B_1C_3S_X_1105_1:
+RULE B_1C_3S_X_622_1:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -8498,7 +5134,7 @@ RULE B_1C_3S_X_1105_1:
   CONDITION: hcp >= 10
   CONDITION: spade_len <= 2
 
-RULE B_1C_4D_PASS_1106_0:
+RULE B_1C_4D_PASS_623_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8507,7 +5143,7 @@ RULE B_1C_4D_PASS_1106_0:
   CONDITION: opp_last_call == '4D'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1C_4D_X_1114_0:
+RULE B_1C_4D_X_631_0:
   CALL: X
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -8517,7 +5153,7 @@ RULE B_1C_4D_X_1114_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 13
 
-RULE B_1C_4H_PASS_1115_0:
+RULE B_1C_4H_PASS_632_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8526,7 +5162,7 @@ RULE B_1C_4H_PASS_1115_0:
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1C_4H_5C_1119_0:
+RULE B_1C_4H_5C_636_0:
   CALL: 5C
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -8537,7 +5173,7 @@ RULE B_1C_4H_5C_1119_0:
   CONDITION: club_len >= 5
   CONDITION: hcp >= 12
 
-RULE B_1C_4S_PASS_1131_0:
+RULE B_1C_4S_PASS_648_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8546,7 +5182,7 @@ RULE B_1C_4S_PASS_1131_0:
   CONDITION: opp_last_call == '4S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1C_4S_5C_1134_0:
+RULE B_1C_4S_5C_651_0:
   CALL: 5C
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -8557,7 +5193,7 @@ RULE B_1C_4S_5C_1134_0:
   CONDITION: club_len >= 5
   CONDITION: hcp >= 12
 
-RULE B_1C_6D_PASS_1151_0:
+RULE B_1C_6D_PASS_668_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8566,7 +5202,7 @@ RULE B_1C_6D_PASS_1151_0:
   CONDITION: opp_last_call == '6D'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1C_6H_PASS_1152_0:
+RULE B_1C_6H_PASS_669_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8575,16 +5211,7 @@ RULE B_1C_6H_PASS_1152_0:
   CONDITION: opp_last_call == '6H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1C_6S_PASS_1153_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1C'
-  CONDITION: opp_last_call == '6S'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1C_7H_PASS_1154_0:
+RULE B_1C_7H_PASS_670_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8593,16 +5220,7 @@ RULE B_1C_7H_PASS_1154_0:
   CONDITION: opp_last_call == '7H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1C_7S_PASS_1155_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1C'
-  CONDITION: opp_last_call == '7S'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1C_1N_PASS_1156_0:
+RULE B_1C_1N_PASS_671_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8611,7 +5229,7 @@ RULE B_1C_1N_PASS_1156_0:
   CONDITION: opp_last_call == '1NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1C_1N_2H_1159_0:
+RULE B_1C_1N_2H_674_0:
   CALL: 2H
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -8624,7 +5242,7 @@ RULE B_1C_1N_2H_1159_0:
   CONDITION: losing_trick_count <= 9
   CONDITION: hcp >= 3
 
-RULE B_1C_1N_2S_1160_0:
+RULE B_1C_1N_2S_675_0:
   CALL: 2S
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -8637,7 +5255,7 @@ RULE B_1C_1N_2S_1160_0:
   CONDITION: losing_trick_count <= 9
   CONDITION: hcp >= 3
 
-RULE B_1C_1N_X_1164_0:
+RULE B_1C_1N_X_679_0:
   CALL: X
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -8647,7 +5265,7 @@ RULE B_1C_1N_X_1164_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 9
 
-RULE B_1C_2N_PASS_1165_0:
+RULE B_1C_2N_PASS_680_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8657,7 +5275,7 @@ RULE B_1C_2N_PASS_1165_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 10
 
-RULE B_1C_2N_3C_1166_0:
+RULE B_1C_2N_3C_681_0:
   CALL: 3C
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -8669,7 +5287,7 @@ RULE B_1C_2N_3C_1166_0:
   CONDITION: club_hcp >= 7
   CONDITION: club_hcp <= 11
 
-RULE B_1C_2N_3D_1167_0:
+RULE B_1C_2N_3D_682_0:
   CALL: 3D
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -8680,7 +5298,7 @@ RULE B_1C_2N_3D_1167_0:
   CONDITION: club_len >= 4
   CONDITION: club_hcp >= 12
 
-RULE B_1C_2N_3H_1168_0:
+RULE B_1C_2N_3H_683_0:
   CALL: 3H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -8691,7 +5309,7 @@ RULE B_1C_2N_3H_1168_0:
   CONDITION: spade_len >= 5
   CONDITION: hcp >= 10
 
-RULE B_1C_2N_3S_1169_0:
+RULE B_1C_2N_3S_684_0:
   CALL: 3S
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -8703,7 +5321,7 @@ RULE B_1C_2N_3S_1169_0:
   CONDITION: spade_len >= 6
   CONDITION: hcp < 10
 
-RULE B_1C_2N_3NT_1170_0:
+RULE B_1C_2N_3NT_685_0:
   CALL: 3NT
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -8716,7 +5334,7 @@ RULE B_1C_2N_3NT_1170_0:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 20
 
-RULE B_1C_2N_X_1180_0:
+RULE B_1C_2N_X_695_0:
   CALL: X
   PRIORITY: 5
   CONDITION: is_opening == False
@@ -8726,7 +5344,7 @@ RULE B_1C_2N_X_1180_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 11
 
-RULE B_1D_P_PASS_1181_0:
+RULE B_1D_P_PASS_696_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8736,7 +5354,7 @@ RULE B_1D_P_PASS_1181_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp < 6
 
-RULE B_1D_P_1NT_1184_0:
+RULE B_1D_P_1NT_699_0:
   CALL: 1NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -8750,7 +5368,7 @@ RULE B_1D_P_1NT_1184_0:
   CONDITION: heart_len < 4
   CONDITION: is_balanced == True
 
-RULE B_1D_P_1NT_1185_0:
+RULE B_1D_P_1NT_700_0:
   CALL: 1NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -8764,7 +5382,7 @@ RULE B_1D_P_1NT_1185_0:
   CONDITION: heart_len < 4
   CONDITION: spade_len < 4
 
-RULE B_1D_P_2D_1187_1:
+RULE B_1D_P_2D_702_1:
   CALL: 2D
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -8778,7 +5396,7 @@ RULE B_1D_P_2D_1187_1:
   CONDITION: spade_len < 4
   CONDITION: hcp < 12
 
-RULE B_1D_P_2H_1188_3:
+RULE B_1D_P_2H_703_3:
   CALL: 2H
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -8791,7 +5409,7 @@ RULE B_1D_P_2H_1188_3:
   CONDITION: hcp > 17
   CONDITION: controls >= 4
 
-RULE B_1D_P_2H_1188_4:
+RULE B_1D_P_2H_703_4:
   CALL: 2H
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -8804,7 +5422,7 @@ RULE B_1D_P_2H_1188_4:
   CONDITION: hcp >= 17
   CONDITION: controls >= 4
 
-RULE B_1D_P_2S_1189_3:
+RULE B_1D_P_2S_704_3:
   CALL: 2S
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -8817,7 +5435,7 @@ RULE B_1D_P_2S_1189_3:
   CONDITION: hcp > 17
   CONDITION: controls >= 4
 
-RULE B_1D_P_2S_1189_4:
+RULE B_1D_P_2S_704_4:
   CALL: 2S
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -8830,7 +5448,7 @@ RULE B_1D_P_2S_1189_4:
   CONDITION: hcp >= 17
   CONDITION: controls >= 4
 
-RULE B_1D_P_2NT_1190_0:
+RULE B_1D_P_2NT_705_0:
   CALL: 2NT
   PRIORITY: 65
   CONDITION: is_opening == False
@@ -8844,7 +5462,7 @@ RULE B_1D_P_2NT_1190_0:
   CONDITION: spade_len < 4
   CONDITION: heart_len < 4
 
-RULE B_1D_P_2NT_1190_1:
+RULE B_1D_P_2NT_705_1:
   CALL: 2NT
   PRIORITY: 65
   CONDITION: is_opening == False
@@ -8858,7 +5476,7 @@ RULE B_1D_P_2NT_1190_1:
   CONDITION: spade_len < 4
   CONDITION: heart_len < 4
 
-RULE B_1D_P_3C_1191_0:
+RULE B_1D_P_3C_706_0:
   CALL: 3C
   PRIORITY: 16
   CONDITION: is_opening == False
@@ -8872,7 +5490,7 @@ RULE B_1D_P_3C_1191_0:
   CONDITION: heart_len < 4
   CONDITION: spade_len < 4
 
-RULE B_1D_P_3H_1193_0:
+RULE B_1D_P_3H_708_0:
   CALL: 3H
   PRIORITY: 150
   CONDITION: is_opening == False
@@ -8885,7 +5503,7 @@ RULE B_1D_P_3H_1193_0:
   CONDITION: diamond_len >= 5
   CONDITION: spade_len <= 3
 
-RULE B_1D_P_3S_1194_0:
+RULE B_1D_P_3S_709_0:
   CALL: 3S
   PRIORITY: 150
   CONDITION: is_opening == False
@@ -8898,7 +5516,7 @@ RULE B_1D_P_3S_1194_0:
   CONDITION: diamond_len >= 5
   CONDITION: heart_len <= 3
 
-RULE B_1D_P_3NT_1195_0:
+RULE B_1D_P_3NT_710_0:
   CALL: 3NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -8912,7 +5530,7 @@ RULE B_1D_P_3NT_1195_0:
   CONDITION: spade_len < 4
   CONDITION: heart_len < 4
 
-RULE B_1D_P_4H_1196_0:
+RULE B_1D_P_4H_711_0:
   CALL: 4H
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -8924,7 +5542,7 @@ RULE B_1D_P_4H_1196_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 6
 
-RULE B_1D_P_4S_1197_0:
+RULE B_1D_P_4S_712_0:
   CALL: 4S
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -8936,7 +5554,7 @@ RULE B_1D_P_4S_1197_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 6
 
-RULE B_1D_P_5C_1199_0:
+RULE B_1D_P_5C_714_0:
   CALL: 5C
   PRIORITY: 72
   CONDITION: is_opening == False
@@ -8948,7 +5566,7 @@ RULE B_1D_P_5C_1199_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 5
 
-RULE B_1D_P_5D_1200_0:
+RULE B_1D_P_5D_715_0:
   CALL: 5D
   PRIORITY: 51
   CONDITION: is_opening == False
@@ -8960,7 +5578,7 @@ RULE B_1D_P_5D_1200_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 5
 
-RULE B_1D_X_PASS_1208_0:
+RULE B_1D_X_PASS_723_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -8970,7 +5588,7 @@ RULE B_1D_X_PASS_1208_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 5
 
-RULE B_1D_X_1NT_1211_0:
+RULE B_1D_X_1NT_726_0:
   CALL: 1NT
   PRIORITY: 12
   CONDITION: is_opening == False
@@ -8981,7 +5599,7 @@ RULE B_1D_X_1NT_1211_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 6
 
-RULE B_1D_X_2D_1213_0:
+RULE B_1D_X_2D_728_0:
   CALL: 2D
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -8993,7 +5611,7 @@ RULE B_1D_X_2D_1213_0:
   CONDITION: total_points >= 7
   CONDITION: total_points <= 10
 
-RULE B_1D_X_2H_1214_0:
+RULE B_1D_X_2H_729_0:
   CALL: 2H
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -9005,7 +5623,7 @@ RULE B_1D_X_2H_1214_0:
   CONDITION: hcp < 10
   CONDITION: heart_len >= 6
 
-RULE B_1D_X_2S_1215_0:
+RULE B_1D_X_2S_730_0:
   CALL: 2S
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -9017,7 +5635,7 @@ RULE B_1D_X_2S_1215_0:
   CONDITION: hcp < 10
   CONDITION: spade_len >= 6
 
-RULE B_1D_X_2NT_1216_0:
+RULE B_1D_X_2NT_731_0:
   CALL: 2NT
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -9031,7 +5649,7 @@ RULE B_1D_X_2NT_1216_0:
   CONDITION: heart_len <= 4
   CONDITION: spade_len <= 4
 
-RULE B_1D_X_3D_1217_0:
+RULE B_1D_X_3D_732_0:
   CALL: 3D
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -9043,7 +5661,7 @@ RULE B_1D_X_3D_1217_0:
   CONDITION: hcp <= 10
   CONDITION: diamond_len >= 5
 
-RULE B_1D_X_3H_1218_0:
+RULE B_1D_X_3H_733_0:
   CALL: 3H
   PRIORITY: 94
   CONDITION: is_opening == False
@@ -9055,7 +5673,7 @@ RULE B_1D_X_3H_1218_0:
   CONDITION: hcp < 10
   CONDITION: heart_len >= 7
 
-RULE B_1D_X_3S_1219_0:
+RULE B_1D_X_3S_734_0:
   CALL: 3S
   PRIORITY: 94
   CONDITION: is_opening == False
@@ -9067,7 +5685,7 @@ RULE B_1D_X_3S_1219_0:
   CONDITION: hcp < 10
   CONDITION: spade_len >= 7
 
-RULE B_1D_X_4D_1220_0:
+RULE B_1D_X_4D_735_0:
   CALL: 4D
   PRIORITY: 97
   CONDITION: is_opening == False
@@ -9079,7 +5697,7 @@ RULE B_1D_X_4D_1220_0:
   CONDITION: hcp <= 6
   CONDITION: diamond_len >= 7
 
-RULE B_1D_X_4H_1221_0:
+RULE B_1D_X_4H_736_0:
   CALL: 4H
   PRIORITY: 98
   CONDITION: is_opening == False
@@ -9091,7 +5709,7 @@ RULE B_1D_X_4H_1221_0:
   CONDITION: hcp < 10
   CONDITION: heart_len >= 8
 
-RULE B_1D_X_4S_1222_0:
+RULE B_1D_X_4S_737_0:
   CALL: 4S
   PRIORITY: 98
   CONDITION: is_opening == False
@@ -9103,7 +5721,7 @@ RULE B_1D_X_4S_1222_0:
   CONDITION: hcp < 10
   CONDITION: spade_len >= 8
 
-RULE B_1D_X_XX_1223_0:
+RULE B_1D_X_XX_738_0:
   CALL: XX
   PRIORITY: 42
   CONDITION: is_opening == False
@@ -9115,7 +5733,7 @@ RULE B_1D_X_XX_1223_0:
   CONDITION: longest_suit_len <= 5
   CONDITION: controls >= 2
 
-RULE B_1D_X_XX_1223_1:
+RULE B_1D_X_XX_738_1:
   CALL: XX
   PRIORITY: 42
   CONDITION: is_opening == False
@@ -9127,7 +5745,7 @@ RULE B_1D_X_XX_1223_1:
   CONDITION: longest_suit_len <= 5
   CONDITION: controls >= 3
 
-RULE B_1D_X_XX_1223_2:
+RULE B_1D_X_XX_738_2:
   CALL: XX
   PRIORITY: 42
   CONDITION: is_opening == False
@@ -9138,7 +5756,7 @@ RULE B_1D_X_XX_1223_2:
   CONDITION: hcp >= 11
   CONDITION: longest_suit_len <= 5
 
-RULE B_1D_X_XX_1223_3:
+RULE B_1D_X_XX_738_3:
   CALL: XX
   PRIORITY: 42
   CONDITION: is_opening == False
@@ -9149,7 +5767,7 @@ RULE B_1D_X_XX_1223_3:
   CONDITION: hcp >= 12
   CONDITION: club_len >= 5
 
-RULE B_1D_1H_PASS_1224_0:
+RULE B_1D_1H_PASS_739_0:
   CALL: PASS
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -9159,7 +5777,7 @@ RULE B_1D_1H_PASS_1224_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1D_1H_PASS_1224_1:
+RULE B_1D_1H_PASS_739_1:
   CALL: PASS
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -9169,18 +5787,7 @@ RULE B_1D_1H_PASS_1224_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 6
 
-RULE B_1D_1H_PASS_1224_2:
-  CALL: PASS
-  PRIORITY: 32
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1D'
-  CONDITION: opp_last_call == '1H'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 5
-  CONDITION: hcp >= 10
-
-RULE B_1D_1H_1S_1225_0:
+RULE B_1D_1H_1S_740_0:
   CALL: 1S
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -9191,7 +5798,7 @@ RULE B_1D_1H_1S_1225_0:
   CONDITION: spade_hcp >= 6
   CONDITION: spade_len >= 5
 
-RULE B_1D_1H_1NT_1226_0:
+RULE B_1D_1H_1NT_741_0:
   CALL: 1NT
   PRIORITY: 21
   CONDITION: is_opening == False
@@ -9203,7 +5810,7 @@ RULE B_1D_1H_1NT_1226_0:
   CONDITION: heart_len >= 3
   CONDITION: hcp <= 11
 
-RULE B_1D_1H_1NT_1226_1:
+RULE B_1D_1H_1NT_741_1:
   CALL: 1NT
   PRIORITY: 21
   CONDITION: is_opening == False
@@ -9215,7 +5822,7 @@ RULE B_1D_1H_1NT_1226_1:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 10
 
-RULE B_1D_1H_2C_1227_0:
+RULE B_1D_1H_2C_742_0:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9226,7 +5833,7 @@ RULE B_1D_1H_2C_1227_0:
   CONDITION: hcp >= 9
   CONDITION: club_len >= 5
 
-RULE B_1D_1H_2C_1227_1_0:
+RULE B_1D_1H_2C_742_1_0:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9239,7 +5846,7 @@ RULE B_1D_1H_2C_1227_1_0:
   CONDITION: h_has_ace == True
   CONDITION: h_has_king == True
 
-RULE B_1D_1H_2C_1227_1_1:
+RULE B_1D_1H_2C_742_1_1:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9252,7 +5859,7 @@ RULE B_1D_1H_2C_1227_1_1:
   CONDITION: h_has_ace == True
   CONDITION: h_has_queen == True
 
-RULE B_1D_1H_2C_1227_1_2:
+RULE B_1D_1H_2C_742_1_2:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9265,7 +5872,7 @@ RULE B_1D_1H_2C_1227_1_2:
   CONDITION: h_has_ace == True
   CONDITION: h_has_jack == True
 
-RULE B_1D_1H_2C_1227_1_3:
+RULE B_1D_1H_2C_742_1_3:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9278,7 +5885,7 @@ RULE B_1D_1H_2C_1227_1_3:
   CONDITION: h_has_ace == True
   CONDITION: h_has_ten == True
 
-RULE B_1D_1H_2C_1227_1_4:
+RULE B_1D_1H_2C_742_1_4:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9291,7 +5898,7 @@ RULE B_1D_1H_2C_1227_1_4:
   CONDITION: h_has_king == True
   CONDITION: h_has_queen == True
 
-RULE B_1D_1H_2C_1227_1_5:
+RULE B_1D_1H_2C_742_1_5:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9304,7 +5911,7 @@ RULE B_1D_1H_2C_1227_1_5:
   CONDITION: h_has_king == True
   CONDITION: h_has_jack == True
 
-RULE B_1D_1H_2C_1227_1_6:
+RULE B_1D_1H_2C_742_1_6:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9317,7 +5924,7 @@ RULE B_1D_1H_2C_1227_1_6:
   CONDITION: h_has_king == True
   CONDITION: h_has_ten == True
 
-RULE B_1D_1H_2C_1227_1_7:
+RULE B_1D_1H_2C_742_1_7:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9330,7 +5937,7 @@ RULE B_1D_1H_2C_1227_1_7:
   CONDITION: h_has_queen == True
   CONDITION: h_has_jack == True
 
-RULE B_1D_1H_2C_1227_1_8:
+RULE B_1D_1H_2C_742_1_8:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9343,7 +5950,7 @@ RULE B_1D_1H_2C_1227_1_8:
   CONDITION: h_has_queen == True
   CONDITION: h_has_ten == True
 
-RULE B_1D_1H_2C_1227_1_9:
+RULE B_1D_1H_2C_742_1_9:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9356,7 +5963,7 @@ RULE B_1D_1H_2C_1227_1_9:
   CONDITION: h_has_jack == True
   CONDITION: h_has_ten == True
 
-RULE B_1D_1H_2C_1227_2:
+RULE B_1D_1H_2C_742_2:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9367,7 +5974,7 @@ RULE B_1D_1H_2C_1227_2:
   CONDITION: hcp >= 12
   CONDITION: club_len >= 4
 
-RULE B_1D_1H_2C_1227_3:
+RULE B_1D_1H_2C_742_3:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9378,7 +5985,7 @@ RULE B_1D_1H_2C_1227_3:
   CONDITION: club_len >= 5
   CONDITION: hcp >= 12
 
-RULE B_1D_1H_2D_1228_0:
+RULE B_1D_1H_2D_743_0:
   CALL: 2D
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -9390,7 +5997,7 @@ RULE B_1D_1H_2D_1228_0:
   CONDITION: hcp >= 6
   CONDITION: diamond_len >= 4
 
-RULE B_1D_1H_2D_1228_1:
+RULE B_1D_1H_2D_743_1:
   CALL: 2D
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -9403,7 +6010,7 @@ RULE B_1D_1H_2D_1228_1:
   CONDITION: diamond_len >= 4
   CONDITION: hcp >= 5
 
-RULE B_1D_1H_2D_1228_2:
+RULE B_1D_1H_2D_743_2:
   CALL: 2D
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -9415,7 +6022,7 @@ RULE B_1D_1H_2D_1228_2:
   CONDITION: hcp >= 6
   CONDITION: diamond_len >= 4
 
-RULE B_1D_1H_2H_1229_0:
+RULE B_1D_1H_2H_744_0:
   CALL: 2H
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -9427,7 +6034,7 @@ RULE B_1D_1H_2H_1229_0:
   CONDITION: diamond_len >= 3
   CONDITION: spade_len <= 3
 
-RULE B_1D_1H_2H_1229_1:
+RULE B_1D_1H_2H_744_1:
   CALL: 2H
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -9440,7 +6047,7 @@ RULE B_1D_1H_2H_1229_1:
   CONDITION: hcp >= 9
   CONDITION: spade_len <= 3
 
-RULE B_1D_1H_2NT_1230_0:
+RULE B_1D_1H_2NT_745_0:
   CALL: 2NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -9452,7 +6059,7 @@ RULE B_1D_1H_2NT_1230_0:
   CONDITION: heart_len >= 4
   CONDITION: hcp <= 12
 
-RULE B_1D_1H_2NT_1230_1:
+RULE B_1D_1H_2NT_745_1:
   CALL: 2NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -9464,7 +6071,7 @@ RULE B_1D_1H_2NT_1230_1:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 11
 
-RULE B_1D_1H_3C_1231_0:
+RULE B_1D_1H_3C_746_0:
   CALL: 3C
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -9476,7 +6083,7 @@ RULE B_1D_1H_3C_1231_0:
   CONDITION: hcp >= 13
   CONDITION: club_hcp <= 15
 
-RULE B_1D_1H_3D_1232_0:
+RULE B_1D_1H_3D_747_0:
   CALL: 3D
   PRIORITY: 47
   CONDITION: is_opening == False
@@ -9488,7 +6095,7 @@ RULE B_1D_1H_3D_1232_0:
   CONDITION: hcp >= 4
   CONDITION: diamond_hcp <= 9
 
-RULE B_1D_1H_3S_1233_0:
+RULE B_1D_1H_3S_748_0:
   CALL: 3S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -9499,7 +6106,7 @@ RULE B_1D_1H_3S_1233_0:
   CONDITION: hcp >= 15
   CONDITION: spade_len >= 6
 
-RULE B_1D_1H_3NT_1234_0:
+RULE B_1D_1H_3NT_749_0:
   CALL: 3NT
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -9512,7 +6119,7 @@ RULE B_1D_1H_3NT_1234_0:
   CONDITION: hcp <= 17
   CONDITION: diamond_len <= 3
 
-RULE B_1D_1H_3NT_1234_1:
+RULE B_1D_1H_3NT_749_1:
   CALL: 3NT
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -9527,7 +6134,7 @@ RULE B_1D_1H_3NT_1234_1:
   CONDITION: is_semi_balanced == True
   CONDITION: spade_len <= 3
 
-RULE B_1D_1H_4D_1235_0:
+RULE B_1D_1H_4D_750_0:
   CALL: 4D
   PRIORITY: 67
   CONDITION: is_opening == False
@@ -9539,7 +6146,7 @@ RULE B_1D_1H_4D_1235_0:
   CONDITION: hcp <= 4
   CONDITION: diamond_hcp >= 7
 
-RULE B_1D_1H_4S_1236_0:
+RULE B_1D_1H_4S_751_0:
   CALL: 4S
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -9551,7 +6158,7 @@ RULE B_1D_1H_4S_1236_0:
   CONDITION: hcp <= 10
   CONDITION: spade_len >= 7
 
-RULE B_1D_1S_PASS_1246_0:
+RULE B_1D_1S_PASS_761_0:
   CALL: PASS
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -9561,7 +6168,7 @@ RULE B_1D_1S_PASS_1246_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1D_1S_PASS_1246_1:
+RULE B_1D_1S_PASS_761_1:
   CALL: PASS
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -9571,18 +6178,7 @@ RULE B_1D_1S_PASS_1246_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 6
 
-RULE B_1D_1S_PASS_1246_2:
-  CALL: PASS
-  PRIORITY: 32
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1D'
-  CONDITION: opp_last_call == '1S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 5
-  CONDITION: hcp >= 10
-
-RULE B_1D_1S_1NT_1247_0:
+RULE B_1D_1S_1NT_762_0:
   CALL: 1NT
   PRIORITY: 21
   CONDITION: is_opening == False
@@ -9594,7 +6190,7 @@ RULE B_1D_1S_1NT_1247_0:
   CONDITION: spade_len >= 3
   CONDITION: hcp <= 11
 
-RULE B_1D_1S_1NT_1247_1:
+RULE B_1D_1S_1NT_762_1:
   CALL: 1NT
   PRIORITY: 21
   CONDITION: is_opening == False
@@ -9606,7 +6202,7 @@ RULE B_1D_1S_1NT_1247_1:
   CONDITION: s_stopper >= 2
   CONDITION: hcp <= 10
 
-RULE B_1D_1S_2C_1248_0:
+RULE B_1D_1S_2C_763_0:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9617,7 +6213,7 @@ RULE B_1D_1S_2C_1248_0:
   CONDITION: hcp >= 9
   CONDITION: club_len >= 5
 
-RULE B_1D_1S_2C_1248_1_0:
+RULE B_1D_1S_2C_763_1_0:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9630,7 +6226,7 @@ RULE B_1D_1S_2C_1248_1_0:
   CONDITION: h_has_ace == True
   CONDITION: h_has_king == True
 
-RULE B_1D_1S_2C_1248_1_1:
+RULE B_1D_1S_2C_763_1_1:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9643,7 +6239,7 @@ RULE B_1D_1S_2C_1248_1_1:
   CONDITION: h_has_ace == True
   CONDITION: h_has_queen == True
 
-RULE B_1D_1S_2C_1248_1_2:
+RULE B_1D_1S_2C_763_1_2:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9656,7 +6252,7 @@ RULE B_1D_1S_2C_1248_1_2:
   CONDITION: h_has_ace == True
   CONDITION: h_has_jack == True
 
-RULE B_1D_1S_2C_1248_1_3:
+RULE B_1D_1S_2C_763_1_3:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9669,7 +6265,7 @@ RULE B_1D_1S_2C_1248_1_3:
   CONDITION: h_has_ace == True
   CONDITION: h_has_ten == True
 
-RULE B_1D_1S_2C_1248_1_4:
+RULE B_1D_1S_2C_763_1_4:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9682,7 +6278,7 @@ RULE B_1D_1S_2C_1248_1_4:
   CONDITION: h_has_king == True
   CONDITION: h_has_queen == True
 
-RULE B_1D_1S_2C_1248_1_5:
+RULE B_1D_1S_2C_763_1_5:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9695,7 +6291,7 @@ RULE B_1D_1S_2C_1248_1_5:
   CONDITION: h_has_king == True
   CONDITION: h_has_jack == True
 
-RULE B_1D_1S_2C_1248_1_6:
+RULE B_1D_1S_2C_763_1_6:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9708,7 +6304,7 @@ RULE B_1D_1S_2C_1248_1_6:
   CONDITION: h_has_king == True
   CONDITION: h_has_ten == True
 
-RULE B_1D_1S_2C_1248_1_7:
+RULE B_1D_1S_2C_763_1_7:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9721,7 +6317,7 @@ RULE B_1D_1S_2C_1248_1_7:
   CONDITION: h_has_queen == True
   CONDITION: h_has_jack == True
 
-RULE B_1D_1S_2C_1248_1_8:
+RULE B_1D_1S_2C_763_1_8:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9734,7 +6330,7 @@ RULE B_1D_1S_2C_1248_1_8:
   CONDITION: h_has_queen == True
   CONDITION: h_has_ten == True
 
-RULE B_1D_1S_2C_1248_1_9:
+RULE B_1D_1S_2C_763_1_9:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9747,7 +6343,7 @@ RULE B_1D_1S_2C_1248_1_9:
   CONDITION: h_has_jack == True
   CONDITION: h_has_ten == True
 
-RULE B_1D_1S_2C_1248_2:
+RULE B_1D_1S_2C_763_2:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9758,7 +6354,7 @@ RULE B_1D_1S_2C_1248_2:
   CONDITION: hcp >= 12
   CONDITION: club_len >= 4
 
-RULE B_1D_1S_2C_1248_3:
+RULE B_1D_1S_2C_763_3:
   CALL: 2C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -9769,7 +6365,7 @@ RULE B_1D_1S_2C_1248_3:
   CONDITION: club_len >= 5
   CONDITION: hcp >= 12
 
-RULE B_1D_1S_2D_1249_0:
+RULE B_1D_1S_2D_764_0:
   CALL: 2D
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -9781,7 +6377,7 @@ RULE B_1D_1S_2D_1249_0:
   CONDITION: hcp >= 6
   CONDITION: diamond_len >= 4
 
-RULE B_1D_1S_2D_1249_1:
+RULE B_1D_1S_2D_764_1:
   CALL: 2D
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -9794,7 +6390,7 @@ RULE B_1D_1S_2D_1249_1:
   CONDITION: diamond_len >= 4
   CONDITION: hcp >= 5
 
-RULE B_1D_1S_2D_1249_2:
+RULE B_1D_1S_2D_764_2:
   CALL: 2D
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -9806,7 +6402,7 @@ RULE B_1D_1S_2D_1249_2:
   CONDITION: hcp >= 6
   CONDITION: diamond_len >= 4
 
-RULE B_1D_1S_2H_1250_0:
+RULE B_1D_1S_2H_765_0:
   CALL: 2H
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -9817,7 +6413,7 @@ RULE B_1D_1S_2H_1250_0:
   CONDITION: heart_len >= 6
   CONDITION: hcp >= 8
 
-RULE B_1D_1S_2H_1250_1:
+RULE B_1D_1S_2H_765_1:
   CALL: 2H
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -9828,7 +6424,7 @@ RULE B_1D_1S_2H_1250_1:
   CONDITION: heart_len >= 5
   CONDITION: hcp >= 10
 
-RULE B_1D_1S_2S_1251_0:
+RULE B_1D_1S_2S_766_0:
   CALL: 2S
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -9840,7 +6436,7 @@ RULE B_1D_1S_2S_1251_0:
   CONDITION: diamond_len >= 3
   CONDITION: heart_len <= 3
 
-RULE B_1D_1S_2S_1251_1:
+RULE B_1D_1S_2S_766_1:
   CALL: 2S
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -9853,7 +6449,7 @@ RULE B_1D_1S_2S_1251_1:
   CONDITION: hcp >= 9
   CONDITION: heart_len <= 3
 
-RULE B_1D_1S_2NT_1252_0:
+RULE B_1D_1S_2NT_767_0:
   CALL: 2NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -9865,7 +6461,7 @@ RULE B_1D_1S_2NT_1252_0:
   CONDITION: spade_len >= 4
   CONDITION: hcp <= 12
 
-RULE B_1D_1S_2NT_1252_1:
+RULE B_1D_1S_2NT_767_1:
   CALL: 2NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -9877,7 +6473,7 @@ RULE B_1D_1S_2NT_1252_1:
   CONDITION: s_stopper >= 2
   CONDITION: hcp <= 11
 
-RULE B_1D_1S_3C_1253_0:
+RULE B_1D_1S_3C_768_0:
   CALL: 3C
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -9889,7 +6485,7 @@ RULE B_1D_1S_3C_1253_0:
   CONDITION: hcp >= 13
   CONDITION: club_hcp <= 15
 
-RULE B_1D_1S_3D_1254_0:
+RULE B_1D_1S_3D_769_0:
   CALL: 3D
   PRIORITY: 47
   CONDITION: is_opening == False
@@ -9901,7 +6497,7 @@ RULE B_1D_1S_3D_1254_0:
   CONDITION: hcp >= 4
   CONDITION: diamond_hcp <= 9
 
-RULE B_1D_1S_3H_1255_0:
+RULE B_1D_1S_3H_770_0:
   CALL: 3H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -9912,7 +6508,7 @@ RULE B_1D_1S_3H_1255_0:
   CONDITION: hcp >= 15
   CONDITION: heart_len >= 6
 
-RULE B_1D_1S_3NT_1256_0:
+RULE B_1D_1S_3NT_771_0:
   CALL: 3NT
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -9925,7 +6521,7 @@ RULE B_1D_1S_3NT_1256_0:
   CONDITION: hcp <= 17
   CONDITION: diamond_len <= 3
 
-RULE B_1D_1S_3NT_1256_1:
+RULE B_1D_1S_3NT_771_1:
   CALL: 3NT
   PRIORITY: 75
   CONDITION: is_opening == False
@@ -9940,7 +6536,7 @@ RULE B_1D_1S_3NT_1256_1:
   CONDITION: is_semi_balanced == True
   CONDITION: heart_len <= 3
 
-RULE B_1D_1S_4D_1257_0:
+RULE B_1D_1S_4D_772_0:
   CALL: 4D
   PRIORITY: 67
   CONDITION: is_opening == False
@@ -9952,7 +6548,7 @@ RULE B_1D_1S_4D_1257_0:
   CONDITION: hcp <= 4
   CONDITION: diamond_hcp >= 7
 
-RULE B_1D_1S_4H_1258_0:
+RULE B_1D_1S_4H_773_0:
   CALL: 4H
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -9964,7 +6560,7 @@ RULE B_1D_1S_4H_1258_0:
   CONDITION: hcp <= 10
   CONDITION: heart_len >= 7
 
-RULE B_1D_2C_PASS_1268_0:
+RULE B_1D_2C_PASS_783_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -9975,7 +6571,7 @@ RULE B_1D_2C_PASS_1268_0:
   CONDITION: hcp <= 11
   CONDITION: club_len >= 4
 
-RULE B_1D_2C_PASS_1268_1:
+RULE B_1D_2C_PASS_783_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -9986,7 +6582,7 @@ RULE B_1D_2C_PASS_1268_1:
   CONDITION: club_len >= 4
   CONDITION: hcp >= 10
 
-RULE B_1D_2C_PASS_1268_2:
+RULE B_1D_2C_PASS_783_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -9996,7 +6592,7 @@ RULE B_1D_2C_PASS_1268_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 10
 
-RULE B_1D_2C_PASS_1268_3:
+RULE B_1D_2C_PASS_783_3:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10006,7 +6602,7 @@ RULE B_1D_2C_PASS_1268_3:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1D_2C_PASS_1268_4:
+RULE B_1D_2C_PASS_783_4:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10016,7 +6612,7 @@ RULE B_1D_2C_PASS_1268_4:
   CONDITION: passes_since_last_bid == 0
   CONDITION: club_len >= 5
 
-RULE B_1D_2C_2D_1269_0:
+RULE B_1D_2C_2D_784_0:
   CALL: 2D
   PRIORITY: 52
   CONDITION: is_opening == False
@@ -10027,7 +6623,7 @@ RULE B_1D_2C_2D_1269_0:
   CONDITION: hcp >= 6
   CONDITION: diamond_len >= 4
 
-RULE B_1D_2C_2NT_1272_0:
+RULE B_1D_2C_2NT_787_0:
   CALL: 2NT
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -10039,7 +6635,7 @@ RULE B_1D_2C_2NT_1272_0:
   CONDITION: hcp >= 9
   CONDITION: hcp <= 11
 
-RULE B_1D_2C_3C_1273_0:
+RULE B_1D_2C_3C_788_0:
   CALL: 3C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -10050,7 +6646,7 @@ RULE B_1D_2C_3C_1273_0:
   CONDITION: diamond_len >= 4
   CONDITION: diamond_hcp >= 10
 
-RULE B_1D_2C_3D_1274_0:
+RULE B_1D_2C_3D_789_0:
   CALL: 3D
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -10062,7 +6658,7 @@ RULE B_1D_2C_3D_1274_0:
   CONDITION: diamond_hcp >= 6
   CONDITION: diamond_hcp <= 9
 
-RULE B_1D_2C_3NT_1277_0:
+RULE B_1D_2C_3NT_792_0:
   CALL: 3NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -10073,7 +6669,7 @@ RULE B_1D_2C_3NT_1277_0:
   CONDITION: c_stopper >= 2
   CONDITION: hcp >= 12
 
-RULE B_1D_2C_4H_1278_0:
+RULE B_1D_2C_4H_793_0:
   CALL: 4H
   PRIORITY: 64
   CONDITION: is_opening == False
@@ -10085,7 +6681,7 @@ RULE B_1D_2C_4H_1278_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 6
 
-RULE B_1D_2C_4S_1279_0:
+RULE B_1D_2C_4S_794_0:
   CALL: 4S
   PRIORITY: 64
   CONDITION: is_opening == False
@@ -10097,7 +6693,7 @@ RULE B_1D_2C_4S_1279_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 6
 
-RULE B_1D_2C_X_1288_0:
+RULE B_1D_2C_X_803_0:
   CALL: X
   PRIORITY: 44
   CONDITION: is_opening == False
@@ -10109,7 +6705,7 @@ RULE B_1D_2C_X_1288_0:
   CONDITION: hcp >= 9
   CONDITION: spade_len >= 3
 
-RULE B_1D_2C_X_1288_1:
+RULE B_1D_2C_X_803_1:
   CALL: X
   PRIORITY: 44
   CONDITION: is_opening == False
@@ -10121,7 +6717,7 @@ RULE B_1D_2C_X_1288_1:
   CONDITION: hcp >= 9
   CONDITION: spade_len >= 4
 
-RULE B_1D_2D_PASS_1289_0:
+RULE B_1D_2D_PASS_804_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10131,7 +6727,7 @@ RULE B_1D_2D_PASS_1289_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1D_2D_2H_1290_0:
+RULE B_1D_2D_2H_805_0:
   CALL: 2H
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -10142,7 +6738,7 @@ RULE B_1D_2D_2H_1290_0:
   CONDITION: hcp >= 10
   CONDITION: diamond_len >= 4
 
-RULE B_1D_2D_2S_1291_0:
+RULE B_1D_2D_2S_806_0:
   CALL: 2S
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -10153,7 +6749,7 @@ RULE B_1D_2D_2S_1291_0:
   CONDITION: hcp >= 10
   CONDITION: club_len >= 5
 
-RULE B_1D_2D_2S_1291_1:
+RULE B_1D_2D_2S_806_1:
   CALL: 2S
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -10165,7 +6761,7 @@ RULE B_1D_2D_2S_1291_1:
   CONDITION: club_len >= 5
   CONDITION: diamond_len <= 4
 
-RULE B_1D_2D_2NT_1292_0:
+RULE B_1D_2D_2NT_807_0:
   CALL: 2NT
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -10178,7 +6774,7 @@ RULE B_1D_2D_2NT_1292_0:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 12
 
-RULE B_1D_2D_3C_1293_0:
+RULE B_1D_2D_3C_808_0:
   CALL: 3C
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -10190,7 +6786,7 @@ RULE B_1D_2D_3C_1293_0:
   CONDITION: club_len >= 6
   CONDITION: hcp <= 10
 
-RULE B_1D_2D_3D_1294_0:
+RULE B_1D_2D_3D_809_0:
   CALL: 3D
   PRIORITY: 52
   CONDITION: is_opening == False
@@ -10202,7 +6798,7 @@ RULE B_1D_2D_3D_1294_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 9
 
-RULE B_1D_2D_3H_1295_0:
+RULE B_1D_2D_3H_810_0:
   CALL: 3H
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -10214,7 +6810,7 @@ RULE B_1D_2D_3H_1295_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 9
 
-RULE B_1D_2D_3S_1296_0:
+RULE B_1D_2D_3S_811_0:
   CALL: 3S
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -10225,7 +6821,7 @@ RULE B_1D_2D_3S_1296_0:
   CONDITION: hcp >= 11
   CONDITION: diamond_len >= 5
 
-RULE B_1D_2D_3NT_1297_0:
+RULE B_1D_2D_3NT_812_0:
   CALL: 3NT
   PRIORITY: 57
   CONDITION: is_opening == False
@@ -10238,7 +6834,7 @@ RULE B_1D_2D_3NT_1297_0:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 20
 
-RULE B_1D_2D_4D_1298_0:
+RULE B_1D_2D_4D_813_0:
   CALL: 4D
   PRIORITY: 53
   CONDITION: is_opening == False
@@ -10250,7 +6846,7 @@ RULE B_1D_2D_4D_1298_0:
   CONDITION: diamond_len >= 6
   CONDITION: hcp <= 9
 
-RULE B_1D_2D_4H_1299_0:
+RULE B_1D_2D_4H_814_0:
   CALL: 4H
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -10262,7 +6858,7 @@ RULE B_1D_2D_4H_1299_0:
   CONDITION: diamond_hcp >= 17
   CONDITION: heart_len <= 1
 
-RULE B_1D_2D_4S_1300_0:
+RULE B_1D_2D_4S_815_0:
   CALL: 4S
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -10274,7 +6870,7 @@ RULE B_1D_2D_4S_1300_0:
   CONDITION: diamond_hcp >= 17
   CONDITION: spade_len <= 1
 
-RULE B_1D_2D_X_1310_0:
+RULE B_1D_2D_X_825_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -10284,7 +6880,7 @@ RULE B_1D_2D_X_1310_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 12
 
-RULE B_1D_2H_PASS_1311_0:
+RULE B_1D_2H_PASS_826_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10294,7 +6890,7 @@ RULE B_1D_2H_PASS_1311_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1D_2H_PASS_1311_2:
+RULE B_1D_2H_PASS_826_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10304,7 +6900,7 @@ RULE B_1D_2H_PASS_1311_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1D_2H_2S_1312_0:
+RULE B_1D_2H_2S_827_0:
   CALL: 2S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -10315,7 +6911,7 @@ RULE B_1D_2H_2S_1312_0:
   CONDITION: spade_hcp >= 11
   CONDITION: spade_len >= 5
 
-RULE B_1D_2H_2NT_1313_0:
+RULE B_1D_2H_2NT_828_0:
   CALL: 2NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -10327,7 +6923,7 @@ RULE B_1D_2H_2NT_1313_0:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 12
 
-RULE B_1D_2H_3C_1314_0:
+RULE B_1D_2H_3C_829_0:
   CALL: 3C
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -10338,7 +6934,7 @@ RULE B_1D_2H_3C_1314_0:
   CONDITION: hcp >= 10
   CONDITION: club_len >= 5
 
-RULE B_1D_2H_3C_1314_1:
+RULE B_1D_2H_3C_829_1:
   CALL: 3C
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -10349,7 +6945,7 @@ RULE B_1D_2H_3C_1314_1:
   CONDITION: hcp >= 11
   CONDITION: club_len >= 5
 
-RULE B_1D_2H_3C_1314_2:
+RULE B_1D_2H_3C_829_2:
   CALL: 3C
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -10360,7 +6956,7 @@ RULE B_1D_2H_3C_1314_2:
   CONDITION: club_len >= 4
   CONDITION: hcp >= 12
 
-RULE B_1D_2H_3D_1315_0:
+RULE B_1D_2H_3D_830_0:
   CALL: 3D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -10372,7 +6968,7 @@ RULE B_1D_2H_3D_1315_0:
   CONDITION: hcp <= 11
   CONDITION: diamond_len >= 5
 
-RULE B_1D_2H_3D_1315_1:
+RULE B_1D_2H_3D_830_1:
   CALL: 3D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -10384,7 +6980,7 @@ RULE B_1D_2H_3D_1315_1:
   CONDITION: hcp <= 11
   CONDITION: diamond_len >= 4
 
-RULE B_1D_2H_3H_1317_0:
+RULE B_1D_2H_3H_832_0:
   CALL: 3H
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -10395,7 +6991,7 @@ RULE B_1D_2H_3H_1317_0:
   CONDITION: hcp >= 12
   CONDITION: diamond_len >= 3
 
-RULE B_1D_2H_3H_1317_1:
+RULE B_1D_2H_3H_832_1:
   CALL: 3H
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -10406,7 +7002,7 @@ RULE B_1D_2H_3H_1317_1:
   CONDITION: hcp >= 11
   CONDITION: diamond_len >= 4
 
-RULE B_1D_2H_X_1329_0:
+RULE B_1D_2H_X_844_0:
   CALL: X
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -10417,7 +7013,7 @@ RULE B_1D_2H_X_1329_0:
   CONDITION: hcp >= 13
   CONDITION: spade_len >= 3
 
-RULE B_1D_2H_X_1329_1:
+RULE B_1D_2H_X_844_1:
   CALL: X
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -10428,7 +7024,7 @@ RULE B_1D_2H_X_1329_1:
   CONDITION: total_points >= 9
   CONDITION: spade_len >= 4
 
-RULE B_1D_2S_PASS_1330_0:
+RULE B_1D_2S_PASS_845_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10438,7 +7034,7 @@ RULE B_1D_2S_PASS_1330_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1D_2S_PASS_1330_2:
+RULE B_1D_2S_PASS_845_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10448,7 +7044,7 @@ RULE B_1D_2S_PASS_1330_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1D_2S_2NT_1331_0:
+RULE B_1D_2S_2NT_846_0:
   CALL: 2NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -10460,7 +7056,7 @@ RULE B_1D_2S_2NT_1331_0:
   CONDITION: s_stopper >= 2
   CONDITION: hcp <= 12
 
-RULE B_1D_2S_3C_1332_0:
+RULE B_1D_2S_3C_847_0:
   CALL: 3C
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -10471,7 +7067,7 @@ RULE B_1D_2S_3C_1332_0:
   CONDITION: hcp >= 10
   CONDITION: club_len >= 5
 
-RULE B_1D_2S_3C_1332_1:
+RULE B_1D_2S_3C_847_1:
   CALL: 3C
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -10482,7 +7078,7 @@ RULE B_1D_2S_3C_1332_1:
   CONDITION: hcp >= 11
   CONDITION: club_len >= 5
 
-RULE B_1D_2S_3C_1332_2:
+RULE B_1D_2S_3C_847_2:
   CALL: 3C
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -10493,7 +7089,7 @@ RULE B_1D_2S_3C_1332_2:
   CONDITION: club_len >= 4
   CONDITION: hcp >= 12
 
-RULE B_1D_2S_3D_1333_0:
+RULE B_1D_2S_3D_848_0:
   CALL: 3D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -10505,7 +7101,7 @@ RULE B_1D_2S_3D_1333_0:
   CONDITION: hcp <= 11
   CONDITION: diamond_len >= 5
 
-RULE B_1D_2S_3D_1333_1:
+RULE B_1D_2S_3D_848_1:
   CALL: 3D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -10517,7 +7113,7 @@ RULE B_1D_2S_3D_1333_1:
   CONDITION: hcp <= 11
   CONDITION: diamond_len >= 4
 
-RULE B_1D_2S_3S_1336_0:
+RULE B_1D_2S_3S_851_0:
   CALL: 3S
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -10528,7 +7124,7 @@ RULE B_1D_2S_3S_1336_0:
   CONDITION: hcp >= 12
   CONDITION: diamond_len >= 3
 
-RULE B_1D_2S_3S_1336_1:
+RULE B_1D_2S_3S_851_1:
   CALL: 3S
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -10539,7 +7135,7 @@ RULE B_1D_2S_3S_1336_1:
   CONDITION: hcp >= 11
   CONDITION: diamond_len >= 4
 
-RULE B_1D_2S_X_1347_0:
+RULE B_1D_2S_X_862_0:
   CALL: X
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -10550,7 +7146,7 @@ RULE B_1D_2S_X_1347_0:
   CONDITION: hcp >= 13
   CONDITION: heart_len >= 3
 
-RULE B_1D_2S_X_1347_1:
+RULE B_1D_2S_X_862_1:
   CALL: X
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -10561,7 +7157,7 @@ RULE B_1D_2S_X_1347_1:
   CONDITION: total_points >= 9
   CONDITION: heart_len >= 4
 
-RULE B_1D_3C_PASS_1348_0:
+RULE B_1D_3C_PASS_863_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10570,7 +7166,7 @@ RULE B_1D_3C_PASS_1348_0:
   CONDITION: opp_last_call == '3C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1D_3C_PASS_1348_1:
+RULE B_1D_3C_PASS_863_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10580,7 +7176,7 @@ RULE B_1D_3C_PASS_1348_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1D_3C_3D_1349_0:
+RULE B_1D_3C_3D_864_0:
   CALL: 3D
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -10592,7 +7188,7 @@ RULE B_1D_3C_3D_1349_0:
   CONDITION: diamond_hcp >= 9
   CONDITION: hcp <= 10
 
-RULE B_1D_3C_3NT_1352_0:
+RULE B_1D_3C_3NT_867_0:
   CALL: 3NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -10603,7 +7199,7 @@ RULE B_1D_3C_3NT_1352_0:
   CONDITION: hcp >= 12
   CONDITION: c_stopper >= 2
 
-RULE B_1D_3C_X_1355_0:
+RULE B_1D_3C_X_870_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -10613,7 +7209,7 @@ RULE B_1D_3C_X_1355_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_1D_3D_PASS_1356_0:
+RULE B_1D_3D_PASS_871_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10623,7 +7219,7 @@ RULE B_1D_3D_PASS_1356_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1D_3D_X_1358_0:
+RULE B_1D_3D_X_873_0:
   CALL: X
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10633,7 +7229,7 @@ RULE B_1D_3D_X_1358_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_1D_3H_PASS_1359_0:
+RULE B_1D_3H_PASS_874_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10643,7 +7239,7 @@ RULE B_1D_3H_PASS_1359_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 12
 
-RULE B_1D_3H_PASS_1359_1:
+RULE B_1D_3H_PASS_874_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10653,7 +7249,7 @@ RULE B_1D_3H_PASS_1359_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: heart_len >= 4
 
-RULE B_1D_3H_PASS_1359_2:
+RULE B_1D_3H_PASS_874_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10663,7 +7259,7 @@ RULE B_1D_3H_PASS_1359_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1D_3H_3S_1360_0:
+RULE B_1D_3H_3S_875_0:
   CALL: 3S
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -10675,7 +7271,7 @@ RULE B_1D_3H_3S_1360_0:
   CONDITION: hcp >= 12
   CONDITION: s_top2_honors >= 1
 
-RULE B_1D_3H_3S_1360_1:
+RULE B_1D_3H_3S_875_1:
   CALL: 3S
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -10686,7 +7282,7 @@ RULE B_1D_3H_3S_1360_1:
   CONDITION: spade_len >= 6
   CONDITION: hcp >= 12
 
-RULE B_1D_3H_4C_1362_0:
+RULE B_1D_3H_4C_877_0:
   CALL: 4C
   PRIORITY: 16
   CONDITION: is_opening == False
@@ -10697,7 +7293,7 @@ RULE B_1D_3H_4C_1362_0:
   CONDITION: hcp >= 12
   CONDITION: club_len >= 6
 
-RULE B_1D_3H_4D_1363_0:
+RULE B_1D_3H_4D_878_0:
   CALL: 4D
   PRIORITY: 12
   CONDITION: is_opening == False
@@ -10709,7 +7305,7 @@ RULE B_1D_3H_4D_1363_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 14
 
-RULE B_1D_3H_4H_1364_0:
+RULE B_1D_3H_4H_879_0:
   CALL: 4H
   PRIORITY: 52
   CONDITION: is_opening == False
@@ -10721,7 +7317,7 @@ RULE B_1D_3H_4H_1364_0:
   CONDITION: diamond_len >= 4
   CONDITION: diamond_hcp >= 14
 
-RULE B_1D_3H_4S_1365_0:
+RULE B_1D_3H_4S_880_0:
   CALL: 4S
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -10733,7 +7329,7 @@ RULE B_1D_3H_4S_1365_0:
   CONDITION: spade_len >= 6
   CONDITION: diamond_hcp >= 14
 
-RULE B_1D_3H_5D_1367_0:
+RULE B_1D_3H_5D_882_0:
   CALL: 5D
   PRIORITY: 27
   CONDITION: is_opening == False
@@ -10745,7 +7341,7 @@ RULE B_1D_3H_5D_1367_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 18
 
-RULE B_1D_3H_6S_1372_0:
+RULE B_1D_3H_6S_887_0:
   CALL: 6S
   PRIORITY: 66
   CONDITION: is_opening == False
@@ -10756,7 +7352,7 @@ RULE B_1D_3H_6S_1372_0:
   CONDITION: spade_len >= 8
   CONDITION: losing_trick_count <= 3
 
-RULE B_1D_3H_X_1376_0:
+RULE B_1D_3H_X_891_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -10766,7 +7362,7 @@ RULE B_1D_3H_X_1376_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 12
 
-RULE B_1D_3H_X_1376_1:
+RULE B_1D_3H_X_891_1:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -10777,7 +7373,7 @@ RULE B_1D_3H_X_1376_1:
   CONDITION: hcp >= 10
   CONDITION: heart_len <= 2
 
-RULE B_1D_3S_PASS_1377_0:
+RULE B_1D_3S_PASS_892_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10787,7 +7383,7 @@ RULE B_1D_3S_PASS_1377_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 12
 
-RULE B_1D_3S_PASS_1377_1:
+RULE B_1D_3S_PASS_892_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10797,7 +7393,7 @@ RULE B_1D_3S_PASS_1377_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: spade_len >= 4
 
-RULE B_1D_3S_PASS_1377_2:
+RULE B_1D_3S_PASS_892_2:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10807,7 +7403,7 @@ RULE B_1D_3S_PASS_1377_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1D_3S_4C_1379_0:
+RULE B_1D_3S_4C_894_0:
   CALL: 4C
   PRIORITY: 16
   CONDITION: is_opening == False
@@ -10818,7 +7414,7 @@ RULE B_1D_3S_4C_1379_0:
   CONDITION: hcp >= 12
   CONDITION: club_len >= 6
 
-RULE B_1D_3S_4D_1380_0:
+RULE B_1D_3S_4D_895_0:
   CALL: 4D
   PRIORITY: 12
   CONDITION: is_opening == False
@@ -10830,7 +7426,7 @@ RULE B_1D_3S_4D_1380_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 14
 
-RULE B_1D_3S_4H_1381_0:
+RULE B_1D_3S_4H_896_0:
   CALL: 4H
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -10842,7 +7438,7 @@ RULE B_1D_3S_4H_1381_0:
   CONDITION: heart_len >= 6
   CONDITION: diamond_hcp >= 14
 
-RULE B_1D_3S_4S_1382_0:
+RULE B_1D_3S_4S_897_0:
   CALL: 4S
   PRIORITY: 52
   CONDITION: is_opening == False
@@ -10854,7 +7450,7 @@ RULE B_1D_3S_4S_1382_0:
   CONDITION: diamond_len >= 4
   CONDITION: diamond_hcp >= 14
 
-RULE B_1D_3S_5D_1384_0:
+RULE B_1D_3S_5D_899_0:
   CALL: 5D
   PRIORITY: 27
   CONDITION: is_opening == False
@@ -10866,7 +7462,7 @@ RULE B_1D_3S_5D_1384_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 18
 
-RULE B_1D_3S_6H_1389_0:
+RULE B_1D_3S_6H_904_0:
   CALL: 6H
   PRIORITY: 66
   CONDITION: is_opening == False
@@ -10877,7 +7473,7 @@ RULE B_1D_3S_6H_1389_0:
   CONDITION: heart_len >= 8
   CONDITION: losing_trick_count <= 3
 
-RULE B_1D_3S_X_1393_0:
+RULE B_1D_3S_X_908_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -10887,7 +7483,7 @@ RULE B_1D_3S_X_1393_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 12
 
-RULE B_1D_3S_X_1393_1:
+RULE B_1D_3S_X_908_1:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -10898,7 +7494,7 @@ RULE B_1D_3S_X_1393_1:
   CONDITION: hcp >= 10
   CONDITION: spade_len <= 2
 
-RULE B_1D_4C_PASS_1394_0:
+RULE B_1D_4C_PASS_909_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10907,7 +7503,7 @@ RULE B_1D_4C_PASS_1394_0:
   CONDITION: opp_last_call == '4C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1D_4C_X_1403_0:
+RULE B_1D_4C_X_918_0:
   CALL: X
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -10917,7 +7513,7 @@ RULE B_1D_4C_X_1403_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 13
 
-RULE B_1D_4H_PASS_1404_0:
+RULE B_1D_4H_PASS_919_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10926,7 +7522,7 @@ RULE B_1D_4H_PASS_1404_0:
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1D_4H_5D_1409_0:
+RULE B_1D_4H_5D_924_0:
   CALL: 5D
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -10937,7 +7533,7 @@ RULE B_1D_4H_5D_1409_0:
   CONDITION: diamond_len >= 5
   CONDITION: hcp >= 12
 
-RULE B_1D_4S_PASS_1420_0:
+RULE B_1D_4S_PASS_935_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10946,7 +7542,7 @@ RULE B_1D_4S_PASS_1420_0:
   CONDITION: opp_last_call == '4S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1D_4S_5D_1424_0:
+RULE B_1D_4S_5D_939_0:
   CALL: 5D
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -10957,7 +7553,7 @@ RULE B_1D_4S_5D_1424_0:
   CONDITION: diamond_len >= 5
   CONDITION: hcp >= 12
 
-RULE B_1D_5C_PASS_1435_0:
+RULE B_1D_5C_PASS_950_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -10966,52 +7562,7 @@ RULE B_1D_5C_PASS_1435_0:
   CONDITION: opp_last_call == '5C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1D_6C_PASS_1441_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1D'
-  CONDITION: opp_last_call == '6C'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1D_6H_PASS_1442_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1D'
-  CONDITION: opp_last_call == '6H'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1D_6S_PASS_1443_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1D'
-  CONDITION: opp_last_call == '6S'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1D_7H_PASS_1444_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1D'
-  CONDITION: opp_last_call == '7H'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1D_7S_PASS_1445_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1D'
-  CONDITION: opp_last_call == '7S'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1D_1N_PASS_1446_0:
+RULE B_1D_1N_PASS_956_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -11020,7 +7571,7 @@ RULE B_1D_1N_PASS_1446_0:
   CONDITION: opp_last_call == '1NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1D_1N_2H_1449_0:
+RULE B_1D_1N_2H_959_0:
   CALL: 2H
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -11033,7 +7584,7 @@ RULE B_1D_1N_2H_1449_0:
   CONDITION: losing_trick_count <= 9
   CONDITION: hcp >= 3
 
-RULE B_1D_1N_2S_1450_0:
+RULE B_1D_1N_2S_960_0:
   CALL: 2S
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -11046,7 +7597,7 @@ RULE B_1D_1N_2S_1450_0:
   CONDITION: losing_trick_count <= 9
   CONDITION: hcp >= 3
 
-RULE B_1D_1N_X_1454_0:
+RULE B_1D_1N_X_964_0:
   CALL: X
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -11056,7 +7607,7 @@ RULE B_1D_1N_X_1454_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 9
 
-RULE B_1D_2N_PASS_1455_0:
+RULE B_1D_2N_PASS_965_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -11066,7 +7617,7 @@ RULE B_1D_2N_PASS_1455_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 10
 
-RULE B_1D_2N_3C_1456_0:
+RULE B_1D_2N_3C_966_0:
   CALL: 3C
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -11077,7 +7628,7 @@ RULE B_1D_2N_3C_1456_0:
   CONDITION: diamond_len >= 4
   CONDITION: diamond_hcp >= 12
 
-RULE B_1D_2N_3D_1457_0:
+RULE B_1D_2N_3D_967_0:
   CALL: 3D
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -11089,7 +7640,7 @@ RULE B_1D_2N_3D_1457_0:
   CONDITION: diamond_hcp >= 7
   CONDITION: diamond_hcp <= 11
 
-RULE B_1D_2N_3H_1458_0:
+RULE B_1D_2N_3H_968_0:
   CALL: 3H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -11100,7 +7651,7 @@ RULE B_1D_2N_3H_1458_0:
   CONDITION: spade_len >= 5
   CONDITION: hcp >= 10
 
-RULE B_1D_2N_3S_1459_0:
+RULE B_1D_2N_3S_969_0:
   CALL: 3S
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -11112,7 +7663,7 @@ RULE B_1D_2N_3S_1459_0:
   CONDITION: spade_len >= 6
   CONDITION: hcp < 10
 
-RULE B_1D_2N_3NT_1460_0:
+RULE B_1D_2N_3NT_970_0:
   CALL: 3NT
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -11125,7 +7676,7 @@ RULE B_1D_2N_3NT_1460_0:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 20
 
-RULE B_1D_2N_X_1470_0:
+RULE B_1D_2N_X_980_0:
   CALL: X
   PRIORITY: 5
   CONDITION: is_opening == False
@@ -11135,7 +7686,7 @@ RULE B_1D_2N_X_1470_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 11
 
-RULE B_1H_P_PASS_1471_0:
+RULE B_1H_P_PASS_981_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -11145,7 +7696,7 @@ RULE B_1H_P_PASS_1471_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp <= 5
 
-RULE B_1H_P_1S_1472_1:
+RULE B_1H_P_1S_982_1:
   CALL: 1S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -11157,7 +7708,7 @@ RULE B_1H_P_1S_1472_1:
   CONDITION: spade_len >= 4
   CONDITION: hcp < 12
 
-RULE B_1H_P_1NT_1473_0:
+RULE B_1H_P_1NT_983_0:
   CALL: 1NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -11169,7 +7720,7 @@ RULE B_1H_P_1NT_1473_0:
   CONDITION: heart_len < 4
   CONDITION: hcp >= 6
 
-RULE B_1H_P_2H_1476_0:
+RULE B_1H_P_2H_986_0:
   CALL: 2H
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -11181,7 +7732,7 @@ RULE B_1H_P_2H_1476_0:
   CONDITION: hcp < 10
   CONDITION: heart_len >= 3
 
-RULE B_1H_P_2H_1476_1:
+RULE B_1H_P_2H_986_1:
   CALL: 2H
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -11193,7 +7744,7 @@ RULE B_1H_P_2H_1476_1:
   CONDITION: hcp < 10
   CONDITION: heart_len >= 4
 
-RULE B_1H_P_2S_1477_2:
+RULE B_1H_P_2S_987_2:
   CALL: 2S
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -11206,7 +7757,7 @@ RULE B_1H_P_2S_1477_2:
   CONDITION: hcp > 17
   CONDITION: controls >= 4
 
-RULE B_1H_P_2S_1477_3:
+RULE B_1H_P_2S_987_3:
   CALL: 2S
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -11220,7 +7771,7 @@ RULE B_1H_P_2S_1477_3:
   CONDITION: controls >= 4
   CONDITION: heart_len <= 2
 
-RULE B_1H_P_2NT_1478_0:
+RULE B_1H_P_2NT_988_0:
   CALL: 2NT
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -11232,7 +7783,7 @@ RULE B_1H_P_2NT_1478_0:
   CONDITION: hcp >= 12
   CONDITION: heart_len >= 4
 
-RULE B_1H_P_3C_1479_0:
+RULE B_1H_P_3C_989_0:
   CALL: 3C
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -11246,7 +7797,7 @@ RULE B_1H_P_3C_1479_0:
   CONDITION: spade_len <= 3
   CONDITION: heart_len <= 2
 
-RULE B_1H_P_3D_1480_0:
+RULE B_1H_P_3D_990_0:
   CALL: 3D
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -11260,7 +7811,7 @@ RULE B_1H_P_3D_1480_0:
   CONDITION: spade_len <= 3
   CONDITION: heart_len <= 2
 
-RULE B_1H_P_3H_1481_0:
+RULE B_1H_P_3H_991_0:
   CALL: 3H
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -11272,7 +7823,7 @@ RULE B_1H_P_3H_1481_0:
   CONDITION: hcp < 12
   CONDITION: heart_len >= 4
 
-RULE B_1H_P_3S_1482_0:
+RULE B_1H_P_3S_992_0:
   CALL: 3S
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -11285,7 +7836,7 @@ RULE B_1H_P_3S_1482_0:
   CONDITION: spade_len <= 1
   CONDITION: heart_len >= 4
 
-RULE B_1H_P_4C_1484_0:
+RULE B_1H_P_4C_994_0:
   CALL: 4C
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -11298,7 +7849,7 @@ RULE B_1H_P_4C_1484_0:
   CONDITION: club_len <= 1
   CONDITION: heart_len >= 4
 
-RULE B_1H_P_4D_1485_0:
+RULE B_1H_P_4D_995_0:
   CALL: 4D
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -11311,7 +7862,7 @@ RULE B_1H_P_4D_1485_0:
   CONDITION: diamond_len <= 1
   CONDITION: heart_len >= 4
 
-RULE B_1H_P_4H_1486_0:
+RULE B_1H_P_4H_996_0:
   CALL: 4H
   PRIORITY: 72
   CONDITION: is_opening == False
@@ -11322,7 +7873,7 @@ RULE B_1H_P_4H_1486_0:
   CONDITION: hcp <= 8
   CONDITION: heart_len >= 5
 
-RULE B_1H_P_4S_1487_0:
+RULE B_1H_P_4S_997_0:
   CALL: 4S
   PRIORITY: 74
   CONDITION: is_opening == False
@@ -11334,7 +7885,7 @@ RULE B_1H_P_4S_1487_0:
   CONDITION: spade_len >= 7
   CONDITION: hcp >= 6
 
-RULE B_1H_X_PASS_1496_0:
+RULE B_1H_X_PASS_1006_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -11343,7 +7894,7 @@ RULE B_1H_X_PASS_1496_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1H_X_1S_1497_0:
+RULE B_1H_X_1S_1007_0:
   CALL: 1S
   PRIORITY: 35
   CONDITION: is_opening == False
@@ -11356,7 +7907,7 @@ RULE B_1H_X_1S_1497_0:
   CONDITION: hcp >= 6
   CONDITION: heart_len <= 2
 
-RULE B_1H_X_1S_1497_1:
+RULE B_1H_X_1S_1007_1:
   CALL: 1S
   PRIORITY: 35
   CONDITION: is_opening == False
@@ -11367,7 +7918,7 @@ RULE B_1H_X_1S_1497_1:
   CONDITION: spade_len >= 6
   CONDITION: hcp >= 6
 
-RULE B_1H_X_1NT_1498_0:
+RULE B_1H_X_1NT_1008_0:
   CALL: 1NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -11378,7 +7929,7 @@ RULE B_1H_X_1NT_1498_0:
   CONDITION: hcp < 10
   CONDITION: hcp >= 7
 
-RULE B_1H_X_2H_1501_0:
+RULE B_1H_X_2H_1011_0:
   CALL: 2H
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -11389,7 +7940,7 @@ RULE B_1H_X_2H_1501_0:
   CONDITION: heart_hcp >= 4
   CONDITION: heart_len >= 5
 
-RULE B_1H_X_2H_1501_1:
+RULE B_1H_X_2H_1011_1:
   CALL: 2H
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -11401,7 +7952,7 @@ RULE B_1H_X_2H_1501_1:
   CONDITION: hcp < 10
   CONDITION: heart_len >= 3
 
-RULE B_1H_X_2H_1501_2:
+RULE B_1H_X_2H_1011_2:
   CALL: 2H
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -11413,7 +7964,7 @@ RULE B_1H_X_2H_1501_2:
   CONDITION: hcp < 10
   CONDITION: heart_len >= 4
 
-RULE B_1H_X_2NT_1503_0:
+RULE B_1H_X_2NT_1013_0:
   CALL: 2NT
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -11424,7 +7975,7 @@ RULE B_1H_X_2NT_1503_0:
   CONDITION: heart_hcp > 12
   CONDITION: heart_len >= 3
 
-RULE B_1H_X_2NT_1503_1:
+RULE B_1H_X_2NT_1013_1:
   CALL: 2NT
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -11435,7 +7986,7 @@ RULE B_1H_X_2NT_1503_1:
   CONDITION: hcp >= 10
   CONDITION: heart_len >= 3
 
-RULE B_1H_X_3S_1507_0:
+RULE B_1H_X_3S_1017_0:
   CALL: 3S
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -11448,7 +7999,7 @@ RULE B_1H_X_3S_1507_0:
   CONDITION: spade_len <= 1
   CONDITION: heart_len >= 4
 
-RULE B_1H_X_3NT_1508_0:
+RULE B_1H_X_3NT_1018_0:
   CALL: 3NT
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -11464,7 +8015,7 @@ RULE B_1H_X_3NT_1508_0:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 17
 
-RULE B_1H_X_4C_1509_0:
+RULE B_1H_X_4C_1019_0:
   CALL: 4C
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -11477,7 +8028,7 @@ RULE B_1H_X_4C_1509_0:
   CONDITION: club_len <= 1
   CONDITION: heart_len >= 4
 
-RULE B_1H_X_4D_1510_0:
+RULE B_1H_X_4D_1020_0:
   CALL: 4D
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -11490,7 +8041,7 @@ RULE B_1H_X_4D_1510_0:
   CONDITION: diamond_len <= 1
   CONDITION: heart_len >= 4
 
-RULE B_1H_X_4H_1511_0:
+RULE B_1H_X_4H_1021_0:
   CALL: 4H
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -11502,7 +8053,7 @@ RULE B_1H_X_4H_1511_0:
   CONDITION: hcp < 10
   CONDITION: heart_len >= 5
 
-RULE B_1H_X_XX_1513_0:
+RULE B_1H_X_XX_1023_0:
   CALL: XX
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -11513,7 +8064,7 @@ RULE B_1H_X_XX_1513_0:
   CONDITION: hcp >= 10
   CONDITION: spade_len <= 5
 
-RULE B_1H_X_XX_1513_1:
+RULE B_1H_X_XX_1023_1:
   CALL: XX
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -11523,7 +8074,7 @@ RULE B_1H_X_XX_1513_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_1H_1S_PASS_1514_0:
+RULE B_1H_1S_PASS_1024_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -11533,7 +8084,7 @@ RULE B_1H_1S_PASS_1514_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1H_1S_PASS_1514_1:
+RULE B_1H_1S_PASS_1024_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -11543,7 +8094,7 @@ RULE B_1H_1S_PASS_1514_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: spade_len >= 5
 
-RULE B_1H_1S_1NT_1515_0:
+RULE B_1H_1S_1NT_1025_0:
   CALL: 1NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -11555,7 +8106,7 @@ RULE B_1H_1S_1NT_1515_0:
   CONDITION: spade_len >= 4
   CONDITION: hcp >= 7
 
-RULE B_1H_1S_1NT_1515_1:
+RULE B_1H_1S_1NT_1025_1:
   CALL: 1NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -11567,7 +8118,7 @@ RULE B_1H_1S_1NT_1515_1:
   CONDITION: s_stopper >= 2
   CONDITION: hcp >= 7
 
-RULE B_1H_1S_2C_1516_0:
+RULE B_1H_1S_2C_1026_0:
   CALL: 2C
   PRIORITY: -1
   CONDITION: is_opening == False
@@ -11578,7 +8129,7 @@ RULE B_1H_1S_2C_1516_0:
   CONDITION: total_points >= 9
   CONDITION: club_len >= 6
 
-RULE B_1H_1S_2D_1519_0:
+RULE B_1H_1S_2D_1029_0:
   CALL: 2D
   PRIORITY: -1
   CONDITION: is_opening == False
@@ -11589,7 +8140,7 @@ RULE B_1H_1S_2D_1519_0:
   CONDITION: total_points >= 9
   CONDITION: diamond_len >= 6
 
-RULE B_1H_1S_2H_1522_0:
+RULE B_1H_1S_2H_1032_0:
   CALL: 2H
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -11601,7 +8152,7 @@ RULE B_1H_1S_2H_1522_0:
   CONDITION: hcp < 10
   CONDITION: heart_len >= 3
 
-RULE B_1H_1S_2S_1523_0:
+RULE B_1H_1S_2S_1033_0:
   CALL: 2S
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -11613,7 +8164,7 @@ RULE B_1H_1S_2S_1523_0:
   CONDITION: hcp >= 9
   CONDITION: heart_len >= 4
 
-RULE B_1H_1S_2S_1523_1:
+RULE B_1H_1S_2S_1033_1:
   CALL: 2S
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -11625,7 +8176,7 @@ RULE B_1H_1S_2S_1523_1:
   CONDITION: hcp >= 9
   CONDITION: heart_len >= 3
 
-RULE B_1H_1S_2NT_1524_0:
+RULE B_1H_1S_2NT_1034_0:
   CALL: 2NT
   PRIORITY: 35
   CONDITION: is_opening == False
@@ -11637,7 +8188,7 @@ RULE B_1H_1S_2NT_1524_0:
   CONDITION: hcp <= 12
   CONDITION: s_stopper >= 2
 
-RULE B_1H_1S_3H_1525_0:
+RULE B_1H_1S_3H_1035_0:
   CALL: 3H
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -11649,7 +8200,7 @@ RULE B_1H_1S_3H_1525_0:
   CONDITION: hcp <= 8
   CONDITION: heart_len >= 4
 
-RULE B_1H_1S_3S_1526_0:
+RULE B_1H_1S_3S_1036_0:
   CALL: 3S
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -11662,7 +8213,7 @@ RULE B_1H_1S_3S_1526_0:
   CONDITION: heart_len >= 4
   CONDITION: spade_len <= 1
 
-RULE B_1H_1S_3NT_1527_0:
+RULE B_1H_1S_3NT_1037_0:
   CALL: 3NT
   PRIORITY: 85
   CONDITION: is_opening == False
@@ -11674,7 +8225,7 @@ RULE B_1H_1S_3NT_1527_0:
   CONDITION: hcp <= 17
   CONDITION: s_stopper >= 2
 
-RULE B_1H_1S_4H_1528_0:
+RULE B_1H_1S_4H_1038_0:
   CALL: 4H
   PRIORITY: 110
   CONDITION: is_opening == False
@@ -11686,7 +8237,7 @@ RULE B_1H_1S_4H_1528_0:
   CONDITION: hcp <= 8
   CONDITION: heart_len >= 5
 
-RULE B_1H_1S_X_1529_0:
+RULE B_1H_1S_X_1039_0:
   CALL: X
   PRIORITY: 38
   CONDITION: is_opening == False
@@ -11698,7 +8249,7 @@ RULE B_1H_1S_X_1529_0:
   CONDITION: club_len >= 4
   CONDITION: diamond_len >= 4
 
-RULE B_1H_2C_PASS_1530_0:
+RULE B_1H_2C_PASS_1040_0:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -11707,7 +8258,7 @@ RULE B_1H_2C_PASS_1530_0:
   CONDITION: opp_last_call == '2C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1H_2C_PASS_1530_1:
+RULE B_1H_2C_PASS_1040_1:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -11718,7 +8269,7 @@ RULE B_1H_2C_PASS_1530_1:
   CONDITION: club_len >= 4
   CONDITION: hcp >= 10
 
-RULE B_1H_2C_PASS_1530_2:
+RULE B_1H_2C_PASS_1040_2:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -11728,7 +8279,7 @@ RULE B_1H_2C_PASS_1530_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1H_2C_PASS_1530_3:
+RULE B_1H_2C_PASS_1040_3:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -11738,7 +8289,7 @@ RULE B_1H_2C_PASS_1530_3:
   CONDITION: passes_since_last_bid == 0
   CONDITION: club_len >= 5
 
-RULE B_1H_2C_2D_1531_0:
+RULE B_1H_2C_2D_1041_0:
   CALL: 2D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -11750,7 +8301,7 @@ RULE B_1H_2C_2D_1531_0:
   CONDITION: total_points >= 10
   CONDITION: hcp >= 8
 
-RULE B_1H_2C_2D_1531_1:
+RULE B_1H_2C_2D_1041_1:
   CALL: 2D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -11762,7 +8313,7 @@ RULE B_1H_2C_2D_1531_1:
   CONDITION: total_points >= 10
   CONDITION: hcp >= 8
 
-RULE B_1H_2C_2D_1531_2:
+RULE B_1H_2C_2D_1041_2:
   CALL: 2D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -11773,7 +8324,7 @@ RULE B_1H_2C_2D_1531_2:
   CONDITION: diamond_len >= 5
   CONDITION: hcp >= 9
 
-RULE B_1H_2C_2H_1532_0:
+RULE B_1H_2C_2H_1042_0:
   CALL: 2H
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -11785,7 +8336,7 @@ RULE B_1H_2C_2H_1532_0:
   CONDITION: hcp <= 9
   CONDITION: heart_hcp >= 6
 
-RULE B_1H_2C_2S_1533_0:
+RULE B_1H_2C_2S_1043_0:
   CALL: 2S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -11796,7 +8347,7 @@ RULE B_1H_2C_2S_1533_0:
   CONDITION: spade_len >= 5
   CONDITION: hcp >= 9
 
-RULE B_1H_2C_2S_1533_1:
+RULE B_1H_2C_2S_1043_1:
   CALL: 2S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -11808,7 +8359,7 @@ RULE B_1H_2C_2S_1533_1:
   CONDITION: total_points >= 10
   CONDITION: hcp >= 8
 
-RULE B_1H_2C_2NT_1534_0:
+RULE B_1H_2C_2NT_1044_0:
   CALL: 2NT
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -11820,7 +8371,7 @@ RULE B_1H_2C_2NT_1534_0:
   CONDITION: hcp >= 9
   CONDITION: hcp <= 11
 
-RULE B_1H_2C_3C_1535_0:
+RULE B_1H_2C_3C_1045_0:
   CALL: 3C
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -11831,7 +8382,7 @@ RULE B_1H_2C_3C_1535_0:
   CONDITION: heart_len >= 3
   CONDITION: hcp >= 10
 
-RULE B_1H_2C_3D_1536_0:
+RULE B_1H_2C_3D_1046_0:
   CALL: 3D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -11842,7 +8393,7 @@ RULE B_1H_2C_3D_1536_0:
   CONDITION: diamond_len >= 6
   CONDITION: hcp >= 15
 
-RULE B_1H_2C_3H_1537_0:
+RULE B_1H_2C_3H_1047_0:
   CALL: 3H
   PRIORITY: 54
   CONDITION: is_opening == False
@@ -11854,7 +8405,7 @@ RULE B_1H_2C_3H_1537_0:
   CONDITION: hcp <= 7
   CONDITION: heart_hcp >= 5
 
-RULE B_1H_2C_4C_1539_0:
+RULE B_1H_2C_4C_1049_0:
   CALL: 4C
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -11867,7 +8418,7 @@ RULE B_1H_2C_4C_1539_0:
   CONDITION: club_len <= 1
   CONDITION: heart_len >= 4
 
-RULE B_1H_2C_4H_1540_0:
+RULE B_1H_2C_4H_1050_0:
   CALL: 4H
   PRIORITY: 82
   CONDITION: is_opening == False
@@ -11879,7 +8430,7 @@ RULE B_1H_2C_4H_1540_0:
   CONDITION: hcp <= 9
   CONDITION: heart_hcp >= 4
 
-RULE B_1H_2C_X_1549_0:
+RULE B_1H_2C_X_1059_0:
   CALL: X
   PRIORITY: 46
   CONDITION: is_opening == False
@@ -11890,7 +8441,7 @@ RULE B_1H_2C_X_1549_0:
   CONDITION: spade_len >= 4
   CONDITION: hcp >= 8
 
-RULE B_1H_2C_X_1549_1:
+RULE B_1H_2C_X_1059_1:
   CALL: X
   PRIORITY: 46
   CONDITION: is_opening == False
@@ -11901,7 +8452,7 @@ RULE B_1H_2C_X_1549_1:
   CONDITION: spade_len >= 5
   CONDITION: hcp >= 7
 
-RULE B_1H_2C_X_1549_2:
+RULE B_1H_2C_X_1059_2:
   CALL: X
   PRIORITY: 46
   CONDITION: is_opening == False
@@ -11912,7 +8463,7 @@ RULE B_1H_2C_X_1549_2:
   CONDITION: spade_len >= 6
   CONDITION: hcp >= 6
 
-RULE B_1H_2D_PASS_1550_0:
+RULE B_1H_2D_PASS_1060_0:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -11921,7 +8472,7 @@ RULE B_1H_2D_PASS_1550_0:
   CONDITION: opp_last_call == '2D'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1H_2D_PASS_1550_1:
+RULE B_1H_2D_PASS_1060_1:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -11932,7 +8483,7 @@ RULE B_1H_2D_PASS_1550_1:
   CONDITION: diamond_len >= 4
   CONDITION: hcp >= 10
 
-RULE B_1H_2D_PASS_1550_2:
+RULE B_1H_2D_PASS_1060_2:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -11942,7 +8493,7 @@ RULE B_1H_2D_PASS_1550_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1H_2D_PASS_1550_3:
+RULE B_1H_2D_PASS_1060_3:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -11952,7 +8503,7 @@ RULE B_1H_2D_PASS_1550_3:
   CONDITION: passes_since_last_bid == 0
   CONDITION: diamond_len >= 5
 
-RULE B_1H_2D_2H_1551_0:
+RULE B_1H_2D_2H_1061_0:
   CALL: 2H
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -11964,7 +8515,7 @@ RULE B_1H_2D_2H_1551_0:
   CONDITION: hcp <= 9
   CONDITION: heart_hcp >= 6
 
-RULE B_1H_2D_2S_1552_0:
+RULE B_1H_2D_2S_1062_0:
   CALL: 2S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -11976,7 +8527,7 @@ RULE B_1H_2D_2S_1552_0:
   CONDITION: total_points >= 10
   CONDITION: hcp >= 8
 
-RULE B_1H_2D_2NT_1553_0:
+RULE B_1H_2D_2NT_1063_0:
   CALL: 2NT
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -11988,7 +8539,7 @@ RULE B_1H_2D_2NT_1553_0:
   CONDITION: hcp >= 9
   CONDITION: hcp <= 11
 
-RULE B_1H_2D_3C_1554_0:
+RULE B_1H_2D_3C_1064_0:
   CALL: 3C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -11999,7 +8550,7 @@ RULE B_1H_2D_3C_1554_0:
   CONDITION: club_len >= 5
   CONDITION: hcp >= 10
 
-RULE B_1H_2D_3D_1555_0:
+RULE B_1H_2D_3D_1065_0:
   CALL: 3D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -12010,7 +8561,7 @@ RULE B_1H_2D_3D_1555_0:
   CONDITION: heart_len >= 3
   CONDITION: hcp >= 10
 
-RULE B_1H_2D_3H_1556_0:
+RULE B_1H_2D_3H_1066_0:
   CALL: 3H
   PRIORITY: 54
   CONDITION: is_opening == False
@@ -12022,7 +8573,7 @@ RULE B_1H_2D_3H_1556_0:
   CONDITION: hcp <= 7
   CONDITION: heart_hcp >= 5
 
-RULE B_1H_2D_4D_1558_0:
+RULE B_1H_2D_4D_1068_0:
   CALL: 4D
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -12035,7 +8586,7 @@ RULE B_1H_2D_4D_1558_0:
   CONDITION: diamond_len <= 1
   CONDITION: heart_len >= 4
 
-RULE B_1H_2D_4H_1559_0:
+RULE B_1H_2D_4H_1069_0:
   CALL: 4H
   PRIORITY: 82
   CONDITION: is_opening == False
@@ -12047,7 +8598,7 @@ RULE B_1H_2D_4H_1559_0:
   CONDITION: hcp <= 9
   CONDITION: heart_hcp >= 4
 
-RULE B_1H_2D_X_1568_0:
+RULE B_1H_2D_X_1078_0:
   CALL: X
   PRIORITY: 46
   CONDITION: is_opening == False
@@ -12058,7 +8609,7 @@ RULE B_1H_2D_X_1568_0:
   CONDITION: spade_len >= 4
   CONDITION: hcp >= 8
 
-RULE B_1H_2D_X_1568_1:
+RULE B_1H_2D_X_1078_1:
   CALL: X
   PRIORITY: 46
   CONDITION: is_opening == False
@@ -12069,7 +8620,7 @@ RULE B_1H_2D_X_1568_1:
   CONDITION: spade_len >= 5
   CONDITION: hcp >= 7
 
-RULE B_1H_2D_X_1568_2:
+RULE B_1H_2D_X_1078_2:
   CALL: X
   PRIORITY: 46
   CONDITION: is_opening == False
@@ -12080,7 +8631,7 @@ RULE B_1H_2D_X_1568_2:
   CONDITION: spade_len >= 6
   CONDITION: hcp >= 6
 
-RULE B_1H_2H_PASS_1569_0:
+RULE B_1H_2H_PASS_1079_0:
   CALL: PASS
   PRIORITY: -1
   CONDITION: is_opening == False
@@ -12090,7 +8641,7 @@ RULE B_1H_2H_PASS_1569_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: spade_len >= 4
 
-RULE B_1H_2H_PASS_1570_0:
+RULE B_1H_2H_PASS_1080_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -12101,7 +8652,7 @@ RULE B_1H_2H_PASS_1570_0:
   CONDITION: hcp <= 11
   CONDITION: heart_len <= 3
 
-RULE B_1H_2H_PASS_1570_1:
+RULE B_1H_2H_PASS_1080_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -12111,7 +8662,7 @@ RULE B_1H_2H_PASS_1570_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: total_points <= 7
 
-RULE B_1H_2H_2S_1571_0:
+RULE B_1H_2H_2S_1081_0:
   CALL: 2S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -12122,7 +8673,7 @@ RULE B_1H_2H_2S_1571_0:
   CONDITION: heart_len >= 4
   CONDITION: heart_hcp >= 14
 
-RULE B_1H_2H_2S_1571_1:
+RULE B_1H_2H_2S_1081_1:
   CALL: 2S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -12133,7 +8684,7 @@ RULE B_1H_2H_2S_1571_1:
   CONDITION: heart_len >= 3
   CONDITION: hcp >= 10
 
-RULE B_1H_2H_3C_1572_0:
+RULE B_1H_2H_3C_1082_0:
   CALL: 3C
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -12145,7 +8696,7 @@ RULE B_1H_2H_3C_1572_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 7
 
-RULE B_1H_2H_3D_1573_0:
+RULE B_1H_2H_3D_1083_0:
   CALL: 3D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -12157,7 +8708,7 @@ RULE B_1H_2H_3D_1573_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 7
 
-RULE B_1H_2H_3H_1574_0:
+RULE B_1H_2H_3H_1084_0:
   CALL: 3H
   PRIORITY: 35
   CONDITION: is_opening == False
@@ -12169,7 +8720,7 @@ RULE B_1H_2H_3H_1574_0:
   CONDITION: total_points <= 10
   CONDITION: total_points >= 8
 
-RULE B_1H_2H_3S_1575_0:
+RULE B_1H_2H_3S_1085_0:
   CALL: 3S
   PRIORITY: 38
   CONDITION: is_opening == False
@@ -12181,7 +8732,7 @@ RULE B_1H_2H_3S_1575_0:
   CONDITION: total_points >= 10
   CONDITION: hcp >= 9
 
-RULE B_1H_2H_3NT_1576_0:
+RULE B_1H_2H_3NT_1086_0:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -12192,7 +8743,7 @@ RULE B_1H_2H_3NT_1576_0:
   CONDITION: hcp >= 12
   CONDITION: s_stopper >= 2
 
-RULE B_1H_2H_4H_1577_0:
+RULE B_1H_2H_4H_1087_0:
   CALL: 4H
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -12204,7 +8755,7 @@ RULE B_1H_2H_4H_1577_0:
   CONDITION: total_points >= 10
   CONDITION: heart_hcp <= 14
 
-RULE B_1H_2H_4H_1577_1:
+RULE B_1H_2H_4H_1087_1:
   CALL: 4H
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -12216,7 +8767,7 @@ RULE B_1H_2H_4H_1577_1:
   CONDITION: total_points >= 4
   CONDITION: heart_hcp <= 14
 
-RULE B_1H_2H_4H_1577_2:
+RULE B_1H_2H_4H_1087_2:
   CALL: 4H
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -12228,7 +8779,7 @@ RULE B_1H_2H_4H_1577_2:
   CONDITION: total_points >= 10
   CONDITION: heart_hcp <= 14
 
-RULE B_1H_2H_5C_1578_0:
+RULE B_1H_2H_5C_1088_0:
   CALL: 5C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -12239,7 +8790,7 @@ RULE B_1H_2H_5C_1578_0:
   CONDITION: club_len >= 8
   CONDITION: losing_trick_count <= 5
 
-RULE B_1H_2H_5D_1579_0:
+RULE B_1H_2H_5D_1089_0:
   CALL: 5D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -12250,7 +8801,7 @@ RULE B_1H_2H_5D_1579_0:
   CONDITION: diamond_len >= 8
   CONDITION: losing_trick_count <= 5
 
-RULE B_1H_2H_X_1580_0:
+RULE B_1H_2H_X_1090_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -12260,7 +8811,7 @@ RULE B_1H_2H_X_1580_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 12
 
-RULE B_1H_2S_PASS_1581_0:
+RULE B_1H_2S_PASS_1091_0:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -12270,7 +8821,7 @@ RULE B_1H_2S_PASS_1581_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1H_2S_PASS_1581_1:
+RULE B_1H_2S_PASS_1091_1:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -12280,7 +8831,7 @@ RULE B_1H_2S_PASS_1581_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1H_2S_PASS_1581_2:
+RULE B_1H_2S_PASS_1091_2:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -12291,7 +8842,7 @@ RULE B_1H_2S_PASS_1581_2:
   CONDITION: spade_len >= 5
   CONDITION: hcp >= 8
 
-RULE B_1H_2S_2NT_1582_0:
+RULE B_1H_2S_2NT_1092_0:
   CALL: 2NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -12303,7 +8854,7 @@ RULE B_1H_2S_2NT_1582_0:
   CONDITION: hcp <= 12
   CONDITION: s_stopper >= 2
 
-RULE B_1H_2S_3H_1586_0:
+RULE B_1H_2S_3H_1096_0:
   CALL: 3H
   PRIORITY: 24
   CONDITION: is_opening == False
@@ -12315,7 +8866,7 @@ RULE B_1H_2S_3H_1586_0:
   CONDITION: heart_hcp >= 7
   CONDITION: hcp <= 10
 
-RULE B_1H_2S_3NT_1588_0:
+RULE B_1H_2S_3NT_1098_0:
   CALL: 3NT
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -12326,7 +8877,7 @@ RULE B_1H_2S_3NT_1588_0:
   CONDITION: hcp >= 12
   CONDITION: s_stopper >= 2
 
-RULE B_1H_2S_X_1590_0:
+RULE B_1H_2S_X_1100_0:
   CALL: X
   PRIORITY: 38
   CONDITION: is_opening == False
@@ -12338,7 +8889,7 @@ RULE B_1H_2S_X_1590_0:
   CONDITION: club_len >= 3
   CONDITION: diamond_len >= 3
 
-RULE B_1H_2S_X_1590_1:
+RULE B_1H_2S_X_1100_1:
   CALL: X
   PRIORITY: 38
   CONDITION: is_opening == False
@@ -12350,7 +8901,7 @@ RULE B_1H_2S_X_1590_1:
   CONDITION: club_len >= 4
   CONDITION: diamond_len >= 4
 
-RULE B_1H_3C_PASS_1591_0:
+RULE B_1H_3C_PASS_1101_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -12360,7 +8911,7 @@ RULE B_1H_3C_PASS_1591_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1H_3C_3D_1592_0:
+RULE B_1H_3C_3D_1102_0:
   CALL: 3D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -12371,7 +8922,7 @@ RULE B_1H_3C_3D_1592_0:
   CONDITION: total_points >= 12
   CONDITION: diamond_len >= 5
 
-RULE B_1H_3C_3H_1593_0:
+RULE B_1H_3C_3H_1103_0:
   CALL: 3H
   PRIORITY: 41
   CONDITION: is_opening == False
@@ -12383,7 +8934,7 @@ RULE B_1H_3C_3H_1593_0:
   CONDITION: hcp <= 10
   CONDITION: heart_len >= 3
 
-RULE B_1H_3C_3S_1594_0:
+RULE B_1H_3C_3S_1104_0:
   CALL: 3S
   PRIORITY: 35
   CONDITION: is_opening == False
@@ -12394,7 +8945,7 @@ RULE B_1H_3C_3S_1594_0:
   CONDITION: hcp >= 12
   CONDITION: spade_len >= 5
 
-RULE B_1H_3C_3NT_1595_0:
+RULE B_1H_3C_3NT_1105_0:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -12406,7 +8957,7 @@ RULE B_1H_3C_3NT_1595_0:
   CONDITION: c_stopper >= 2
   CONDITION: hcp <= 18
 
-RULE B_1H_3C_4C_1596_0:
+RULE B_1H_3C_4C_1106_0:
   CALL: 4C
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -12417,7 +8968,7 @@ RULE B_1H_3C_4C_1596_0:
   CONDITION: hcp >= 13
   CONDITION: heart_len >= 2
 
-RULE B_1H_3C_4C_1596_1:
+RULE B_1H_3C_4C_1106_1:
   CALL: 4C
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -12428,7 +8979,7 @@ RULE B_1H_3C_4C_1596_1:
   CONDITION: hcp >= 13
   CONDITION: heart_len >= 3
 
-RULE B_1H_3C_4H_1597_0:
+RULE B_1H_3C_4H_1107_0:
   CALL: 4H
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -12440,7 +8991,7 @@ RULE B_1H_3C_4H_1597_0:
   CONDITION: hcp <= 12
   CONDITION: heart_len >= 2
 
-RULE B_1H_3C_4H_1597_1:
+RULE B_1H_3C_4H_1107_1:
   CALL: 4H
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -12452,7 +9003,7 @@ RULE B_1H_3C_4H_1597_1:
   CONDITION: heart_hcp >= 10
   CONDITION: hcp < 10
 
-RULE B_1H_3C_4H_1597_2:
+RULE B_1H_3C_4H_1107_2:
   CALL: 4H
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -12464,7 +9015,7 @@ RULE B_1H_3C_4H_1597_2:
   CONDITION: hcp <= 12
   CONDITION: heart_len >= 3
 
-RULE B_1H_3C_4H_1597_3:
+RULE B_1H_3C_4H_1107_3:
   CALL: 4H
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -12476,7 +9027,7 @@ RULE B_1H_3C_4H_1597_3:
   CONDITION: hcp <= 12
   CONDITION: heart_len >= 4
 
-RULE B_1H_3C_4S_1598_0:
+RULE B_1H_3C_4S_1108_0:
   CALL: 4S
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -12487,7 +9038,7 @@ RULE B_1H_3C_4S_1598_0:
   CONDITION: hcp >= 10
   CONDITION: spade_len >= 7
 
-RULE B_1H_3C_X_1607_0:
+RULE B_1H_3C_X_1117_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -12498,7 +9049,7 @@ RULE B_1H_3C_X_1607_0:
   CONDITION: spade_len >= 4
   CONDITION: hcp >= 10
 
-RULE B_1H_3D_PASS_1608_0:
+RULE B_1H_3D_PASS_1118_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -12508,7 +9059,7 @@ RULE B_1H_3D_PASS_1608_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1H_3D_3H_1609_0:
+RULE B_1H_3D_3H_1119_0:
   CALL: 3H
   PRIORITY: 41
   CONDITION: is_opening == False
@@ -12520,7 +9071,7 @@ RULE B_1H_3D_3H_1609_0:
   CONDITION: hcp <= 10
   CONDITION: heart_len >= 3
 
-RULE B_1H_3D_3S_1610_0:
+RULE B_1H_3D_3S_1120_0:
   CALL: 3S
   PRIORITY: 35
   CONDITION: is_opening == False
@@ -12531,7 +9082,7 @@ RULE B_1H_3D_3S_1610_0:
   CONDITION: hcp >= 12
   CONDITION: spade_len >= 5
 
-RULE B_1H_3D_3NT_1611_0:
+RULE B_1H_3D_3NT_1121_0:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -12543,7 +9094,7 @@ RULE B_1H_3D_3NT_1611_0:
   CONDITION: d_stopper >= 2
   CONDITION: hcp <= 18
 
-RULE B_1H_3D_4C_1612_0:
+RULE B_1H_3D_4C_1122_0:
   CALL: 4C
   PRIORITY: 5
   CONDITION: is_opening == False
@@ -12554,7 +9105,7 @@ RULE B_1H_3D_4C_1612_0:
   CONDITION: club_len >= 6
   CONDITION: hcp >= 10
 
-RULE B_1H_3D_4D_1613_0:
+RULE B_1H_3D_4D_1123_0:
   CALL: 4D
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -12565,7 +9116,7 @@ RULE B_1H_3D_4D_1613_0:
   CONDITION: hcp >= 13
   CONDITION: heart_len >= 2
 
-RULE B_1H_3D_4D_1613_1:
+RULE B_1H_3D_4D_1123_1:
   CALL: 4D
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -12576,7 +9127,7 @@ RULE B_1H_3D_4D_1613_1:
   CONDITION: hcp >= 13
   CONDITION: heart_len >= 3
 
-RULE B_1H_3D_4H_1614_0:
+RULE B_1H_3D_4H_1124_0:
   CALL: 4H
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -12588,7 +9139,7 @@ RULE B_1H_3D_4H_1614_0:
   CONDITION: hcp <= 12
   CONDITION: heart_len >= 2
 
-RULE B_1H_3D_4H_1614_1:
+RULE B_1H_3D_4H_1124_1:
   CALL: 4H
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -12600,7 +9151,7 @@ RULE B_1H_3D_4H_1614_1:
   CONDITION: heart_hcp >= 10
   CONDITION: hcp < 10
 
-RULE B_1H_3D_4H_1614_2:
+RULE B_1H_3D_4H_1124_2:
   CALL: 4H
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -12612,7 +9163,7 @@ RULE B_1H_3D_4H_1614_2:
   CONDITION: hcp <= 12
   CONDITION: heart_len >= 3
 
-RULE B_1H_3D_4H_1614_3:
+RULE B_1H_3D_4H_1124_3:
   CALL: 4H
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -12624,7 +9175,7 @@ RULE B_1H_3D_4H_1614_3:
   CONDITION: hcp <= 12
   CONDITION: heart_len >= 4
 
-RULE B_1H_3D_4S_1615_0:
+RULE B_1H_3D_4S_1125_0:
   CALL: 4S
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -12635,7 +9186,7 @@ RULE B_1H_3D_4S_1615_0:
   CONDITION: hcp >= 10
   CONDITION: spade_len >= 7
 
-RULE B_1H_3D_X_1624_0:
+RULE B_1H_3D_X_1134_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -12646,7 +9197,7 @@ RULE B_1H_3D_X_1624_0:
   CONDITION: spade_len >= 4
   CONDITION: hcp >= 10
 
-RULE B_1H_3S_PASS_1625_0:
+RULE B_1H_3S_PASS_1135_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -12655,7 +9206,7 @@ RULE B_1H_3S_PASS_1625_0:
   CONDITION: opp_last_call == '3S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1H_3S_4C_1627_1:
+RULE B_1H_3S_4C_1137_1:
   CALL: 4C
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -12666,7 +9217,7 @@ RULE B_1H_3S_4C_1627_1:
   CONDITION: club_len >= 6
   CONDITION: hcp >= 12
 
-RULE B_1H_3S_4D_1628_1:
+RULE B_1H_3S_4D_1138_1:
   CALL: 4D
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -12677,7 +9228,7 @@ RULE B_1H_3S_4D_1628_1:
   CONDITION: diamond_len >= 6
   CONDITION: hcp >= 12
 
-RULE B_1H_3S_4H_1629_2:
+RULE B_1H_3S_4H_1139_2:
   CALL: 4H
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -12688,7 +9239,7 @@ RULE B_1H_3S_4H_1629_2:
   CONDITION: heart_len >= 3
   CONDITION: heart_hcp >= 10
 
-RULE B_1H_3S_5C_1632_0:
+RULE B_1H_3S_5C_1142_0:
   CALL: 5C
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -12701,7 +9252,7 @@ RULE B_1H_3S_5C_1632_0:
   CONDITION: hcp >= 6
   CONDITION: heart_len <= 2
 
-RULE B_1H_3S_5D_1633_0:
+RULE B_1H_3S_5D_1143_0:
   CALL: 5D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -12714,7 +9265,7 @@ RULE B_1H_3S_5D_1633_0:
   CONDITION: hcp >= 6
   CONDITION: heart_len <= 2
 
-RULE B_1H_3S_X_1641_0:
+RULE B_1H_3S_X_1151_0:
   CALL: X
   PRIORITY: 5
   CONDITION: is_opening == False
@@ -12725,7 +9276,7 @@ RULE B_1H_3S_X_1641_0:
   CONDITION: heart_len >= 2
   CONDITION: hcp >= 10
 
-RULE B_1H_3S_X_1642_0:
+RULE B_1H_3S_X_1152_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -12737,7 +9288,7 @@ RULE B_1H_3S_X_1642_0:
   CONDITION: club_len >= 3
   CONDITION: diamond_len >= 3
 
-RULE B_1H_3S_X_1642_1:
+RULE B_1H_3S_X_1152_1:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -12749,7 +9300,7 @@ RULE B_1H_3S_X_1642_1:
   CONDITION: club_len >= 4
   CONDITION: diamond_len >= 4
 
-RULE B_1H_4C_PASS_1643_0:
+RULE B_1H_4C_PASS_1153_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -12759,7 +9310,7 @@ RULE B_1H_4C_PASS_1643_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1H_4C_4H_1644_0:
+RULE B_1H_4C_4H_1154_0:
   CALL: 4H
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -12771,7 +9322,7 @@ RULE B_1H_4C_4H_1644_0:
   CONDITION: hcp <= 12
   CONDITION: heart_len >= 2
 
-RULE B_1H_4C_4H_1644_1:
+RULE B_1H_4C_4H_1154_1:
   CALL: 4H
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -12783,7 +9334,7 @@ RULE B_1H_4C_4H_1644_1:
   CONDITION: hcp <= 16
   CONDITION: heart_len >= 3
 
-RULE B_1H_4C_4S_1645_0:
+RULE B_1H_4C_4S_1155_0:
   CALL: 4S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -12794,7 +9345,7 @@ RULE B_1H_4C_4S_1645_0:
   CONDITION: hcp >= 12
   CONDITION: spade_len >= 6
 
-RULE B_1H_4C_X_1655_0:
+RULE B_1H_4C_X_1165_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -12804,7 +9355,7 @@ RULE B_1H_4C_X_1655_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_1H_4D_PASS_1656_0:
+RULE B_1H_4D_PASS_1166_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -12814,7 +9365,7 @@ RULE B_1H_4D_PASS_1656_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1H_4D_4H_1657_0:
+RULE B_1H_4D_4H_1167_0:
   CALL: 4H
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -12826,7 +9377,7 @@ RULE B_1H_4D_4H_1657_0:
   CONDITION: hcp <= 12
   CONDITION: heart_len >= 2
 
-RULE B_1H_4D_4H_1657_1:
+RULE B_1H_4D_4H_1167_1:
   CALL: 4H
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -12838,7 +9389,7 @@ RULE B_1H_4D_4H_1657_1:
   CONDITION: hcp <= 16
   CONDITION: heart_len >= 3
 
-RULE B_1H_4D_4S_1658_0:
+RULE B_1H_4D_4S_1168_0:
   CALL: 4S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -12849,7 +9400,7 @@ RULE B_1H_4D_4S_1658_0:
   CONDITION: hcp >= 12
   CONDITION: spade_len >= 6
 
-RULE B_1H_4D_X_1668_0:
+RULE B_1H_4D_X_1178_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -12859,7 +9410,7 @@ RULE B_1H_4D_X_1668_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_1H_5C_PASS_1682_0:
+RULE B_1H_5C_PASS_1192_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -12868,7 +9419,7 @@ RULE B_1H_5C_PASS_1682_0:
   CONDITION: opp_last_call == '5C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1H_5D_PASS_1686_1:
+RULE B_1H_5D_PASS_1196_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -12877,7 +9428,7 @@ RULE B_1H_5D_PASS_1686_1:
   CONDITION: opp_last_call == '5D'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1H_5D_5H_1687_0:
+RULE B_1H_5D_5H_1197_0:
   CALL: 5H
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -12888,7 +9439,7 @@ RULE B_1H_5D_5H_1687_0:
   CONDITION: heart_len >= 3
   CONDITION: hcp >= 12
 
-RULE B_1H_5D_X_1690_0:
+RULE B_1H_5D_X_1200_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -12898,7 +9449,7 @@ RULE B_1H_5D_X_1690_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 13
 
-RULE B_1H_6C_PASS_1691_0:
+RULE B_1H_6C_PASS_1201_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -12907,16 +9458,7 @@ RULE B_1H_6C_PASS_1691_0:
   CONDITION: opp_last_call == '6C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1H_6D_PASS_1692_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1H'
-  CONDITION: opp_last_call == '6D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1H_6S_PASS_1693_0:
+RULE B_1H_6S_PASS_1202_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -12925,7 +9467,7 @@ RULE B_1H_6S_PASS_1693_0:
   CONDITION: opp_last_call == '6S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1H_1N_PASS_1694_0:
+RULE B_1H_1N_PASS_1203_0:
   CALL: PASS
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -12935,7 +9477,7 @@ RULE B_1H_1N_PASS_1694_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1H_1N_2C_1695_0:
+RULE B_1H_1N_2C_1204_0:
   CALL: 2C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -12947,7 +9489,7 @@ RULE B_1H_1N_2C_1695_0:
   CONDITION: hcp >= 5
   CONDITION: club_len >= 6
 
-RULE B_1H_1N_2D_1696_0:
+RULE B_1H_1N_2D_1205_0:
   CALL: 2D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -12959,7 +9501,7 @@ RULE B_1H_1N_2D_1696_0:
   CONDITION: hcp >= 5
   CONDITION: diamond_len >= 6
 
-RULE B_1H_1N_2H_1697_0:
+RULE B_1H_1N_2H_1206_0:
   CALL: 2H
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -12971,7 +9513,7 @@ RULE B_1H_1N_2H_1697_0:
   CONDITION: heart_hcp >= 5
   CONDITION: heart_len >= 3
 
-RULE B_1H_1N_2S_1698_0:
+RULE B_1H_1N_2S_1207_0:
   CALL: 2S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -12983,7 +9525,7 @@ RULE B_1H_1N_2S_1698_0:
   CONDITION: hcp >= 5
   CONDITION: spade_len >= 6
 
-RULE B_1H_1N_3H_1699_0:
+RULE B_1H_1N_3H_1208_0:
   CALL: 3H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -12995,7 +9537,7 @@ RULE B_1H_1N_3H_1699_0:
   CONDITION: hcp >= 5
   CONDITION: heart_len >= 4
 
-RULE B_1H_1N_3H_1699_1:
+RULE B_1H_1N_3H_1208_1:
   CALL: 3H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -13007,7 +9549,7 @@ RULE B_1H_1N_3H_1699_1:
   CONDITION: hcp >= 5
   CONDITION: heart_len >= 5
 
-RULE B_1H_1N_4H_1701_0:
+RULE B_1H_1N_4H_1210_0:
   CALL: 4H
   PRIORITY: 65
   CONDITION: is_opening == False
@@ -13018,7 +9560,7 @@ RULE B_1H_1N_4H_1701_0:
   CONDITION: heart_hcp >= 11
   CONDITION: heart_len >= 4
 
-RULE B_1H_1N_4S_1702_0:
+RULE B_1H_1N_4S_1211_0:
   CALL: 4S
   PRIORITY: 63
   CONDITION: is_opening == False
@@ -13029,7 +9571,7 @@ RULE B_1H_1N_4S_1702_0:
   CONDITION: spade_hcp >= 11
   CONDITION: heart_len >= 7
 
-RULE B_1H_2N_PASS_1704_0:
+RULE B_1H_2N_PASS_1213_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -13039,7 +9581,7 @@ RULE B_1H_2N_PASS_1704_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1H_2N_3C_1705_0:
+RULE B_1H_2N_3C_1214_0:
   CALL: 3C
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -13050,7 +9592,7 @@ RULE B_1H_2N_3C_1705_0:
   CONDITION: heart_len >= 3
   CONDITION: hcp >= 10
 
-RULE B_1H_2N_3D_1706_0:
+RULE B_1H_2N_3D_1215_0:
   CALL: 3D
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -13061,7 +9603,7 @@ RULE B_1H_2N_3D_1706_0:
   CONDITION: spade_len >= 5
   CONDITION: hcp >= 10
 
-RULE B_1H_2N_3H_1707_0:
+RULE B_1H_2N_3H_1216_0:
   CALL: 3H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -13073,7 +9615,7 @@ RULE B_1H_2N_3H_1707_0:
   CONDITION: hcp <= 9
   CONDITION: hcp >= 7
 
-RULE B_1H_2N_3S_1708_0:
+RULE B_1H_2N_3S_1217_0:
   CALL: 3S
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -13085,7 +9627,7 @@ RULE B_1H_2N_3S_1708_0:
   CONDITION: hcp <= 9
   CONDITION: hcp >= 7
 
-RULE B_1H_2N_3NT_1709_0:
+RULE B_1H_2N_3NT_1218_0:
   CALL: 3NT
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -13098,7 +9640,7 @@ RULE B_1H_2N_3NT_1709_0:
   CONDITION: hcp >= 12
   CONDITION: heart_len <= 2
 
-RULE B_1H_2N_4H_1710_0:
+RULE B_1H_2N_4H_1219_0:
   CALL: 4H
   PRIORITY: 33
   CONDITION: is_opening == False
@@ -13110,7 +9652,7 @@ RULE B_1H_2N_4H_1710_0:
   CONDITION: hcp <= 9
   CONDITION: heart_hcp >= 6
 
-RULE B_1H_2N_4S_1711_0:
+RULE B_1H_2N_4S_1220_0:
   CALL: 4S
   PRIORITY: 35
   CONDITION: is_opening == False
@@ -13122,7 +9664,7 @@ RULE B_1H_2N_4S_1711_0:
   CONDITION: hcp <= 9
   CONDITION: hcp >= 7
 
-RULE B_1H_2N_X_1720_0:
+RULE B_1H_2N_X_1229_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -13132,7 +9674,7 @@ RULE B_1H_2N_X_1720_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 9
 
-RULE B_1S_P_PASS_1721_0:
+RULE B_1S_P_PASS_1230_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -13142,7 +9684,7 @@ RULE B_1S_P_PASS_1721_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp <= 5
 
-RULE B_1S_P_1NT_1722_0:
+RULE B_1S_P_1NT_1231_0:
   CALL: 1NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -13154,7 +9696,7 @@ RULE B_1S_P_1NT_1722_0:
   CONDITION: spade_len < 4
   CONDITION: hcp >= 6
 
-RULE B_1S_P_2C_1723_2:
+RULE B_1S_P_2C_1232_2:
   CALL: 2C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -13169,7 +9711,7 @@ RULE B_1S_P_2C_1723_2:
   CONDITION: diamond_len == 3
   CONDITION: club_len == 3
 
-RULE B_1S_P_2S_1726_0:
+RULE B_1S_P_2S_1235_0:
   CALL: 2S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -13181,7 +9723,7 @@ RULE B_1S_P_2S_1726_0:
   CONDITION: hcp < 10
   CONDITION: spade_len >= 3
 
-RULE B_1S_P_2S_1726_1:
+RULE B_1S_P_2S_1235_1:
   CALL: 2S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -13193,7 +9735,7 @@ RULE B_1S_P_2S_1726_1:
   CONDITION: hcp < 10
   CONDITION: spade_len >= 4
 
-RULE B_1S_P_2NT_1727_0:
+RULE B_1S_P_2NT_1236_0:
   CALL: 2NT
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -13205,7 +9747,7 @@ RULE B_1S_P_2NT_1727_0:
   CONDITION: hcp >= 12
   CONDITION: spade_len >= 4
 
-RULE B_1S_P_3C_1728_0:
+RULE B_1S_P_3C_1237_0:
   CALL: 3C
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -13219,7 +9761,7 @@ RULE B_1S_P_3C_1728_0:
   CONDITION: heart_len <= 3
   CONDITION: spade_len <= 2
 
-RULE B_1S_P_3D_1729_0:
+RULE B_1S_P_3D_1238_0:
   CALL: 3D
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -13233,7 +9775,7 @@ RULE B_1S_P_3D_1729_0:
   CONDITION: heart_len <= 3
   CONDITION: spade_len <= 2
 
-RULE B_1S_P_3H_1730_0:
+RULE B_1S_P_3H_1239_0:
   CALL: 3H
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -13245,7 +9787,7 @@ RULE B_1S_P_3H_1730_0:
   CONDITION: hcp < 12
   CONDITION: heart_len >= 6
 
-RULE B_1S_P_3S_1731_0:
+RULE B_1S_P_3S_1240_0:
   CALL: 3S
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -13257,7 +9799,7 @@ RULE B_1S_P_3S_1731_0:
   CONDITION: hcp < 12
   CONDITION: spade_len >= 4
 
-RULE B_1S_P_4C_1733_0:
+RULE B_1S_P_4C_1242_0:
   CALL: 4C
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -13270,7 +9812,7 @@ RULE B_1S_P_4C_1733_0:
   CONDITION: club_len <= 1
   CONDITION: spade_len >= 4
 
-RULE B_1S_P_4D_1734_0:
+RULE B_1S_P_4D_1243_0:
   CALL: 4D
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -13283,7 +9825,7 @@ RULE B_1S_P_4D_1734_0:
   CONDITION: diamond_len <= 1
   CONDITION: spade_len >= 4
 
-RULE B_1S_P_4H_1735_0:
+RULE B_1S_P_4H_1244_0:
   CALL: 4H
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -13296,7 +9838,7 @@ RULE B_1S_P_4H_1735_0:
   CONDITION: heart_len <= 1
   CONDITION: spade_len >= 4
 
-RULE B_1S_P_4S_1736_0:
+RULE B_1S_P_4S_1245_0:
   CALL: 4S
   PRIORITY: 72
   CONDITION: is_opening == False
@@ -13307,7 +9849,7 @@ RULE B_1S_P_4S_1736_0:
   CONDITION: hcp <= 8
   CONDITION: spade_len >= 5
 
-RULE B_1S_X_PASS_1745_0:
+RULE B_1S_X_PASS_1254_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -13316,7 +9858,7 @@ RULE B_1S_X_PASS_1745_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1S_X_1NT_1746_0:
+RULE B_1S_X_1NT_1255_0:
   CALL: 1NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -13327,7 +9869,7 @@ RULE B_1S_X_1NT_1746_0:
   CONDITION: hcp < 10
   CONDITION: hcp >= 7
 
-RULE B_1S_X_2H_1749_0:
+RULE B_1S_X_2H_1258_0:
   CALL: 2H
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -13339,7 +9881,7 @@ RULE B_1S_X_2H_1749_0:
   CONDITION: total_points >= 9
   CONDITION: total_points <= 11
 
-RULE B_1S_X_2S_1750_0:
+RULE B_1S_X_2S_1259_0:
   CALL: 2S
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -13350,7 +9892,7 @@ RULE B_1S_X_2S_1750_0:
   CONDITION: spade_hcp >= 4
   CONDITION: spade_len >= 5
 
-RULE B_1S_X_2S_1750_1:
+RULE B_1S_X_2S_1259_1:
   CALL: 2S
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -13362,7 +9904,7 @@ RULE B_1S_X_2S_1750_1:
   CONDITION: hcp < 10
   CONDITION: spade_len >= 3
 
-RULE B_1S_X_2S_1750_2:
+RULE B_1S_X_2S_1259_2:
   CALL: 2S
   PRIORITY: 45
   CONDITION: is_opening == False
@@ -13374,7 +9916,7 @@ RULE B_1S_X_2S_1750_2:
   CONDITION: hcp < 10
   CONDITION: spade_len >= 4
 
-RULE B_1S_X_2NT_1751_0:
+RULE B_1S_X_2NT_1260_0:
   CALL: 2NT
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -13385,7 +9927,7 @@ RULE B_1S_X_2NT_1751_0:
   CONDITION: spade_hcp > 12
   CONDITION: spade_len >= 3
 
-RULE B_1S_X_2NT_1751_1:
+RULE B_1S_X_2NT_1260_1:
   CALL: 2NT
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -13396,7 +9938,7 @@ RULE B_1S_X_2NT_1751_1:
   CONDITION: hcp >= 10
   CONDITION: spade_len >= 3
 
-RULE B_1S_X_3NT_1755_0:
+RULE B_1S_X_3NT_1264_0:
   CALL: 3NT
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -13412,7 +9954,7 @@ RULE B_1S_X_3NT_1755_0:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 17
 
-RULE B_1S_X_4C_1756_0:
+RULE B_1S_X_4C_1265_0:
   CALL: 4C
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -13425,7 +9967,7 @@ RULE B_1S_X_4C_1756_0:
   CONDITION: club_len <= 1
   CONDITION: spade_len >= 4
 
-RULE B_1S_X_4D_1757_0:
+RULE B_1S_X_4D_1266_0:
   CALL: 4D
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -13438,7 +9980,7 @@ RULE B_1S_X_4D_1757_0:
   CONDITION: diamond_len <= 1
   CONDITION: spade_len >= 4
 
-RULE B_1S_X_4H_1758_0:
+RULE B_1S_X_4H_1267_0:
   CALL: 4H
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -13451,7 +9993,7 @@ RULE B_1S_X_4H_1758_0:
   CONDITION: heart_len <= 1
   CONDITION: spade_len >= 4
 
-RULE B_1S_X_4S_1759_0:
+RULE B_1S_X_4S_1268_0:
   CALL: 4S
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -13463,7 +10005,7 @@ RULE B_1S_X_4S_1759_0:
   CONDITION: hcp < 10
   CONDITION: spade_len >= 5
 
-RULE B_1S_X_XX_1760_0:
+RULE B_1S_X_XX_1269_0:
   CALL: XX
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -13473,7 +10015,7 @@ RULE B_1S_X_XX_1760_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_1S_2C_PASS_1761_0:
+RULE B_1S_2C_PASS_1270_0:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -13482,7 +10024,7 @@ RULE B_1S_2C_PASS_1761_0:
   CONDITION: opp_last_call == '2C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1S_2C_PASS_1761_1:
+RULE B_1S_2C_PASS_1270_1:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -13493,7 +10035,7 @@ RULE B_1S_2C_PASS_1761_1:
   CONDITION: club_len >= 4
   CONDITION: hcp >= 10
 
-RULE B_1S_2C_PASS_1761_2:
+RULE B_1S_2C_PASS_1270_2:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -13503,7 +10045,7 @@ RULE B_1S_2C_PASS_1761_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1S_2C_PASS_1761_3:
+RULE B_1S_2C_PASS_1270_3:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -13513,7 +10055,7 @@ RULE B_1S_2C_PASS_1761_3:
   CONDITION: passes_since_last_bid == 0
   CONDITION: club_len >= 5
 
-RULE B_1S_2C_2D_1762_0:
+RULE B_1S_2C_2D_1271_0:
   CALL: 2D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -13525,7 +10067,7 @@ RULE B_1S_2C_2D_1762_0:
   CONDITION: total_points >= 10
   CONDITION: hcp >= 8
 
-RULE B_1S_2C_2D_1762_1:
+RULE B_1S_2C_2D_1271_1:
   CALL: 2D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -13537,7 +10079,7 @@ RULE B_1S_2C_2D_1762_1:
   CONDITION: total_points >= 10
   CONDITION: hcp >= 8
 
-RULE B_1S_2C_2D_1762_2:
+RULE B_1S_2C_2D_1271_2:
   CALL: 2D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -13548,7 +10090,7 @@ RULE B_1S_2C_2D_1762_2:
   CONDITION: diamond_len >= 5
   CONDITION: hcp >= 9
 
-RULE B_1S_2C_2H_1763_0:
+RULE B_1S_2C_2H_1272_0:
   CALL: 2H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -13559,7 +10101,7 @@ RULE B_1S_2C_2H_1763_0:
   CONDITION: heart_len >= 5
   CONDITION: hcp >= 9
 
-RULE B_1S_2C_2H_1763_1:
+RULE B_1S_2C_2H_1272_1:
   CALL: 2H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -13571,7 +10113,7 @@ RULE B_1S_2C_2H_1763_1:
   CONDITION: total_points >= 10
   CONDITION: hcp >= 8
 
-RULE B_1S_2C_2S_1764_0:
+RULE B_1S_2C_2S_1273_0:
   CALL: 2S
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -13583,7 +10125,7 @@ RULE B_1S_2C_2S_1764_0:
   CONDITION: hcp <= 9
   CONDITION: spade_hcp >= 6
 
-RULE B_1S_2C_2NT_1765_0:
+RULE B_1S_2C_2NT_1274_0:
   CALL: 2NT
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -13595,7 +10137,7 @@ RULE B_1S_2C_2NT_1765_0:
   CONDITION: hcp >= 9
   CONDITION: hcp <= 11
 
-RULE B_1S_2C_3C_1766_0:
+RULE B_1S_2C_3C_1275_0:
   CALL: 3C
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -13606,7 +10148,7 @@ RULE B_1S_2C_3C_1766_0:
   CONDITION: spade_len >= 3
   CONDITION: hcp >= 10
 
-RULE B_1S_2C_3D_1767_0:
+RULE B_1S_2C_3D_1276_0:
   CALL: 3D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -13617,7 +10159,7 @@ RULE B_1S_2C_3D_1767_0:
   CONDITION: diamond_len >= 6
   CONDITION: hcp >= 15
 
-RULE B_1S_2C_3S_1768_0:
+RULE B_1S_2C_3S_1277_0:
   CALL: 3S
   PRIORITY: 54
   CONDITION: is_opening == False
@@ -13629,7 +10171,7 @@ RULE B_1S_2C_3S_1768_0:
   CONDITION: hcp <= 7
   CONDITION: spade_hcp >= 5
 
-RULE B_1S_2C_4C_1770_0:
+RULE B_1S_2C_4C_1279_0:
   CALL: 4C
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -13642,7 +10184,7 @@ RULE B_1S_2C_4C_1770_0:
   CONDITION: club_len <= 1
   CONDITION: spade_len >= 4
 
-RULE B_1S_2C_4S_1771_0:
+RULE B_1S_2C_4S_1280_0:
   CALL: 4S
   PRIORITY: 82
   CONDITION: is_opening == False
@@ -13654,7 +10196,7 @@ RULE B_1S_2C_4S_1771_0:
   CONDITION: hcp <= 9
   CONDITION: spade_hcp >= 4
 
-RULE B_1S_2C_X_1780_0:
+RULE B_1S_2C_X_1289_0:
   CALL: X
   PRIORITY: 46
   CONDITION: is_opening == False
@@ -13665,7 +10207,7 @@ RULE B_1S_2C_X_1780_0:
   CONDITION: heart_len >= 4
   CONDITION: hcp >= 8
 
-RULE B_1S_2C_X_1780_1:
+RULE B_1S_2C_X_1289_1:
   CALL: X
   PRIORITY: 46
   CONDITION: is_opening == False
@@ -13676,7 +10218,7 @@ RULE B_1S_2C_X_1780_1:
   CONDITION: heart_len >= 5
   CONDITION: hcp >= 7
 
-RULE B_1S_2C_X_1780_2:
+RULE B_1S_2C_X_1289_2:
   CALL: X
   PRIORITY: 46
   CONDITION: is_opening == False
@@ -13687,7 +10229,7 @@ RULE B_1S_2C_X_1780_2:
   CONDITION: heart_len >= 6
   CONDITION: hcp >= 6
 
-RULE B_1S_2D_PASS_1781_0:
+RULE B_1S_2D_PASS_1290_0:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -13696,7 +10238,7 @@ RULE B_1S_2D_PASS_1781_0:
   CONDITION: opp_last_call == '2D'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1S_2D_PASS_1781_1:
+RULE B_1S_2D_PASS_1290_1:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -13707,7 +10249,7 @@ RULE B_1S_2D_PASS_1781_1:
   CONDITION: diamond_len >= 4
   CONDITION: hcp >= 10
 
-RULE B_1S_2D_PASS_1781_2:
+RULE B_1S_2D_PASS_1290_2:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -13717,7 +10259,7 @@ RULE B_1S_2D_PASS_1781_2:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1S_2D_PASS_1781_3:
+RULE B_1S_2D_PASS_1290_3:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -13727,7 +10269,7 @@ RULE B_1S_2D_PASS_1781_3:
   CONDITION: passes_since_last_bid == 0
   CONDITION: diamond_len >= 5
 
-RULE B_1S_2D_2H_1782_0:
+RULE B_1S_2D_2H_1291_0:
   CALL: 2H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -13739,7 +10281,7 @@ RULE B_1S_2D_2H_1782_0:
   CONDITION: total_points >= 10
   CONDITION: hcp >= 8
 
-RULE B_1S_2D_2S_1783_0:
+RULE B_1S_2D_2S_1292_0:
   CALL: 2S
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -13751,7 +10293,7 @@ RULE B_1S_2D_2S_1783_0:
   CONDITION: hcp <= 9
   CONDITION: spade_hcp >= 6
 
-RULE B_1S_2D_2NT_1784_0:
+RULE B_1S_2D_2NT_1293_0:
   CALL: 2NT
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -13763,7 +10305,7 @@ RULE B_1S_2D_2NT_1784_0:
   CONDITION: hcp >= 9
   CONDITION: hcp <= 11
 
-RULE B_1S_2D_3C_1785_0:
+RULE B_1S_2D_3C_1294_0:
   CALL: 3C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -13774,7 +10316,7 @@ RULE B_1S_2D_3C_1785_0:
   CONDITION: club_len >= 5
   CONDITION: hcp >= 10
 
-RULE B_1S_2D_3D_1786_0:
+RULE B_1S_2D_3D_1295_0:
   CALL: 3D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -13785,7 +10327,7 @@ RULE B_1S_2D_3D_1786_0:
   CONDITION: spade_len >= 3
   CONDITION: hcp >= 10
 
-RULE B_1S_2D_3S_1787_0:
+RULE B_1S_2D_3S_1296_0:
   CALL: 3S
   PRIORITY: 54
   CONDITION: is_opening == False
@@ -13797,7 +10339,7 @@ RULE B_1S_2D_3S_1787_0:
   CONDITION: hcp <= 7
   CONDITION: spade_hcp >= 5
 
-RULE B_1S_2D_4D_1789_0:
+RULE B_1S_2D_4D_1298_0:
   CALL: 4D
   PRIORITY: 125
   CONDITION: is_opening == False
@@ -13810,7 +10352,7 @@ RULE B_1S_2D_4D_1789_0:
   CONDITION: diamond_len <= 1
   CONDITION: spade_len >= 4
 
-RULE B_1S_2D_4S_1790_0:
+RULE B_1S_2D_4S_1299_0:
   CALL: 4S
   PRIORITY: 82
   CONDITION: is_opening == False
@@ -13822,7 +10364,7 @@ RULE B_1S_2D_4S_1790_0:
   CONDITION: hcp <= 9
   CONDITION: spade_hcp >= 4
 
-RULE B_1S_2D_X_1799_0:
+RULE B_1S_2D_X_1308_0:
   CALL: X
   PRIORITY: 46
   CONDITION: is_opening == False
@@ -13833,7 +10375,7 @@ RULE B_1S_2D_X_1799_0:
   CONDITION: heart_len >= 4
   CONDITION: hcp >= 8
 
-RULE B_1S_2D_X_1799_1:
+RULE B_1S_2D_X_1308_1:
   CALL: X
   PRIORITY: 46
   CONDITION: is_opening == False
@@ -13844,7 +10386,7 @@ RULE B_1S_2D_X_1799_1:
   CONDITION: heart_len >= 5
   CONDITION: hcp >= 7
 
-RULE B_1S_2D_X_1799_2:
+RULE B_1S_2D_X_1308_2:
   CALL: X
   PRIORITY: 46
   CONDITION: is_opening == False
@@ -13855,7 +10397,7 @@ RULE B_1S_2D_X_1799_2:
   CONDITION: heart_len >= 6
   CONDITION: hcp >= 6
 
-RULE B_1S_2H_PASS_1800_0:
+RULE B_1S_2H_PASS_1309_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -13865,7 +10407,7 @@ RULE B_1S_2H_PASS_1800_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1S_2H_PASS_1800_1:
+RULE B_1S_2H_PASS_1309_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -13875,7 +10417,7 @@ RULE B_1S_2H_PASS_1800_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1S_2H_2S_1801_0:
+RULE B_1S_2H_2S_1310_0:
   CALL: 2S
   PRIORITY: 33
   CONDITION: is_opening == False
@@ -13887,7 +10429,7 @@ RULE B_1S_2H_2S_1801_0:
   CONDITION: hcp <= 9
   CONDITION: spade_hcp >= 6
 
-RULE B_1S_2H_2NT_1802_0:
+RULE B_1S_2H_2NT_1311_0:
   CALL: 2NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -13899,7 +10441,7 @@ RULE B_1S_2H_2NT_1802_0:
   CONDITION: hcp >= 10
   CONDITION: hcp <= 11
 
-RULE B_1S_2H_3C_1803_0:
+RULE B_1S_2H_3C_1312_0:
   CALL: 3C
   PRIORITY: 29
   CONDITION: is_opening == False
@@ -13910,7 +10452,7 @@ RULE B_1S_2H_3C_1803_0:
   CONDITION: club_len >= 5
   CONDITION: hcp >= 10
 
-RULE B_1S_2H_3C_1803_1:
+RULE B_1S_2H_3C_1312_1:
   CALL: 3C
   PRIORITY: 29
   CONDITION: is_opening == False
@@ -13921,7 +10463,7 @@ RULE B_1S_2H_3C_1803_1:
   CONDITION: club_len >= 5
   CONDITION: total_points >= 13
 
-RULE B_1S_2H_3D_1804_0:
+RULE B_1S_2H_3D_1313_0:
   CALL: 3D
   PRIORITY: 29
   CONDITION: is_opening == False
@@ -13932,7 +10474,7 @@ RULE B_1S_2H_3D_1804_0:
   CONDITION: diamond_len >= 5
   CONDITION: hcp >= 10
 
-RULE B_1S_2H_3D_1804_1:
+RULE B_1S_2H_3D_1313_1:
   CALL: 3D
   PRIORITY: 29
   CONDITION: is_opening == False
@@ -13943,7 +10485,7 @@ RULE B_1S_2H_3D_1804_1:
   CONDITION: diamond_len >= 5
   CONDITION: total_points >= 13
 
-RULE B_1S_2H_3H_1805_0:
+RULE B_1S_2H_3H_1314_0:
   CALL: 3H
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -13954,7 +10496,7 @@ RULE B_1S_2H_3H_1805_0:
   CONDITION: spade_len >= 3
   CONDITION: hcp >= 10
 
-RULE B_1S_2H_3H_1805_1:
+RULE B_1S_2H_3H_1314_1:
   CALL: 3H
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -13965,7 +10507,7 @@ RULE B_1S_2H_3H_1805_1:
   CONDITION: spade_len >= 3
   CONDITION: spade_hcp >= 12
 
-RULE B_1S_2H_3S_1806_0:
+RULE B_1S_2H_3S_1315_0:
   CALL: 3S
   PRIORITY: 34
   CONDITION: is_opening == False
@@ -13977,7 +10519,7 @@ RULE B_1S_2H_3S_1806_0:
   CONDITION: hcp <= 8
   CONDITION: hcp >= 4
 
-RULE B_1S_2H_4S_1809_0:
+RULE B_1S_2H_4S_1318_0:
   CALL: 4S
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -13988,7 +10530,7 @@ RULE B_1S_2H_4S_1809_0:
   CONDITION: spade_len >= 5
   CONDITION: hcp <= 8
 
-RULE B_1S_2H_X_1810_0:
+RULE B_1S_2H_X_1319_0:
   CALL: X
   PRIORITY: 28
   CONDITION: is_opening == False
@@ -14000,7 +10542,7 @@ RULE B_1S_2H_X_1810_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp >= 9
 
-RULE B_1S_2S_PASS_1811_0:
+RULE B_1S_2S_PASS_1320_0:
   CALL: PASS
   PRIORITY: -1
   CONDITION: is_opening == False
@@ -14010,7 +10552,7 @@ RULE B_1S_2S_PASS_1811_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: heart_len >= 4
 
-RULE B_1S_2S_PASS_1812_0:
+RULE B_1S_2S_PASS_1321_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14021,7 +10563,7 @@ RULE B_1S_2S_PASS_1812_0:
   CONDITION: hcp <= 11
   CONDITION: spade_len <= 3
 
-RULE B_1S_2S_PASS_1812_1:
+RULE B_1S_2S_PASS_1321_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14031,7 +10573,7 @@ RULE B_1S_2S_PASS_1812_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: total_points <= 7
 
-RULE B_1S_2S_3C_1813_0:
+RULE B_1S_2S_3C_1322_0:
   CALL: 3C
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -14043,7 +10585,7 @@ RULE B_1S_2S_3C_1813_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 7
 
-RULE B_1S_2S_3D_1814_0:
+RULE B_1S_2S_3D_1323_0:
   CALL: 3D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -14055,7 +10597,7 @@ RULE B_1S_2S_3D_1814_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 7
 
-RULE B_1S_2S_3H_1815_0:
+RULE B_1S_2S_3H_1324_0:
   CALL: 3H
   PRIORITY: 38
   CONDITION: is_opening == False
@@ -14067,7 +10609,7 @@ RULE B_1S_2S_3H_1815_0:
   CONDITION: spade_hcp >= 10
   CONDITION: hcp >= 8
 
-RULE B_1S_2S_3H_1815_1:
+RULE B_1S_2S_3H_1324_1:
   CALL: 3H
   PRIORITY: 38
   CONDITION: is_opening == False
@@ -14079,7 +10621,7 @@ RULE B_1S_2S_3H_1815_1:
   CONDITION: total_points >= 10
   CONDITION: hcp >= 9
 
-RULE B_1S_2S_3S_1816_0:
+RULE B_1S_2S_3S_1325_0:
   CALL: 3S
   PRIORITY: 35
   CONDITION: is_opening == False
@@ -14091,7 +10633,7 @@ RULE B_1S_2S_3S_1816_0:
   CONDITION: total_points <= 10
   CONDITION: total_points >= 8
 
-RULE B_1S_2S_3NT_1817_0:
+RULE B_1S_2S_3NT_1326_0:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -14102,7 +10644,7 @@ RULE B_1S_2S_3NT_1817_0:
   CONDITION: hcp >= 12
   CONDITION: h_stopper >= 2
 
-RULE B_1S_2S_4S_1818_0:
+RULE B_1S_2S_4S_1327_0:
   CALL: 4S
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -14114,7 +10656,7 @@ RULE B_1S_2S_4S_1818_0:
   CONDITION: total_points >= 10
   CONDITION: spade_hcp <= 14
 
-RULE B_1S_2S_4S_1818_1:
+RULE B_1S_2S_4S_1327_1:
   CALL: 4S
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -14126,7 +10668,7 @@ RULE B_1S_2S_4S_1818_1:
   CONDITION: total_points >= 4
   CONDITION: spade_hcp <= 14
 
-RULE B_1S_2S_4S_1818_2:
+RULE B_1S_2S_4S_1327_2:
   CALL: 4S
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -14138,7 +10680,7 @@ RULE B_1S_2S_4S_1818_2:
   CONDITION: total_points >= 10
   CONDITION: spade_hcp <= 14
 
-RULE B_1S_2S_5C_1819_0:
+RULE B_1S_2S_5C_1328_0:
   CALL: 5C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -14149,7 +10691,7 @@ RULE B_1S_2S_5C_1819_0:
   CONDITION: club_len >= 8
   CONDITION: losing_trick_count <= 5
 
-RULE B_1S_2S_5D_1820_0:
+RULE B_1S_2S_5D_1329_0:
   CALL: 5D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -14160,7 +10702,7 @@ RULE B_1S_2S_5D_1820_0:
   CONDITION: diamond_len >= 8
   CONDITION: losing_trick_count <= 5
 
-RULE B_1S_2S_X_1821_0:
+RULE B_1S_2S_X_1330_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -14170,7 +10712,7 @@ RULE B_1S_2S_X_1821_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 12
 
-RULE B_1S_3C_PASS_1822_0:
+RULE B_1S_3C_PASS_1331_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14180,7 +10722,7 @@ RULE B_1S_3C_PASS_1822_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1S_3C_3D_1823_0:
+RULE B_1S_3C_3D_1332_0:
   CALL: 3D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -14191,7 +10733,7 @@ RULE B_1S_3C_3D_1823_0:
   CONDITION: total_points >= 12
   CONDITION: diamond_len >= 5
 
-RULE B_1S_3C_3H_1824_0:
+RULE B_1S_3C_3H_1333_0:
   CALL: 3H
   PRIORITY: 35
   CONDITION: is_opening == False
@@ -14202,7 +10744,7 @@ RULE B_1S_3C_3H_1824_0:
   CONDITION: hcp >= 12
   CONDITION: heart_len >= 5
 
-RULE B_1S_3C_3S_1825_0:
+RULE B_1S_3C_3S_1334_0:
   CALL: 3S
   PRIORITY: 41
   CONDITION: is_opening == False
@@ -14214,7 +10756,7 @@ RULE B_1S_3C_3S_1825_0:
   CONDITION: hcp <= 10
   CONDITION: spade_len >= 3
 
-RULE B_1S_3C_3NT_1826_0:
+RULE B_1S_3C_3NT_1335_0:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -14226,7 +10768,7 @@ RULE B_1S_3C_3NT_1826_0:
   CONDITION: c_stopper >= 2
   CONDITION: hcp <= 18
 
-RULE B_1S_3C_4C_1827_0:
+RULE B_1S_3C_4C_1336_0:
   CALL: 4C
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -14237,7 +10779,7 @@ RULE B_1S_3C_4C_1827_0:
   CONDITION: hcp >= 13
   CONDITION: spade_len >= 2
 
-RULE B_1S_3C_4C_1827_1:
+RULE B_1S_3C_4C_1336_1:
   CALL: 4C
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -14248,7 +10790,7 @@ RULE B_1S_3C_4C_1827_1:
   CONDITION: hcp >= 13
   CONDITION: spade_len >= 3
 
-RULE B_1S_3C_4H_1828_0:
+RULE B_1S_3C_4H_1337_0:
   CALL: 4H
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -14259,7 +10801,7 @@ RULE B_1S_3C_4H_1828_0:
   CONDITION: hcp >= 10
   CONDITION: heart_len >= 7
 
-RULE B_1S_3C_4S_1829_0:
+RULE B_1S_3C_4S_1338_0:
   CALL: 4S
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -14271,7 +10813,7 @@ RULE B_1S_3C_4S_1829_0:
   CONDITION: hcp <= 12
   CONDITION: spade_len >= 2
 
-RULE B_1S_3C_4S_1829_1:
+RULE B_1S_3C_4S_1338_1:
   CALL: 4S
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -14283,7 +10825,7 @@ RULE B_1S_3C_4S_1829_1:
   CONDITION: spade_hcp >= 10
   CONDITION: hcp < 10
 
-RULE B_1S_3C_4S_1829_2:
+RULE B_1S_3C_4S_1338_2:
   CALL: 4S
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -14295,7 +10837,7 @@ RULE B_1S_3C_4S_1829_2:
   CONDITION: hcp <= 12
   CONDITION: spade_len >= 3
 
-RULE B_1S_3C_4S_1829_3:
+RULE B_1S_3C_4S_1338_3:
   CALL: 4S
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -14307,7 +10849,7 @@ RULE B_1S_3C_4S_1829_3:
   CONDITION: hcp <= 12
   CONDITION: spade_len >= 4
 
-RULE B_1S_3C_X_1838_0:
+RULE B_1S_3C_X_1347_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -14318,7 +10860,7 @@ RULE B_1S_3C_X_1838_0:
   CONDITION: heart_len >= 4
   CONDITION: hcp >= 10
 
-RULE B_1S_3D_PASS_1839_0:
+RULE B_1S_3D_PASS_1348_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14328,7 +10870,7 @@ RULE B_1S_3D_PASS_1839_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1S_3D_3H_1840_0:
+RULE B_1S_3D_3H_1349_0:
   CALL: 3H
   PRIORITY: 35
   CONDITION: is_opening == False
@@ -14339,7 +10881,7 @@ RULE B_1S_3D_3H_1840_0:
   CONDITION: hcp >= 12
   CONDITION: heart_len >= 5
 
-RULE B_1S_3D_3S_1841_0:
+RULE B_1S_3D_3S_1350_0:
   CALL: 3S
   PRIORITY: 41
   CONDITION: is_opening == False
@@ -14351,7 +10893,7 @@ RULE B_1S_3D_3S_1841_0:
   CONDITION: hcp <= 10
   CONDITION: spade_len >= 3
 
-RULE B_1S_3D_3NT_1842_0:
+RULE B_1S_3D_3NT_1351_0:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -14363,7 +10905,7 @@ RULE B_1S_3D_3NT_1842_0:
   CONDITION: d_stopper >= 2
   CONDITION: hcp <= 18
 
-RULE B_1S_3D_4C_1843_0:
+RULE B_1S_3D_4C_1352_0:
   CALL: 4C
   PRIORITY: 5
   CONDITION: is_opening == False
@@ -14374,7 +10916,7 @@ RULE B_1S_3D_4C_1843_0:
   CONDITION: club_len >= 6
   CONDITION: hcp >= 10
 
-RULE B_1S_3D_4D_1844_0:
+RULE B_1S_3D_4D_1353_0:
   CALL: 4D
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -14385,7 +10927,7 @@ RULE B_1S_3D_4D_1844_0:
   CONDITION: hcp >= 13
   CONDITION: spade_len >= 2
 
-RULE B_1S_3D_4D_1844_1:
+RULE B_1S_3D_4D_1353_1:
   CALL: 4D
   PRIORITY: 56
   CONDITION: is_opening == False
@@ -14396,7 +10938,7 @@ RULE B_1S_3D_4D_1844_1:
   CONDITION: hcp >= 13
   CONDITION: spade_len >= 3
 
-RULE B_1S_3D_4H_1845_0:
+RULE B_1S_3D_4H_1354_0:
   CALL: 4H
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -14407,7 +10949,7 @@ RULE B_1S_3D_4H_1845_0:
   CONDITION: hcp >= 10
   CONDITION: heart_len >= 7
 
-RULE B_1S_3D_4S_1846_0:
+RULE B_1S_3D_4S_1355_0:
   CALL: 4S
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -14419,7 +10961,7 @@ RULE B_1S_3D_4S_1846_0:
   CONDITION: hcp <= 12
   CONDITION: spade_len >= 2
 
-RULE B_1S_3D_4S_1846_1:
+RULE B_1S_3D_4S_1355_1:
   CALL: 4S
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -14431,7 +10973,7 @@ RULE B_1S_3D_4S_1846_1:
   CONDITION: spade_hcp >= 10
   CONDITION: hcp < 10
 
-RULE B_1S_3D_4S_1846_2:
+RULE B_1S_3D_4S_1355_2:
   CALL: 4S
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -14443,7 +10985,7 @@ RULE B_1S_3D_4S_1846_2:
   CONDITION: hcp <= 12
   CONDITION: spade_len >= 3
 
-RULE B_1S_3D_4S_1846_3:
+RULE B_1S_3D_4S_1355_3:
   CALL: 4S
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -14455,7 +10997,7 @@ RULE B_1S_3D_4S_1846_3:
   CONDITION: hcp <= 12
   CONDITION: spade_len >= 4
 
-RULE B_1S_3D_X_1855_0:
+RULE B_1S_3D_X_1364_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -14466,7 +11008,7 @@ RULE B_1S_3D_X_1855_0:
   CONDITION: heart_len >= 4
   CONDITION: hcp >= 10
 
-RULE B_1S_3H_PASS_1856_0:
+RULE B_1S_3H_PASS_1365_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14475,7 +11017,7 @@ RULE B_1S_3H_PASS_1856_0:
   CONDITION: opp_last_call == '3H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1S_3H_4C_1860_0:
+RULE B_1S_3H_4C_1369_0:
   CALL: 4C
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -14486,7 +11028,7 @@ RULE B_1S_3H_4C_1860_0:
   CONDITION: club_len >= 6
   CONDITION: hcp >= 12
 
-RULE B_1S_3H_4D_1862_0:
+RULE B_1S_3H_4D_1371_0:
   CALL: 4D
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -14497,7 +11039,7 @@ RULE B_1S_3H_4D_1862_0:
   CONDITION: diamond_len >= 6
   CONDITION: hcp >= 12
 
-RULE B_1S_3H_4S_1864_1:
+RULE B_1S_3H_4S_1373_1:
   CALL: 4S
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -14508,7 +11050,7 @@ RULE B_1S_3H_4S_1864_1:
   CONDITION: spade_len >= 3
   CONDITION: spade_hcp >= 10
 
-RULE B_1S_3H_5C_1866_0:
+RULE B_1S_3H_5C_1375_0:
   CALL: 5C
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -14521,7 +11063,7 @@ RULE B_1S_3H_5C_1866_0:
   CONDITION: hcp >= 6
   CONDITION: spade_len <= 2
 
-RULE B_1S_3H_5D_1867_0:
+RULE B_1S_3H_5D_1376_0:
   CALL: 5D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -14534,7 +11076,7 @@ RULE B_1S_3H_5D_1867_0:
   CONDITION: hcp >= 6
   CONDITION: spade_len <= 2
 
-RULE B_1S_3H_X_1870_0:
+RULE B_1S_3H_X_1379_0:
   CALL: X
   PRIORITY: 5
   CONDITION: is_opening == False
@@ -14545,7 +11087,7 @@ RULE B_1S_3H_X_1870_0:
   CONDITION: spade_len >= 2
   CONDITION: hcp >= 10
 
-RULE B_1S_4C_PASS_1871_0:
+RULE B_1S_4C_PASS_1380_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14555,7 +11097,7 @@ RULE B_1S_4C_PASS_1871_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1S_4C_4H_1872_0:
+RULE B_1S_4C_4H_1381_0:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -14566,7 +11108,7 @@ RULE B_1S_4C_4H_1872_0:
   CONDITION: hcp >= 12
   CONDITION: heart_len >= 6
 
-RULE B_1S_4C_4S_1873_0:
+RULE B_1S_4C_4S_1382_0:
   CALL: 4S
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -14578,7 +11120,7 @@ RULE B_1S_4C_4S_1873_0:
   CONDITION: hcp <= 12
   CONDITION: spade_len >= 2
 
-RULE B_1S_4C_4S_1873_1:
+RULE B_1S_4C_4S_1382_1:
   CALL: 4S
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -14590,7 +11132,7 @@ RULE B_1S_4C_4S_1873_1:
   CONDITION: hcp <= 16
   CONDITION: spade_len >= 3
 
-RULE B_1S_4C_X_1883_0:
+RULE B_1S_4C_X_1392_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -14600,7 +11142,7 @@ RULE B_1S_4C_X_1883_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_1S_4D_PASS_1884_0:
+RULE B_1S_4D_PASS_1393_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14610,7 +11152,7 @@ RULE B_1S_4D_PASS_1884_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 11
 
-RULE B_1S_4D_4H_1885_0:
+RULE B_1S_4D_4H_1394_0:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -14621,7 +11163,7 @@ RULE B_1S_4D_4H_1885_0:
   CONDITION: hcp >= 12
   CONDITION: heart_len >= 6
 
-RULE B_1S_4D_4S_1886_0:
+RULE B_1S_4D_4S_1395_0:
   CALL: 4S
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -14633,7 +11175,7 @@ RULE B_1S_4D_4S_1886_0:
   CONDITION: hcp <= 12
   CONDITION: spade_len >= 2
 
-RULE B_1S_4D_4S_1886_1:
+RULE B_1S_4D_4S_1395_1:
   CALL: 4S
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -14645,7 +11187,7 @@ RULE B_1S_4D_4S_1886_1:
   CONDITION: hcp <= 16
   CONDITION: spade_len >= 3
 
-RULE B_1S_4D_X_1896_0:
+RULE B_1S_4D_X_1405_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -14655,7 +11197,7 @@ RULE B_1S_4D_X_1896_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_1S_4H_PASS_1897_0:
+RULE B_1S_4H_PASS_1406_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14664,7 +11206,7 @@ RULE B_1S_4H_PASS_1897_0:
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1S_4H_4S_1899_0:
+RULE B_1S_4H_4S_1408_0:
   CALL: 4S
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -14675,7 +11217,7 @@ RULE B_1S_4H_4S_1899_0:
   CONDITION: spade_len >= 3
   CONDITION: spade_hcp >= 10
 
-RULE B_1S_5C_PASS_1903_0:
+RULE B_1S_5C_PASS_1412_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14684,7 +11226,7 @@ RULE B_1S_5C_PASS_1903_0:
   CONDITION: opp_last_call == '5C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1S_5D_PASS_1909_1:
+RULE B_1S_5D_PASS_1418_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14693,7 +11235,7 @@ RULE B_1S_5D_PASS_1909_1:
   CONDITION: opp_last_call == '5D'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1S_5D_5S_1911_0:
+RULE B_1S_5D_5S_1420_0:
   CALL: 5S
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14704,7 +11246,7 @@ RULE B_1S_5D_5S_1911_0:
   CONDITION: spade_len >= 3
   CONDITION: hcp >= 12
 
-RULE B_1S_5D_X_1913_0:
+RULE B_1S_5D_X_1422_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -14714,34 +11256,7 @@ RULE B_1S_5D_X_1913_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 13
 
-RULE B_1S_6C_PASS_1914_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1S'
-  CONDITION: opp_last_call == '6C'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1S_6D_PASS_1915_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1S'
-  CONDITION: opp_last_call == '6D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1S_6H_PASS_1916_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '1S'
-  CONDITION: opp_last_call == '6H'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1S_1N_PASS_1917_0:
+RULE B_1S_1N_PASS_1423_0:
   CALL: PASS
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -14751,7 +11266,7 @@ RULE B_1S_1N_PASS_1917_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1S_1N_2C_1918_0:
+RULE B_1S_1N_2C_1424_0:
   CALL: 2C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -14763,7 +11278,7 @@ RULE B_1S_1N_2C_1918_0:
   CONDITION: hcp >= 5
   CONDITION: club_len >= 6
 
-RULE B_1S_1N_2D_1919_0:
+RULE B_1S_1N_2D_1425_0:
   CALL: 2D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -14775,7 +11290,7 @@ RULE B_1S_1N_2D_1919_0:
   CONDITION: hcp >= 5
   CONDITION: diamond_len >= 6
 
-RULE B_1S_1N_2H_1920_0:
+RULE B_1S_1N_2H_1426_0:
   CALL: 2H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -14787,7 +11302,7 @@ RULE B_1S_1N_2H_1920_0:
   CONDITION: hcp >= 5
   CONDITION: heart_len >= 6
 
-RULE B_1S_1N_2S_1921_0:
+RULE B_1S_1N_2S_1427_0:
   CALL: 2S
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -14799,7 +11314,7 @@ RULE B_1S_1N_2S_1921_0:
   CONDITION: spade_hcp >= 5
   CONDITION: spade_len >= 3
 
-RULE B_1S_1N_3S_1923_0:
+RULE B_1S_1N_3S_1429_0:
   CALL: 3S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -14811,7 +11326,7 @@ RULE B_1S_1N_3S_1923_0:
   CONDITION: hcp >= 5
   CONDITION: spade_len >= 4
 
-RULE B_1S_1N_3S_1923_1:
+RULE B_1S_1N_3S_1429_1:
   CALL: 3S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -14823,7 +11338,7 @@ RULE B_1S_1N_3S_1923_1:
   CONDITION: hcp >= 5
   CONDITION: spade_len >= 5
 
-RULE B_1S_1N_4H_1924_0:
+RULE B_1S_1N_4H_1430_0:
   CALL: 4H
   PRIORITY: 63
   CONDITION: is_opening == False
@@ -14834,7 +11349,7 @@ RULE B_1S_1N_4H_1924_0:
   CONDITION: heart_hcp >= 11
   CONDITION: spade_len >= 7
 
-RULE B_1S_1N_4S_1925_0:
+RULE B_1S_1N_4S_1431_0:
   CALL: 4S
   PRIORITY: 65
   CONDITION: is_opening == False
@@ -14845,7 +11360,7 @@ RULE B_1S_1N_4S_1925_0:
   CONDITION: spade_hcp >= 11
   CONDITION: spade_len >= 4
 
-RULE B_1S_2N_PASS_1927_0:
+RULE B_1S_2N_PASS_1433_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14855,7 +11370,7 @@ RULE B_1S_2N_PASS_1927_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1S_2N_3C_1928_0:
+RULE B_1S_2N_3C_1434_0:
   CALL: 3C
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -14866,7 +11381,7 @@ RULE B_1S_2N_3C_1928_0:
   CONDITION: spade_len >= 3
   CONDITION: hcp >= 10
 
-RULE B_1S_2N_3D_1929_0:
+RULE B_1S_2N_3D_1435_0:
   CALL: 3D
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -14877,7 +11392,7 @@ RULE B_1S_2N_3D_1929_0:
   CONDITION: heart_len >= 5
   CONDITION: hcp >= 10
 
-RULE B_1S_2N_3H_1930_0:
+RULE B_1S_2N_3H_1436_0:
   CALL: 3H
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -14889,7 +11404,7 @@ RULE B_1S_2N_3H_1930_0:
   CONDITION: hcp <= 9
   CONDITION: hcp >= 7
 
-RULE B_1S_2N_3S_1931_0:
+RULE B_1S_2N_3S_1437_0:
   CALL: 3S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -14901,7 +11416,7 @@ RULE B_1S_2N_3S_1931_0:
   CONDITION: hcp <= 9
   CONDITION: hcp >= 7
 
-RULE B_1S_2N_3NT_1932_0:
+RULE B_1S_2N_3NT_1438_0:
   CALL: 3NT
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -14914,7 +11429,7 @@ RULE B_1S_2N_3NT_1932_0:
   CONDITION: hcp >= 12
   CONDITION: spade_len <= 2
 
-RULE B_1S_2N_4H_1933_0:
+RULE B_1S_2N_4H_1439_0:
   CALL: 4H
   PRIORITY: 35
   CONDITION: is_opening == False
@@ -14926,7 +11441,7 @@ RULE B_1S_2N_4H_1933_0:
   CONDITION: hcp <= 9
   CONDITION: hcp >= 7
 
-RULE B_1S_2N_4S_1934_0:
+RULE B_1S_2N_4S_1440_0:
   CALL: 4S
   PRIORITY: 33
   CONDITION: is_opening == False
@@ -14938,7 +11453,7 @@ RULE B_1S_2N_4S_1934_0:
   CONDITION: hcp <= 9
   CONDITION: spade_hcp >= 6
 
-RULE B_1S_2N_X_1943_0:
+RULE B_1S_2N_X_1449_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -14948,7 +11463,7 @@ RULE B_1S_2N_X_1943_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 9
 
-RULE B_2C_P_2D_1944_0:
+RULE B_2C_P_2D_1450_0:
   CALL: 2D
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14957,7 +11472,7 @@ RULE B_2C_P_2D_1944_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 1
 
-RULE B_2C_P_2NT_1947_0:
+RULE B_2C_P_2NT_1453_0:
   CALL: 2NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -14968,7 +11483,7 @@ RULE B_2C_P_2NT_1947_0:
   CONDITION: hcp >= 8
   CONDITION: is_balanced == True
 
-RULE B_2C_P_2NT_1947_1:
+RULE B_2C_P_2NT_1453_1:
   CALL: 2NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -14979,7 +11494,7 @@ RULE B_2C_P_2NT_1947_1:
   CONDITION: hcp >= 8
   CONDITION: is_semi_balanced == True
 
-RULE B_2C_2D_PASS_1952_0:
+RULE B_2C_2D_PASS_1458_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -14988,7 +11503,7 @@ RULE B_2C_2D_PASS_1952_0:
   CONDITION: opp_last_call == '2D'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2C_2D_2NT_1955_0:
+RULE B_2C_2D_2NT_1461_0:
   CALL: 2NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -14999,7 +11514,7 @@ RULE B_2C_2D_2NT_1955_0:
   CONDITION: d_stopper >= 2
   CONDITION: hcp >= 8
 
-RULE B_2C_2D_3C_1956_0:
+RULE B_2C_2D_3C_1462_0:
   CALL: 3C
   PRIORITY: 21
   CONDITION: is_opening == False
@@ -15010,7 +11525,7 @@ RULE B_2C_2D_3C_1956_0:
   CONDITION: club_len >= 6
   CONDITION: hcp >= 8
 
-RULE B_2C_2D_3D_1957_0:
+RULE B_2C_2D_3D_1463_0:
   CALL: 3D
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -15021,7 +11536,7 @@ RULE B_2C_2D_3D_1957_0:
   CONDITION: diamond_len <= 1
   CONDITION: hcp >= 6
 
-RULE B_2C_2H_PASS_1959_0:
+RULE B_2C_2H_PASS_1465_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15031,7 +11546,7 @@ RULE B_2C_2H_PASS_1959_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 7
 
-RULE B_2C_2H_2S_1960_0:
+RULE B_2C_2H_2S_1466_0:
   CALL: 2S
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -15042,7 +11557,7 @@ RULE B_2C_2H_2S_1960_0:
   CONDITION: spade_len >= 5
   CONDITION: hcp >= 8
 
-RULE B_2C_2H_2NT_1961_0:
+RULE B_2C_2H_2NT_1467_0:
   CALL: 2NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -15053,7 +11568,7 @@ RULE B_2C_2H_2NT_1961_0:
   CONDITION: h_stopper >= 2
   CONDITION: hcp >= 8
 
-RULE B_2C_2H_X_1965_0:
+RULE B_2C_2H_X_1471_0:
   CALL: X
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -15063,7 +11578,7 @@ RULE B_2C_2H_X_1965_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: heart_len >= 5
 
-RULE B_2C_2S_PASS_1966_0:
+RULE B_2C_2S_PASS_1472_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15073,7 +11588,7 @@ RULE B_2C_2S_PASS_1966_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 7
 
-RULE B_2C_2S_2NT_1967_0:
+RULE B_2C_2S_2NT_1473_0:
   CALL: 2NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -15084,7 +11599,7 @@ RULE B_2C_2S_2NT_1967_0:
   CONDITION: s_stopper >= 2
   CONDITION: hcp >= 8
 
-RULE B_2C_2S_3H_1970_0:
+RULE B_2C_2S_3H_1476_0:
   CALL: 3H
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15095,7 +11610,7 @@ RULE B_2C_2S_3H_1970_0:
   CONDITION: heart_len >= 5
   CONDITION: hcp >= 8
 
-RULE B_2C_2S_X_1972_0:
+RULE B_2C_2S_X_1478_0:
   CALL: X
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -15105,7 +11620,7 @@ RULE B_2C_2S_X_1972_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: spade_len >= 5
 
-RULE B_2C_3C_PASS_1973_0:
+RULE B_2C_3C_PASS_1479_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15115,7 +11630,7 @@ RULE B_2C_3C_PASS_1973_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 7
 
-RULE B_2C_3C_X_1976_0:
+RULE B_2C_3C_X_1482_0:
   CALL: X
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -15125,7 +11640,7 @@ RULE B_2C_3C_X_1976_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: club_len >= 5
 
-RULE B_2C_3H_PASS_1977_0:
+RULE B_2C_3H_PASS_1483_0:
   CALL: PASS
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -15134,7 +11649,7 @@ RULE B_2C_3H_PASS_1977_0:
   CONDITION: opp_last_call == '3H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2C_3S_PASS_1982_0:
+RULE B_2C_3S_PASS_1488_0:
   CALL: PASS
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -15143,7 +11658,7 @@ RULE B_2C_3S_PASS_1982_0:
   CONDITION: opp_last_call == '3S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2C_4D_PASS_1987_0:
+RULE B_2C_4D_PASS_1493_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15152,7 +11667,7 @@ RULE B_2C_4D_PASS_1987_0:
   CONDITION: opp_last_call == '4D'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2C_4H_PASS_1988_0:
+RULE B_2C_4H_PASS_1494_0:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -15162,7 +11677,7 @@ RULE B_2C_4H_PASS_1988_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 8
 
-RULE B_2C_4H_X_1989_0:
+RULE B_2C_4H_X_1495_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -15172,27 +11687,7 @@ RULE B_2C_4H_X_1989_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 7
 
-RULE B_2C_4S_PASS_1990_0:
-  CALL: PASS
-  PRIORITY: 20
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2C'
-  CONDITION: opp_last_call == '4S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 8
-
-RULE B_2C_4S_X_1991_0:
-  CALL: X
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2C'
-  CONDITION: opp_last_call == '4S'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 7
-
-RULE B_2C_5D_PASS_1992_0:
+RULE B_2C_5D_PASS_1496_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15201,7 +11696,7 @@ RULE B_2C_5D_PASS_1992_0:
   CONDITION: opp_last_call == '5D'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_P_PASS_1993_0:
+RULE B_2D_P_PASS_1497_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15210,7 +11705,7 @@ RULE B_2D_P_PASS_1993_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 1
 
-RULE B_2D_P_2H_1994_0:
+RULE B_2D_P_2H_1498_0:
   CALL: 2H
   PRIORITY: 76
   CONDITION: is_opening == False
@@ -15221,7 +11716,7 @@ RULE B_2D_P_2H_1994_0:
   CONDITION: hcp >= 14
   CONDITION: heart_len >= 5
 
-RULE B_2D_P_2S_1995_0:
+RULE B_2D_P_2S_1499_0:
   CALL: 2S
   PRIORITY: 76
   CONDITION: is_opening == False
@@ -15232,7 +11727,7 @@ RULE B_2D_P_2S_1995_0:
   CONDITION: hcp >= 14
   CONDITION: spade_len >= 5
 
-RULE B_2D_P_2NT_1996_0:
+RULE B_2D_P_2NT_1500_0:
   CALL: 2NT
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15242,7 +11737,7 @@ RULE B_2D_P_2NT_1996_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp >= 15
 
-RULE B_2D_P_3D_1998_0:
+RULE B_2D_P_3D_1502_0:
   CALL: 3D
   PRIORITY: 66
   CONDITION: is_opening == False
@@ -15254,7 +11749,7 @@ RULE B_2D_P_3D_1998_0:
   CONDITION: diamond_len >= 2
   CONDITION: hcp <= 13
 
-RULE B_2D_P_3D_1998_1:
+RULE B_2D_P_3D_1502_1:
   CALL: 3D
   PRIORITY: 66
   CONDITION: is_opening == False
@@ -15266,7 +11761,7 @@ RULE B_2D_P_3D_1998_1:
   CONDITION: diamond_len >= 3
   CONDITION: diamond_hcp <= 10
 
-RULE B_2D_P_3NT_2001_0:
+RULE B_2D_P_3NT_1505_0:
   CALL: 3NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -15277,7 +11772,7 @@ RULE B_2D_P_3NT_2001_0:
   CONDITION: hcp >= 18
   CONDITION: hcp <= 21
 
-RULE B_2D_P_4D_2002_0:
+RULE B_2D_P_4D_1506_0:
   CALL: 4D
   PRIORITY: 68
   CONDITION: is_opening == False
@@ -15289,7 +11784,7 @@ RULE B_2D_P_4D_2002_0:
   CONDITION: diamond_len >= 4
   CONDITION: diamond_hcp <= 11
 
-RULE B_2D_P_5D_2012_0:
+RULE B_2D_P_5D_1516_0:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15300,7 +11795,7 @@ RULE B_2D_P_5D_2012_0:
   CONDITION: diamond_hcp >= 7
   CONDITION: diamond_len >= 6
 
-RULE B_2D_P_5D_2012_1:
+RULE B_2D_P_5D_1516_1:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15311,7 +11806,7 @@ RULE B_2D_P_5D_2012_1:
   CONDITION: diamond_len >= 3
   CONDITION: diamond_hcp >= 15
 
-RULE B_2D_P_5D_2012_3:
+RULE B_2D_P_5D_1516_3:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15323,7 +11818,7 @@ RULE B_2D_P_5D_2012_3:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
-RULE B_2D_X_PASS_2021_0:
+RULE B_2D_X_PASS_1525_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15332,7 +11827,7 @@ RULE B_2D_X_PASS_2021_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_X_2H_2022_0:
+RULE B_2D_X_2H_1526_0:
   CALL: 2H
   PRIORITY: 76
   CONDITION: is_opening == False
@@ -15343,7 +11838,7 @@ RULE B_2D_X_2H_2022_0:
   CONDITION: hcp >= 14
   CONDITION: heart_len >= 5
 
-RULE B_2D_X_2S_2023_0:
+RULE B_2D_X_2S_1527_0:
   CALL: 2S
   PRIORITY: 76
   CONDITION: is_opening == False
@@ -15354,7 +11849,7 @@ RULE B_2D_X_2S_2023_0:
   CONDITION: hcp >= 14
   CONDITION: spade_len >= 5
 
-RULE B_2D_X_2NT_2024_0:
+RULE B_2D_X_2NT_1528_0:
   CALL: 2NT
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15364,7 +11859,7 @@ RULE B_2D_X_2NT_2024_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 15
 
-RULE B_2D_X_3D_2026_0:
+RULE B_2D_X_3D_1530_0:
   CALL: 3D
   PRIORITY: 66
   CONDITION: is_opening == False
@@ -15376,7 +11871,7 @@ RULE B_2D_X_3D_2026_0:
   CONDITION: diamond_len >= 2
   CONDITION: hcp <= 13
 
-RULE B_2D_X_3D_2026_1:
+RULE B_2D_X_3D_1530_1:
   CALL: 3D
   PRIORITY: 66
   CONDITION: is_opening == False
@@ -15388,7 +11883,7 @@ RULE B_2D_X_3D_2026_1:
   CONDITION: diamond_len >= 3
   CONDITION: diamond_hcp <= 10
 
-RULE B_2D_X_3NT_2029_0:
+RULE B_2D_X_3NT_1533_0:
   CALL: 3NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -15399,7 +11894,7 @@ RULE B_2D_X_3NT_2029_0:
   CONDITION: hcp >= 18
   CONDITION: hcp <= 21
 
-RULE B_2D_X_4D_2031_0:
+RULE B_2D_X_4D_1535_0:
   CALL: 4D
   PRIORITY: 68
   CONDITION: is_opening == False
@@ -15411,7 +11906,7 @@ RULE B_2D_X_4D_2031_0:
   CONDITION: diamond_len >= 4
   CONDITION: diamond_hcp <= 11
 
-RULE B_2D_X_5D_2041_0:
+RULE B_2D_X_5D_1545_0:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15422,7 +11917,7 @@ RULE B_2D_X_5D_2041_0:
   CONDITION: diamond_hcp >= 7
   CONDITION: diamond_len >= 6
 
-RULE B_2D_X_5D_2041_1:
+RULE B_2D_X_5D_1545_1:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15433,7 +11928,7 @@ RULE B_2D_X_5D_2041_1:
   CONDITION: diamond_len >= 3
   CONDITION: diamond_hcp >= 15
 
-RULE B_2D_X_5D_2041_5:
+RULE B_2D_X_5D_1545_5:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15445,7 +11940,7 @@ RULE B_2D_X_5D_2041_5:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
-RULE B_2D_2H_PASS_2050_0:
+RULE B_2D_2H_PASS_1554_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15454,7 +11949,7 @@ RULE B_2D_2H_PASS_2050_0:
   CONDITION: opp_last_call == '2H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_2H_2NT_2053_0:
+RULE B_2D_2H_2NT_1557_0:
   CALL: 2NT
   PRIORITY: 41
   CONDITION: is_opening == False
@@ -15465,7 +11960,7 @@ RULE B_2D_2H_2NT_2053_0:
   CONDITION: hcp >= 15
   CONDITION: h_stopper >= 2
 
-RULE B_2D_2H_3D_2055_1:
+RULE B_2D_2H_3D_1559_1:
   CALL: 3D
   PRIORITY: 5
   CONDITION: is_opening == False
@@ -15477,7 +11972,7 @@ RULE B_2D_2H_3D_2055_1:
   CONDITION: hcp >= 7
   CONDITION: hcp <= 14
 
-RULE B_2D_2H_3H_2056_0:
+RULE B_2D_2H_3H_1560_0:
   CALL: 3H
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -15488,7 +11983,7 @@ RULE B_2D_2H_3H_2056_0:
   CONDITION: hcp >= 17
   CONDITION: diamond_len >= 2
 
-RULE B_2D_2H_3S_2057_0:
+RULE B_2D_2H_3S_1561_0:
   CALL: 3S
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -15499,7 +11994,7 @@ RULE B_2D_2H_3S_2057_0:
   CONDITION: total_points >= 20
   CONDITION: spade_len >= 5
 
-RULE B_2D_2H_3NT_2058_0:
+RULE B_2D_2H_3NT_1562_0:
   CALL: 3NT
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -15511,7 +12006,7 @@ RULE B_2D_2H_3NT_2058_0:
   CONDITION: hcp <= 21
   CONDITION: h_stopper >= 2
 
-RULE B_2D_2H_4D_2059_0:
+RULE B_2D_2H_4D_1563_0:
   CALL: 4D
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -15523,7 +12018,7 @@ RULE B_2D_2H_4D_2059_0:
   CONDITION: hcp >= 7
   CONDITION: hcp <= 11
 
-RULE B_2D_2H_5D_2065_0:
+RULE B_2D_2H_5D_1569_0:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15534,7 +12029,7 @@ RULE B_2D_2H_5D_2065_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp >= 12
 
-RULE B_2D_2S_PASS_2074_0:
+RULE B_2D_2S_PASS_1578_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15543,7 +12038,7 @@ RULE B_2D_2S_PASS_2074_0:
   CONDITION: opp_last_call == '2S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_2S_2NT_2075_0:
+RULE B_2D_2S_2NT_1579_0:
   CALL: 2NT
   PRIORITY: 41
   CONDITION: is_opening == False
@@ -15554,7 +12049,7 @@ RULE B_2D_2S_2NT_2075_0:
   CONDITION: hcp >= 15
   CONDITION: s_stopper >= 2
 
-RULE B_2D_2S_3D_2077_1:
+RULE B_2D_2S_3D_1581_1:
   CALL: 3D
   PRIORITY: 5
   CONDITION: is_opening == False
@@ -15566,7 +12061,7 @@ RULE B_2D_2S_3D_2077_1:
   CONDITION: hcp >= 7
   CONDITION: hcp <= 14
 
-RULE B_2D_2S_3H_2078_0:
+RULE B_2D_2S_3H_1582_0:
   CALL: 3H
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -15577,7 +12072,7 @@ RULE B_2D_2S_3H_2078_0:
   CONDITION: total_points >= 20
   CONDITION: heart_len >= 5
 
-RULE B_2D_2S_3S_2079_0:
+RULE B_2D_2S_3S_1583_0:
   CALL: 3S
   PRIORITY: 22
   CONDITION: is_opening == False
@@ -15588,7 +12083,7 @@ RULE B_2D_2S_3S_2079_0:
   CONDITION: hcp >= 17
   CONDITION: diamond_len >= 2
 
-RULE B_2D_2S_3NT_2080_0:
+RULE B_2D_2S_3NT_1584_0:
   CALL: 3NT
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -15600,7 +12095,7 @@ RULE B_2D_2S_3NT_2080_0:
   CONDITION: hcp <= 21
   CONDITION: s_stopper >= 2
 
-RULE B_2D_2S_4D_2081_0:
+RULE B_2D_2S_4D_1585_0:
   CALL: 4D
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -15612,7 +12107,7 @@ RULE B_2D_2S_4D_2081_0:
   CONDITION: hcp >= 7
   CONDITION: hcp <= 11
 
-RULE B_2D_2S_5D_2087_0:
+RULE B_2D_2S_5D_1591_0:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15623,7 +12118,7 @@ RULE B_2D_2S_5D_2087_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp >= 12
 
-RULE B_2D_3C_PASS_2096_0:
+RULE B_2D_3C_PASS_1600_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15632,7 +12127,7 @@ RULE B_2D_3C_PASS_2096_0:
   CONDITION: opp_last_call == '3C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_3C_3D_2098_0:
+RULE B_2D_3C_3D_1602_0:
   CALL: 3D
   PRIORITY: 66
   CONDITION: is_opening == False
@@ -15644,7 +12139,7 @@ RULE B_2D_3C_3D_2098_0:
   CONDITION: diamond_len >= 3
   CONDITION: diamond_hcp <= 10
 
-RULE B_2D_3C_3NT_2103_0:
+RULE B_2D_3C_3NT_1607_0:
   CALL: 3NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -15655,7 +12150,7 @@ RULE B_2D_3C_3NT_2103_0:
   CONDITION: hcp >= 18
   CONDITION: hcp <= 21
 
-RULE B_2D_3C_4D_2104_0:
+RULE B_2D_3C_4D_1608_0:
   CALL: 4D
   PRIORITY: 68
   CONDITION: is_opening == False
@@ -15667,7 +12162,7 @@ RULE B_2D_3C_4D_2104_0:
   CONDITION: diamond_len >= 4
   CONDITION: diamond_hcp <= 11
 
-RULE B_2D_3C_5D_2113_2:
+RULE B_2D_3C_5D_1617_2:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15679,7 +12174,7 @@ RULE B_2D_3C_5D_2113_2:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
-RULE B_2D_3D_3NT_2124_0:
+RULE B_2D_3D_3NT_1628_0:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -15692,7 +12187,7 @@ RULE B_2D_3D_3NT_2124_0:
   CONDITION: h_stopper >= 2
   CONDITION: s_stopper >= 2
 
-RULE B_2D_3D_4D_2125_0:
+RULE B_2D_3D_4D_1629_0:
   CALL: 4D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -15703,7 +12198,7 @@ RULE B_2D_3D_4D_2125_0:
   CONDITION: diamond_len >= 3
   CONDITION: hcp <= 10
 
-RULE B_2D_3D_5D_2128_0:
+RULE B_2D_3D_5D_1632_0:
   CALL: 5D
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -15714,7 +12209,7 @@ RULE B_2D_3D_5D_2128_0:
   CONDITION: diamond_len >= 2
   CONDITION: hcp >= 18
 
-RULE B_2D_3D_5D_2128_1:
+RULE B_2D_3D_5D_1632_1:
   CALL: 5D
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -15725,7 +12220,7 @@ RULE B_2D_3D_5D_2128_1:
   CONDITION: diamond_len >= 4
   CONDITION: hcp >= 10
 
-RULE B_2D_3H_PASS_2143_0:
+RULE B_2D_3H_PASS_1647_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15734,7 +12229,7 @@ RULE B_2D_3H_PASS_2143_0:
   CONDITION: opp_last_call == '3H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_3H_3NT_2144_0:
+RULE B_2D_3H_3NT_1648_0:
   CALL: 3NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -15745,7 +12240,7 @@ RULE B_2D_3H_3NT_2144_0:
   CONDITION: hcp >= 18
   CONDITION: hcp <= 21
 
-RULE B_2D_3H_4D_2145_0:
+RULE B_2D_3H_4D_1649_0:
   CALL: 4D
   PRIORITY: 68
   CONDITION: is_opening == False
@@ -15757,7 +12252,7 @@ RULE B_2D_3H_4D_2145_0:
   CONDITION: diamond_len >= 4
   CONDITION: diamond_hcp <= 11
 
-RULE B_2D_3H_5D_2148_2:
+RULE B_2D_3H_5D_1652_2:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15769,7 +12264,7 @@ RULE B_2D_3H_5D_2148_2:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
-RULE B_2D_3S_PASS_2157_0:
+RULE B_2D_3S_PASS_1661_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15778,7 +12273,7 @@ RULE B_2D_3S_PASS_2157_0:
   CONDITION: opp_last_call == '3S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_3S_3NT_2158_0:
+RULE B_2D_3S_3NT_1662_0:
   CALL: 3NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -15789,7 +12284,7 @@ RULE B_2D_3S_3NT_2158_0:
   CONDITION: hcp >= 18
   CONDITION: hcp <= 21
 
-RULE B_2D_3S_4D_2159_0:
+RULE B_2D_3S_4D_1663_0:
   CALL: 4D
   PRIORITY: 68
   CONDITION: is_opening == False
@@ -15801,7 +12296,7 @@ RULE B_2D_3S_4D_2159_0:
   CONDITION: diamond_len >= 4
   CONDITION: diamond_hcp <= 11
 
-RULE B_2D_3S_5D_2162_2:
+RULE B_2D_3S_5D_1666_2:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15813,7 +12308,7 @@ RULE B_2D_3S_5D_2162_2:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
-RULE B_2D_4C_PASS_2171_0:
+RULE B_2D_4C_PASS_1675_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15822,7 +12317,7 @@ RULE B_2D_4C_PASS_2171_0:
   CONDITION: opp_last_call == '4C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_4C_4D_2173_0:
+RULE B_2D_4C_4D_1677_0:
   CALL: 4D
   PRIORITY: 68
   CONDITION: is_opening == False
@@ -15834,7 +12329,7 @@ RULE B_2D_4C_4D_2173_0:
   CONDITION: diamond_len >= 4
   CONDITION: diamond_hcp <= 11
 
-RULE B_2D_4C_5D_2177_2:
+RULE B_2D_4C_5D_1681_2:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15846,7 +12341,7 @@ RULE B_2D_4C_5D_2177_2:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
-RULE B_2D_4H_PASS_2186_0:
+RULE B_2D_4H_PASS_1690_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15855,7 +12350,7 @@ RULE B_2D_4H_PASS_2186_0:
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_4H_5D_2194_2:
+RULE B_2D_4H_5D_1698_2:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15867,7 +12362,7 @@ RULE B_2D_4H_5D_2194_2:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
-RULE B_2D_4S_PASS_2205_0:
+RULE B_2D_4S_PASS_1709_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15876,7 +12371,7 @@ RULE B_2D_4S_PASS_2205_0:
   CONDITION: opp_last_call == '4S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_4S_5D_2208_2:
+RULE B_2D_4S_5D_1712_2:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15888,7 +12383,7 @@ RULE B_2D_4S_5D_2208_2:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
-RULE B_2D_6C_PASS_2219_0:
+RULE B_2D_6C_PASS_1723_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15897,7 +12392,7 @@ RULE B_2D_6C_PASS_2219_0:
   CONDITION: opp_last_call == '6C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_6H_PASS_2220_0:
+RULE B_2D_6H_PASS_1724_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15906,16 +12401,7 @@ RULE B_2D_6H_PASS_2220_0:
   CONDITION: opp_last_call == '6H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_6S_PASS_2221_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2D'
-  CONDITION: opp_last_call == '6S'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_2D_2N_PASS_2222_0:
+RULE B_2D_2N_PASS_1725_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15924,7 +12410,7 @@ RULE B_2D_2N_PASS_2222_0:
   CONDITION: opp_last_call == '2NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_2N_3D_2225_0:
+RULE B_2D_2N_3D_1728_0:
   CALL: 3D
   PRIORITY: 66
   CONDITION: is_opening == False
@@ -15936,7 +12422,7 @@ RULE B_2D_2N_3D_2225_0:
   CONDITION: diamond_len >= 3
   CONDITION: diamond_hcp <= 10
 
-RULE B_2D_2N_3NT_2232_0:
+RULE B_2D_2N_3NT_1735_0:
   CALL: 3NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -15947,7 +12433,7 @@ RULE B_2D_2N_3NT_2232_0:
   CONDITION: hcp >= 18
   CONDITION: hcp <= 21
 
-RULE B_2D_2N_4D_2233_0:
+RULE B_2D_2N_4D_1736_0:
   CALL: 4D
   PRIORITY: 68
   CONDITION: is_opening == False
@@ -15959,7 +12445,7 @@ RULE B_2D_2N_4D_2233_0:
   CONDITION: diamond_len >= 4
   CONDITION: diamond_hcp <= 11
 
-RULE B_2D_2N_5D_2239_0:
+RULE B_2D_2N_5D_1742_0:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15970,7 +12456,7 @@ RULE B_2D_2N_5D_2239_0:
   CONDITION: diamond_hcp >= 7
   CONDITION: diamond_len >= 6
 
-RULE B_2D_2N_5D_2239_3:
+RULE B_2D_2N_5D_1742_3:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -15982,7 +12468,7 @@ RULE B_2D_2N_5D_2239_3:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
-RULE B_2D_3N_PASS_2249_0:
+RULE B_2D_3N_PASS_1752_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -15991,7 +12477,7 @@ RULE B_2D_3N_PASS_2249_0:
   CONDITION: opp_last_call == '3NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2D_3N_4D_2251_0:
+RULE B_2D_3N_4D_1754_0:
   CALL: 4D
   PRIORITY: 68
   CONDITION: is_opening == False
@@ -16003,7 +12489,7 @@ RULE B_2D_3N_4D_2251_0:
   CONDITION: diamond_len >= 4
   CONDITION: diamond_hcp <= 11
 
-RULE B_2D_3N_5D_2255_2:
+RULE B_2D_3N_5D_1758_2:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -16015,7 +12501,7 @@ RULE B_2D_3N_5D_2255_2:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
-RULE B_2H_P_2NT_2267_0:
+RULE B_2H_P_2NT_1770_0:
   CALL: 2NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -16025,7 +12511,18 @@ RULE B_2H_P_2NT_2267_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp >= 15
 
-RULE B_2H_P_3H_2270_0:
+RULE B_2H_P_2NT_1770_1:
+  CALL: 2NT
+  PRIORITY: 60
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: hcp >= 13
+  CONDITION: controls >= 5
+
+RULE B_2H_P_3H_1773_0:
   CALL: 3H
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -16037,29 +12534,7 @@ RULE B_2H_P_3H_2270_0:
   CONDITION: hcp <= 9
   CONDITION: heart_len >= 3
 
-RULE B_2H_X_2NT_2286_0:
-  CALL: 2NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 15
-
-RULE B_2H_X_3H_2289_0:
-  CALL: 3H
-  PRIORITY: 40
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_hcp >= 6
-  CONDITION: hcp <= 9
-  CONDITION: heart_len >= 3
-
-RULE B_2H_2S_PASS_2303_0:
+RULE B_2H_2S_PASS_1787_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16068,7 +12543,7 @@ RULE B_2H_2S_PASS_2303_0:
   CONDITION: opp_last_call == '2S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2H_2S_2NT_2304_0:
+RULE B_2H_2S_2NT_1788_0:
   CALL: 2NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -16080,7 +12555,7 @@ RULE B_2H_2S_2NT_2304_0:
   CONDITION: s_stopper >= 2
   CONDITION: hcp <= 19
 
-RULE B_2H_2S_3H_2309_1:
+RULE B_2H_2S_3H_1793_1:
   CALL: 3H
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -16092,7 +12567,7 @@ RULE B_2H_2S_3H_2309_1:
   CONDITION: hcp <= 11
   CONDITION: heart_len <= 3
 
-RULE B_2H_2S_3H_2309_2:
+RULE B_2H_2S_3H_1793_2:
   CALL: 3H
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -16104,7 +12579,7 @@ RULE B_2H_2S_3H_2309_2:
   CONDITION: hcp <= 11
   CONDITION: heart_len >= 2
 
-RULE B_2H_2S_4H_2311_0:
+RULE B_2H_2S_4H_1795_0:
   CALL: 4H
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -16115,7 +12590,7 @@ RULE B_2H_2S_4H_2311_0:
   CONDITION: hcp >= 12
   CONDITION: heart_len >= 3
 
-RULE B_2H_3C_PASS_2324_0:
+RULE B_2H_3C_PASS_1808_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16124,7 +12599,7 @@ RULE B_2H_3C_PASS_2324_0:
   CONDITION: opp_last_call == '3C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2H_3C_3H_2327_0:
+RULE B_2H_3C_3H_1811_0:
   CALL: 3H
   PRIORITY: 12
   CONDITION: is_opening == False
@@ -16137,7 +12612,7 @@ RULE B_2H_3C_3H_2327_0:
   CONDITION: heart_len >= 2
   CONDITION: heart_len <= 4
 
-RULE B_2H_3C_3S_2328_0:
+RULE B_2H_3C_3S_1812_0:
   CALL: 3S
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -16148,7 +12623,7 @@ RULE B_2H_3C_3S_2328_0:
   CONDITION: hcp >= 15
   CONDITION: spade_len >= 5
 
-RULE B_2H_3C_4H_2331_0:
+RULE B_2H_3C_4H_1815_0:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -16159,7 +12634,7 @@ RULE B_2H_3C_4H_2331_0:
   CONDITION: hcp >= 14
   CONDITION: heart_len >= 2
 
-RULE B_2H_3C_4H_2331_1:
+RULE B_2H_3C_4H_1815_1:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -16170,7 +12645,7 @@ RULE B_2H_3C_4H_2331_1:
   CONDITION: hcp >= 12
   CONDITION: heart_len >= 3
 
-RULE B_2H_3D_PASS_2345_0:
+RULE B_2H_3D_PASS_1829_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16179,7 +12654,7 @@ RULE B_2H_3D_PASS_2345_0:
   CONDITION: opp_last_call == '3D'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2H_3D_3H_2347_0:
+RULE B_2H_3D_3H_1831_0:
   CALL: 3H
   PRIORITY: 12
   CONDITION: is_opening == False
@@ -16192,7 +12667,7 @@ RULE B_2H_3D_3H_2347_0:
   CONDITION: heart_len >= 2
   CONDITION: heart_len <= 4
 
-RULE B_2H_3D_3S_2348_0:
+RULE B_2H_3D_3S_1832_0:
   CALL: 3S
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -16203,7 +12678,7 @@ RULE B_2H_3D_3S_2348_0:
   CONDITION: hcp >= 15
   CONDITION: spade_len >= 5
 
-RULE B_2H_3D_4H_2351_0:
+RULE B_2H_3D_4H_1835_0:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -16214,7 +12689,7 @@ RULE B_2H_3D_4H_2351_0:
   CONDITION: hcp >= 14
   CONDITION: heart_len >= 2
 
-RULE B_2H_3D_4H_2351_1:
+RULE B_2H_3D_4H_1835_1:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -16225,7 +12700,7 @@ RULE B_2H_3D_4H_2351_1:
   CONDITION: hcp >= 12
   CONDITION: heart_len >= 3
 
-RULE B_2H_3H_4H_2365_0:
+RULE B_2H_3H_4H_1849_0:
   CALL: 4H
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -16236,7 +12711,7 @@ RULE B_2H_3H_4H_2365_0:
   CONDITION: heart_len >= 3
   CONDITION: hcp >= 14
 
-RULE B_2H_3S_PASS_2374_0:
+RULE B_2H_3S_PASS_1858_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16245,7 +12720,7 @@ RULE B_2H_3S_PASS_2374_0:
   CONDITION: opp_last_call == '3S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2H_3S_4H_2377_0:
+RULE B_2H_3S_4H_1861_0:
   CALL: 4H
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -16256,7 +12731,7 @@ RULE B_2H_3S_4H_2377_0:
   CONDITION: heart_len >= 4
   CONDITION: hcp >= 6
 
-RULE B_2H_4C_PASS_2379_0:
+RULE B_2H_4C_PASS_1863_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16265,7 +12740,7 @@ RULE B_2H_4C_PASS_2379_0:
   CONDITION: opp_last_call == '4C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2H_4C_4H_2380_0:
+RULE B_2H_4C_4H_1864_0:
   CALL: 4H
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -16276,27 +12751,7 @@ RULE B_2H_4C_4H_2380_0:
   CONDITION: heart_len >= 4
   CONDITION: hcp >= 6
 
-RULE B_2H_4D_PASS_2381_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2H'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_2H_4D_4H_2382_0:
-  CALL: 4H
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2H'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 4
-  CONDITION: hcp >= 6
-
-RULE B_2H_4H_PASS_2383_0:
+RULE B_2H_4H_PASS_1865_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16305,7 +12760,7 @@ RULE B_2H_4H_PASS_2383_0:
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2H_6C_PASS_2397_0:
+RULE B_2H_6C_PASS_1879_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16314,16 +12769,7 @@ RULE B_2H_6C_PASS_2397_0:
   CONDITION: opp_last_call == '6C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2H_6D_PASS_2398_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2H'
-  CONDITION: opp_last_call == '6D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_2H_6S_PASS_2399_0:
+RULE B_2H_6S_PASS_1880_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16332,7 +12778,7 @@ RULE B_2H_6S_PASS_2399_0:
   CONDITION: opp_last_call == '6S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2H_7C_PASS_2400_0:
+RULE B_2H_7C_PASS_1881_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16341,16 +12787,7 @@ RULE B_2H_7C_PASS_2400_0:
   CONDITION: opp_last_call == '7C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2H_7D_PASS_2401_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2H'
-  CONDITION: opp_last_call == '7D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_2H_2N_PASS_2402_0:
+RULE B_2H_2N_PASS_1882_0:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -16359,7 +12796,7 @@ RULE B_2H_2N_PASS_2402_0:
   CONDITION: opp_last_call == '2NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2H_3N_PASS_2413_0:
+RULE B_2H_3N_PASS_1893_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16368,7 +12805,7 @@ RULE B_2H_3N_PASS_2413_0:
   CONDITION: opp_last_call == '3NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2H_4N_PASS_2419_0:
+RULE B_2H_4N_PASS_1899_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16377,7 +12814,7 @@ RULE B_2H_4N_PASS_2419_0:
   CONDITION: opp_last_call == '4NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2S_P_2NT_2423_0:
+RULE B_2S_P_2NT_1903_0:
   CALL: 2NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -16387,7 +12824,18 @@ RULE B_2S_P_2NT_2423_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp >= 15
 
-RULE B_2S_P_3H_2426_0:
+RULE B_2S_P_2NT_1903_1:
+  CALL: 2NT
+  PRIORITY: 60
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: hcp >= 13
+  CONDITION: controls >= 5
+
+RULE B_2S_P_3H_1906_0:
   CALL: 3H
   PRIORITY: 69
   CONDITION: is_opening == False
@@ -16398,7 +12846,7 @@ RULE B_2S_P_3H_2426_0:
   CONDITION: hcp >= 17
   CONDITION: heart_len >= 6
 
-RULE B_2S_P_3S_2427_0:
+RULE B_2S_P_3S_1907_0:
   CALL: 3S
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -16410,40 +12858,7 @@ RULE B_2S_P_3S_2427_0:
   CONDITION: hcp <= 9
   CONDITION: spade_len >= 3
 
-RULE B_2S_X_2NT_2441_0:
-  CALL: 2NT
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2S'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 15
-
-RULE B_2S_X_3H_2444_0:
-  CALL: 3H
-  PRIORITY: 69
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2S'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 17
-  CONDITION: heart_len >= 6
-
-RULE B_2S_X_3S_2445_0:
-  CALL: 3S
-  PRIORITY: 40
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2S'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_hcp >= 6
-  CONDITION: hcp <= 9
-  CONDITION: spade_len >= 3
-
-RULE B_2S_3C_PASS_2458_0:
+RULE B_2S_3C_PASS_1920_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16452,7 +12867,7 @@ RULE B_2S_3C_PASS_2458_0:
   CONDITION: opp_last_call == '3C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2S_3C_3H_2460_0:
+RULE B_2S_3C_3H_1922_0:
   CALL: 3H
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -16463,7 +12878,7 @@ RULE B_2S_3C_3H_2460_0:
   CONDITION: hcp >= 15
   CONDITION: heart_len >= 5
 
-RULE B_2S_3C_3S_2462_0:
+RULE B_2S_3C_3S_1924_0:
   CALL: 3S
   PRIORITY: 12
   CONDITION: is_opening == False
@@ -16476,7 +12891,7 @@ RULE B_2S_3C_3S_2462_0:
   CONDITION: spade_len >= 2
   CONDITION: spade_len <= 4
 
-RULE B_2S_3C_4S_2466_0:
+RULE B_2S_3C_4S_1928_0:
   CALL: 4S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -16487,7 +12902,7 @@ RULE B_2S_3C_4S_2466_0:
   CONDITION: hcp >= 14
   CONDITION: spade_len >= 2
 
-RULE B_2S_3C_4S_2466_1:
+RULE B_2S_3C_4S_1928_1:
   CALL: 4S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -16498,7 +12913,7 @@ RULE B_2S_3C_4S_2466_1:
   CONDITION: hcp >= 12
   CONDITION: spade_len >= 3
 
-RULE B_2S_3D_PASS_2479_0:
+RULE B_2S_3D_PASS_1941_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16507,7 +12922,7 @@ RULE B_2S_3D_PASS_2479_0:
   CONDITION: opp_last_call == '3D'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2S_3D_3H_2480_0:
+RULE B_2S_3D_3H_1942_0:
   CALL: 3H
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -16518,7 +12933,7 @@ RULE B_2S_3D_3H_2480_0:
   CONDITION: hcp >= 15
   CONDITION: heart_len >= 5
 
-RULE B_2S_3D_3S_2482_0:
+RULE B_2S_3D_3S_1944_0:
   CALL: 3S
   PRIORITY: 12
   CONDITION: is_opening == False
@@ -16531,7 +12946,7 @@ RULE B_2S_3D_3S_2482_0:
   CONDITION: spade_len >= 2
   CONDITION: spade_len <= 4
 
-RULE B_2S_3D_4S_2486_0:
+RULE B_2S_3D_4S_1948_0:
   CALL: 4S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -16542,7 +12957,7 @@ RULE B_2S_3D_4S_2486_0:
   CONDITION: hcp >= 14
   CONDITION: spade_len >= 2
 
-RULE B_2S_3D_4S_2486_1:
+RULE B_2S_3D_4S_1948_1:
   CALL: 4S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -16553,7 +12968,7 @@ RULE B_2S_3D_4S_2486_1:
   CONDITION: hcp >= 12
   CONDITION: spade_len >= 3
 
-RULE B_2S_3H_PASS_2497_0:
+RULE B_2S_3H_PASS_1959_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16562,7 +12977,7 @@ RULE B_2S_3H_PASS_2497_0:
   CONDITION: opp_last_call == '3H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2S_3H_3S_2499_0:
+RULE B_2S_3H_3S_1961_0:
   CALL: 3S
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -16575,7 +12990,7 @@ RULE B_2S_3H_3S_2499_0:
   CONDITION: spade_len >= 2
   CONDITION: spade_len <= 3
 
-RULE B_2S_3H_3S_2499_1:
+RULE B_2S_3H_3S_1961_1:
   CALL: 3S
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -16588,7 +13003,7 @@ RULE B_2S_3H_3S_2499_1:
   CONDITION: spade_len >= 2
   CONDITION: spade_len <= 3
 
-RULE B_2S_3H_4H_2505_0:
+RULE B_2S_3H_4H_1967_0:
   CALL: 4H
   PRIORITY: 43
   CONDITION: is_opening == False
@@ -16599,7 +13014,7 @@ RULE B_2S_3H_4H_2505_0:
   CONDITION: spade_len >= 2
   CONDITION: hcp >= 18
 
-RULE B_2S_3H_4S_2507_1:
+RULE B_2S_3H_4S_1969_1:
   CALL: 4S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -16610,7 +13025,7 @@ RULE B_2S_3H_4S_2507_1:
   CONDITION: spade_len >= 2
   CONDITION: hcp >= 13
 
-RULE B_2S_3S_4S_2520_0:
+RULE B_2S_3S_4S_1982_0:
   CALL: 4S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -16621,7 +13036,7 @@ RULE B_2S_3S_4S_2520_0:
   CONDITION: spade_len >= 3
   CONDITION: hcp >= 14
 
-RULE B_2S_4C_PASS_2529_0:
+RULE B_2S_4C_PASS_1991_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16630,7 +13045,7 @@ RULE B_2S_4C_PASS_2529_0:
   CONDITION: opp_last_call == '4C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2S_4C_4S_2530_0:
+RULE B_2S_4C_4S_1992_0:
   CALL: 4S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -16641,27 +13056,7 @@ RULE B_2S_4C_4S_2530_0:
   CONDITION: spade_len >= 4
   CONDITION: hcp >= 6
 
-RULE B_2S_4D_PASS_2531_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2S'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_2S_4D_4S_2532_0:
-  CALL: 4S
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2S'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 4
-  CONDITION: hcp >= 6
-
-RULE B_2S_4H_PASS_2533_0:
+RULE B_2S_4H_PASS_1993_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16670,7 +13065,7 @@ RULE B_2S_4H_PASS_2533_0:
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2S_4H_4S_2535_1:
+RULE B_2S_4H_4S_1995_1:
   CALL: 4S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -16681,61 +13076,7 @@ RULE B_2S_4H_4S_2535_1:
   CONDITION: spade_len >= 2
   CONDITION: hcp >= 13
 
-RULE B_2S_4S_PASS_2548_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2S'
-  CONDITION: opp_last_call == '4S'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_2S_6C_PASS_2549_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2S'
-  CONDITION: opp_last_call == '6C'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_2S_6D_PASS_2550_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2S'
-  CONDITION: opp_last_call == '6D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_2S_6H_PASS_2551_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2S'
-  CONDITION: opp_last_call == '6H'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_2S_7C_PASS_2552_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2S'
-  CONDITION: opp_last_call == '7C'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_2S_7D_PASS_2553_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2S'
-  CONDITION: opp_last_call == '7D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_2S_2N_PASS_2554_0:
+RULE B_2S_2N_PASS_2008_0:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -16744,7 +13085,7 @@ RULE B_2S_2N_PASS_2554_0:
   CONDITION: opp_last_call == '2NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2S_3N_PASS_2565_0:
+RULE B_2S_3N_PASS_2019_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16753,7 +13094,7 @@ RULE B_2S_3N_PASS_2565_0:
   CONDITION: opp_last_call == '3NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_2S_4N_PASS_2571_0:
+RULE B_2S_4N_PASS_2025_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16762,7 +13103,7 @@ RULE B_2S_4N_PASS_2571_0:
   CONDITION: opp_last_call == '4NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3C_P_PASS_2574_0:
+RULE B_3C_P_PASS_2028_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16771,7 +13112,7 @@ RULE B_3C_P_PASS_2574_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 1
 
-RULE B_3C_P_4C_2582_0:
+RULE B_3C_P_4C_2036_0:
   CALL: 4C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -16783,7 +13124,7 @@ RULE B_3C_P_4C_2582_0:
   CONDITION: hcp <= 10
   CONDITION: club_hcp >= 6
 
-RULE B_3C_P_5C_2591_0:
+RULE B_3C_P_5C_2045_0:
   CALL: 5C
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -16794,7 +13135,7 @@ RULE B_3C_P_5C_2591_0:
   CONDITION: hcp >= 18
   CONDITION: club_len >= 1
 
-RULE B_3C_X_PASS_2600_0:
+RULE B_3C_X_PASS_2054_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16803,7 +13144,7 @@ RULE B_3C_X_PASS_2600_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3C_X_4C_2608_0:
+RULE B_3C_X_4C_2062_0:
   CALL: 4C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -16815,7 +13156,7 @@ RULE B_3C_X_4C_2608_0:
   CONDITION: hcp <= 10
   CONDITION: club_hcp >= 6
 
-RULE B_3C_X_5C_2617_0:
+RULE B_3C_X_5C_2071_0:
   CALL: 5C
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -16826,7 +13167,7 @@ RULE B_3C_X_5C_2617_0:
   CONDITION: hcp >= 18
   CONDITION: club_len >= 1
 
-RULE B_3C_3D_PASS_2627_0:
+RULE B_3C_3D_PASS_2081_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16836,7 +13177,7 @@ RULE B_3C_3D_PASS_2627_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: club_len <= 3
 
-RULE B_3C_3D_PASS_2627_1:
+RULE B_3C_3D_PASS_2081_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16846,7 +13187,7 @@ RULE B_3C_3D_PASS_2627_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: club_hcp <= 5
 
-RULE B_3C_3H_PASS_2638_0:
+RULE B_3C_3H_PASS_2092_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16855,7 +13196,7 @@ RULE B_3C_3H_PASS_2638_0:
   CONDITION: opp_last_call == '3H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3C_3H_3NT_2640_0:
+RULE B_3C_3H_3NT_2094_0:
   CALL: 3NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -16866,7 +13207,7 @@ RULE B_3C_3H_3NT_2640_0:
   CONDITION: hcp >= 15
   CONDITION: h_stopper >= 2
 
-RULE B_3C_3H_5C_2644_0:
+RULE B_3C_3H_5C_2098_0:
   CALL: 5C
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -16877,7 +13218,7 @@ RULE B_3C_3H_5C_2644_0:
   CONDITION: club_len >= 4
   CONDITION: hcp <= 10
 
-RULE B_3C_3S_3NT_2655_0:
+RULE B_3C_3S_3NT_2109_0:
   CALL: 3NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -16888,7 +13229,7 @@ RULE B_3C_3S_3NT_2655_0:
   CONDITION: hcp >= 15
   CONDITION: s_stopper >= 2
 
-RULE B_3C_3S_5C_2659_0:
+RULE B_3C_3S_5C_2113_0:
   CALL: 5C
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -16899,7 +13240,7 @@ RULE B_3C_3S_5C_2659_0:
   CONDITION: club_len >= 4
   CONDITION: hcp <= 10
 
-RULE B_3C_4C_PASS_2669_0:
+RULE B_3C_4C_PASS_2123_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16909,7 +13250,7 @@ RULE B_3C_4C_PASS_2669_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: club_len <= 3
 
-RULE B_3C_4C_PASS_2669_1:
+RULE B_3C_4C_PASS_2123_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16919,7 +13260,7 @@ RULE B_3C_4C_PASS_2669_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: club_hcp <= 9
 
-RULE B_3C_4C_5C_2672_0:
+RULE B_3C_4C_5C_2126_0:
   CALL: 5C
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -16930,7 +13271,7 @@ RULE B_3C_4C_5C_2672_0:
   CONDITION: club_len >= 4
   CONDITION: club_hcp >= 10
 
-RULE B_3C_4H_PASS_2673_0:
+RULE B_3C_4H_PASS_2127_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16939,7 +13280,7 @@ RULE B_3C_4H_PASS_2673_0:
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3C_4S_PASS_2681_0:
+RULE B_3C_4S_PASS_2135_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16948,7 +13289,7 @@ RULE B_3C_4S_PASS_2681_0:
   CONDITION: opp_last_call == '4S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3C_6H_PASS_2687_0:
+RULE B_3C_6H_PASS_2141_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16957,16 +13298,7 @@ RULE B_3C_6H_PASS_2687_0:
   CONDITION: opp_last_call == '6H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3C_6S_PASS_2688_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3C'
-  CONDITION: opp_last_call == '6S'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_3C_3N_PASS_2689_0:
+RULE B_3C_3N_PASS_2142_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16975,7 +13307,7 @@ RULE B_3C_3N_PASS_2689_0:
   CONDITION: opp_last_call == '3NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3D_P_PASS_2696_0:
+RULE B_3D_P_PASS_2149_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -16984,7 +13316,7 @@ RULE B_3D_P_PASS_2696_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 1
 
-RULE B_3D_P_4D_2704_0:
+RULE B_3D_P_4D_2157_0:
   CALL: 4D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -16996,7 +13328,7 @@ RULE B_3D_P_4D_2704_0:
   CONDITION: hcp <= 10
   CONDITION: diamond_hcp >= 6
 
-RULE B_3D_P_5D_2713_0:
+RULE B_3D_P_5D_2166_0:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17007,7 +13339,7 @@ RULE B_3D_P_5D_2713_0:
   CONDITION: hcp >= 18
   CONDITION: diamond_len >= 1
 
-RULE B_3D_X_PASS_2721_0:
+RULE B_3D_X_PASS_2174_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17016,7 +13348,7 @@ RULE B_3D_X_PASS_2721_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3D_X_4D_2730_0:
+RULE B_3D_X_4D_2183_0:
   CALL: 4D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -17028,7 +13360,7 @@ RULE B_3D_X_4D_2730_0:
   CONDITION: hcp <= 10
   CONDITION: diamond_hcp >= 6
 
-RULE B_3D_X_5D_2739_0:
+RULE B_3D_X_5D_2192_0:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17039,7 +13371,7 @@ RULE B_3D_X_5D_2739_0:
   CONDITION: hcp >= 18
   CONDITION: diamond_len >= 1
 
-RULE B_3D_3H_PASS_2747_0:
+RULE B_3D_3H_PASS_2200_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17048,7 +13380,7 @@ RULE B_3D_3H_PASS_2747_0:
   CONDITION: opp_last_call == '3H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3D_3H_3NT_2750_0:
+RULE B_3D_3H_3NT_2203_0:
   CALL: 3NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -17059,7 +13391,7 @@ RULE B_3D_3H_3NT_2750_0:
   CONDITION: hcp >= 15
   CONDITION: h_stopper >= 2
 
-RULE B_3D_3H_4C_2751_0:
+RULE B_3D_3H_4C_2204_0:
   CALL: 4C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -17070,7 +13402,7 @@ RULE B_3D_3H_4C_2751_0:
   CONDITION: club_len >= 7
   CONDITION: hcp <= 10
 
-RULE B_3D_3H_4D_2752_0:
+RULE B_3D_3H_4D_2205_0:
   CALL: 4D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -17081,7 +13413,7 @@ RULE B_3D_3H_4D_2752_0:
   CONDITION: diamond_len >= 3
   CONDITION: hcp <= 10
 
-RULE B_3D_3H_5D_2756_0:
+RULE B_3D_3H_5D_2209_0:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17092,7 +13424,7 @@ RULE B_3D_3H_5D_2756_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 10
 
-RULE B_3D_3S_PASS_2770_0:
+RULE B_3D_3S_PASS_2223_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17101,7 +13433,7 @@ RULE B_3D_3S_PASS_2770_0:
   CONDITION: opp_last_call == '3S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3D_3S_3NT_2772_0:
+RULE B_3D_3S_3NT_2225_0:
   CALL: 3NT
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -17112,7 +13444,7 @@ RULE B_3D_3S_3NT_2772_0:
   CONDITION: hcp >= 15
   CONDITION: s_stopper >= 2
 
-RULE B_3D_3S_4C_2773_0:
+RULE B_3D_3S_4C_2226_0:
   CALL: 4C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -17123,7 +13455,7 @@ RULE B_3D_3S_4C_2773_0:
   CONDITION: club_len >= 7
   CONDITION: hcp <= 10
 
-RULE B_3D_3S_4D_2774_0:
+RULE B_3D_3S_4D_2227_0:
   CALL: 4D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -17134,7 +13466,7 @@ RULE B_3D_3S_4D_2774_0:
   CONDITION: diamond_len >= 3
   CONDITION: hcp <= 10
 
-RULE B_3D_3S_5D_2778_0:
+RULE B_3D_3S_5D_2231_0:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17145,7 +13477,7 @@ RULE B_3D_3S_5D_2778_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 10
 
-RULE B_3D_4C_PASS_2792_0:
+RULE B_3D_4C_PASS_2245_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17154,7 +13486,7 @@ RULE B_3D_4C_PASS_2792_0:
   CONDITION: opp_last_call == '4C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3D_4C_4D_2794_0:
+RULE B_3D_4C_4D_2247_0:
   CALL: 4D
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -17165,7 +13497,7 @@ RULE B_3D_4C_4D_2794_0:
   CONDITION: diamond_len >= 3
   CONDITION: hcp <= 10
 
-RULE B_3D_4C_5D_2801_0:
+RULE B_3D_4C_5D_2254_0:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17176,7 +13508,7 @@ RULE B_3D_4C_5D_2801_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 10
 
-RULE B_3D_4D_PASS_2810_0:
+RULE B_3D_4D_PASS_2263_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17186,7 +13518,7 @@ RULE B_3D_4D_PASS_2810_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: diamond_len <= 3
 
-RULE B_3D_4D_PASS_2810_1:
+RULE B_3D_4D_PASS_2263_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17196,7 +13528,7 @@ RULE B_3D_4D_PASS_2810_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: diamond_hcp <= 9
 
-RULE B_3D_4D_5D_2813_0:
+RULE B_3D_4D_5D_2266_0:
   CALL: 5D
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17207,7 +13539,7 @@ RULE B_3D_4D_5D_2813_0:
   CONDITION: diamond_len >= 4
   CONDITION: diamond_hcp >= 10
 
-RULE B_3D_4H_PASS_2814_0:
+RULE B_3D_4H_PASS_2267_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17216,7 +13548,7 @@ RULE B_3D_4H_PASS_2814_0:
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3D_4S_PASS_2824_0:
+RULE B_3D_4S_PASS_2277_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17225,7 +13557,7 @@ RULE B_3D_4S_PASS_2824_0:
   CONDITION: opp_last_call == '4S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3D_5C_PASS_2830_0:
+RULE B_3D_5C_PASS_2283_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17234,25 +13566,7 @@ RULE B_3D_5C_PASS_2830_0:
   CONDITION: opp_last_call == '5C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3D_6H_PASS_2833_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3D'
-  CONDITION: opp_last_call == '6H'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_3D_6S_PASS_2834_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3D'
-  CONDITION: opp_last_call == '6S'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_3D_3N_PASS_2835_0:
+RULE B_3D_3N_PASS_2286_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17261,7 +13575,7 @@ RULE B_3D_3N_PASS_2835_0:
   CONDITION: opp_last_call == '3NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3H_P_PASS_2842_0:
+RULE B_3H_P_PASS_2293_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17270,7 +13584,7 @@ RULE B_3H_P_PASS_2842_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 1
 
-RULE B_3H_P_3NT_2843_0:
+RULE B_3H_P_3NT_2294_0:
   CALL: 3NT
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -17280,7 +13594,7 @@ RULE B_3H_P_3NT_2843_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp >= 15
 
-RULE B_3H_P_4H_2849_0:
+RULE B_3H_P_4H_2300_0:
   CALL: 4H
   PRIORITY: 59
   CONDITION: is_opening == False
@@ -17291,7 +13605,7 @@ RULE B_3H_P_4H_2849_0:
   CONDITION: heart_len >= 3
   CONDITION: total_points >= 7
 
-RULE B_3H_P_4H_2850_0:
+RULE B_3H_P_4H_2301_0:
   CALL: 4H
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -17302,7 +13616,7 @@ RULE B_3H_P_4H_2850_0:
   CONDITION: heart_len >= 2
   CONDITION: total_points >= 9
 
-RULE B_3H_P_4S_2851_1:
+RULE B_3H_P_4S_2302_1:
   CALL: 4S
   PRIORITY: 47
   CONDITION: is_opening == False
@@ -17313,59 +13627,7 @@ RULE B_3H_P_4S_2851_1:
   CONDITION: losing_trick_count <= 3
   CONDITION: spade_len >= 6
 
-RULE B_3H_X_PASS_2867_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_3H_X_3NT_2868_0:
-  CALL: 3NT
-  PRIORITY: 40
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp >= 15
-
-RULE B_3H_X_4H_2874_0:
-  CALL: 4H
-  PRIORITY: 59
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 3
-  CONDITION: total_points >= 7
-
-RULE B_3H_X_4H_2875_0:
-  CALL: 4H
-  PRIORITY: 60
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 2
-  CONDITION: total_points >= 9
-
-RULE B_3H_X_4S_2876_1:
-  CALL: 4S
-  PRIORITY: 47
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: losing_trick_count <= 3
-  CONDITION: spade_len >= 6
-
-RULE B_3H_3S_PASS_2892_0:
+RULE B_3H_3S_PASS_2318_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17374,7 +13636,7 @@ RULE B_3H_3S_PASS_2892_0:
   CONDITION: opp_last_call == '3S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3H_3S_3NT_2893_0:
+RULE B_3H_3S_3NT_2319_0:
   CALL: 3NT
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -17385,7 +13647,7 @@ RULE B_3H_3S_3NT_2893_0:
   CONDITION: hcp >= 15
   CONDITION: s_stopper >= 2
 
-RULE B_3H_3S_4H_2896_0:
+RULE B_3H_3S_4H_2322_0:
   CALL: 4H
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17396,7 +13658,7 @@ RULE B_3H_3S_4H_2896_0:
   CONDITION: heart_len >= 2
   CONDITION: heart_hcp >= 9
 
-RULE B_3H_4C_4H_2907_0:
+RULE B_3H_4C_4H_2333_0:
   CALL: 4H
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17407,18 +13669,7 @@ RULE B_3H_4C_4H_2907_0:
   CONDITION: heart_len >= 3
   CONDITION: heart_hcp >= 10
 
-RULE B_3H_4D_4H_2909_0:
-  CALL: 4H
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3H'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 3
-  CONDITION: heart_hcp >= 10
-
-RULE B_3H_4S_PASS_2911_0:
+RULE B_3H_4S_PASS_2335_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17427,7 +13678,7 @@ RULE B_3H_4S_PASS_2911_0:
   CONDITION: opp_last_call == '4S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3H_6C_PASS_2914_0:
+RULE B_3H_6C_PASS_2338_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17436,16 +13687,7 @@ RULE B_3H_6C_PASS_2914_0:
   CONDITION: opp_last_call == '6C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3H_6D_PASS_2915_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3H'
-  CONDITION: opp_last_call == '6D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_3H_6S_PASS_2916_0:
+RULE B_3H_6S_PASS_2339_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17454,7 +13696,7 @@ RULE B_3H_6S_PASS_2916_0:
   CONDITION: opp_last_call == '6S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3S_P_PASS_2922_0:
+RULE B_3S_P_PASS_2345_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17463,7 +13705,7 @@ RULE B_3S_P_PASS_2922_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 1
 
-RULE B_3S_P_3NT_2923_0:
+RULE B_3S_P_3NT_2346_0:
   CALL: 3NT
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -17473,7 +13715,7 @@ RULE B_3S_P_3NT_2923_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp >= 15
 
-RULE B_3S_P_4H_2928_1:
+RULE B_3S_P_4H_2351_1:
   CALL: 4H
   PRIORITY: 47
   CONDITION: is_opening == False
@@ -17484,7 +13726,7 @@ RULE B_3S_P_4H_2928_1:
   CONDITION: losing_trick_count <= 3
   CONDITION: heart_len >= 6
 
-RULE B_3S_P_4S_2933_0:
+RULE B_3S_P_4S_2356_0:
   CALL: 4S
   PRIORITY: 59
   CONDITION: is_opening == False
@@ -17495,7 +13737,7 @@ RULE B_3S_P_4S_2933_0:
   CONDITION: spade_len >= 3
   CONDITION: total_points >= 7
 
-RULE B_3S_P_4S_2934_0:
+RULE B_3S_P_4S_2357_0:
   CALL: 4S
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -17506,7 +13748,7 @@ RULE B_3S_P_4S_2934_0:
   CONDITION: spade_len >= 2
   CONDITION: total_points >= 9
 
-RULE B_3S_X_PASS_2947_0:
+RULE B_3S_X_PASS_2370_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17515,7 +13757,7 @@ RULE B_3S_X_PASS_2947_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3S_X_3NT_2948_0:
+RULE B_3S_X_3NT_2371_0:
   CALL: 3NT
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -17525,7 +13767,7 @@ RULE B_3S_X_3NT_2948_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 15
 
-RULE B_3S_X_4H_2954_1:
+RULE B_3S_X_4H_2377_1:
   CALL: 4H
   PRIORITY: 47
   CONDITION: is_opening == False
@@ -17536,7 +13778,7 @@ RULE B_3S_X_4H_2954_1:
   CONDITION: losing_trick_count <= 3
   CONDITION: heart_len >= 6
 
-RULE B_3S_X_4S_2959_0:
+RULE B_3S_X_4S_2382_0:
   CALL: 4S
   PRIORITY: 59
   CONDITION: is_opening == False
@@ -17547,7 +13789,7 @@ RULE B_3S_X_4S_2959_0:
   CONDITION: spade_len >= 3
   CONDITION: total_points >= 7
 
-RULE B_3S_X_4S_2960_1:
+RULE B_3S_X_4S_2383_1:
   CALL: 4S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17558,7 +13800,7 @@ RULE B_3S_X_4S_2960_1:
   CONDITION: spade_len >= 2
   CONDITION: total_points >= 9
 
-RULE B_3S_4C_4S_2974_0:
+RULE B_3S_4C_4S_2397_0:
   CALL: 4S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17569,18 +13811,7 @@ RULE B_3S_4C_4S_2974_0:
   CONDITION: spade_len >= 3
   CONDITION: spade_hcp >= 10
 
-RULE B_3S_4D_4S_2976_0:
-  CALL: 4S
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3S'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 3
-  CONDITION: spade_hcp >= 10
-
-RULE B_3S_4H_PASS_2977_0:
+RULE B_3S_4H_PASS_2398_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17589,7 +13820,7 @@ RULE B_3S_4H_PASS_2977_0:
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3S_4H_4S_2979_0:
+RULE B_3S_4H_4S_2400_0:
   CALL: 4S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17600,7 +13831,7 @@ RULE B_3S_4H_4S_2979_0:
   CONDITION: spade_len >= 3
   CONDITION: hcp >= 10
 
-RULE B_3S_4H_4S_2979_1:
+RULE B_3S_4H_4S_2400_1:
   CALL: 4S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17611,7 +13842,7 @@ RULE B_3S_4H_4S_2979_1:
   CONDITION: spade_len >= 2
   CONDITION: hcp >= 14
 
-RULE B_3S_4H_4S_2979_2:
+RULE B_3S_4H_4S_2400_2:
   CALL: 4S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17622,34 +13853,7 @@ RULE B_3S_4H_4S_2979_2:
   CONDITION: spade_len >= 1
   CONDITION: hcp >= 16
 
-RULE B_3S_6C_PASS_2983_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3S'
-  CONDITION: opp_last_call == '6C'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_3S_6D_PASS_2984_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3S'
-  CONDITION: opp_last_call == '6D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_3S_6H_PASS_2985_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3S'
-  CONDITION: opp_last_call == '6H'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_4C_P_PASS_2991_0:
+RULE B_4C_P_PASS_2407_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17659,7 +13863,7 @@ RULE B_4C_P_PASS_2991_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp <= 16
 
-RULE B_4C_P_PASS_2991_1:
+RULE B_4C_P_PASS_2407_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17669,7 +13873,7 @@ RULE B_4C_P_PASS_2991_1:
   CONDITION: passes_since_last_bid == 1
   CONDITION: ace_count <= 1
 
-RULE B_4C_P_4H_2992_0:
+RULE B_4C_P_4H_2408_0:
   CALL: 4H
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17680,7 +13884,7 @@ RULE B_4C_P_4H_2992_0:
   CONDITION: heart_len >= 7
   CONDITION: total_points >= 17
 
-RULE B_4C_P_4S_2993_0:
+RULE B_4C_P_4S_2409_0:
   CALL: 4S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17691,7 +13895,7 @@ RULE B_4C_P_4S_2993_0:
   CONDITION: spade_len >= 7
   CONDITION: total_points >= 17
 
-RULE B_4C_P_5C_2996_1:
+RULE B_4C_P_5C_2412_1:
   CALL: 5C
   PRIORITY: 69
   CONDITION: is_opening == False
@@ -17702,7 +13906,7 @@ RULE B_4C_P_5C_2996_1:
   CONDITION: ace_count == 2
   CONDITION: hcp >= 16
 
-RULE B_4C_P_5C_2996_2:
+RULE B_4C_P_5C_2412_2:
   CALL: 5C
   PRIORITY: 69
   CONDITION: is_opening == False
@@ -17713,7 +13917,7 @@ RULE B_4C_P_5C_2996_2:
   CONDITION: ace_count == 3
   CONDITION: hcp <= 17
 
-RULE B_4C_P_6C_2998_0:
+RULE B_4C_P_6C_2414_0:
   CALL: 6C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -17724,7 +13928,7 @@ RULE B_4C_P_6C_2998_0:
   CONDITION: club_len >= 1
   CONDITION: ace_count >= 4
 
-RULE B_4C_P_6C_2998_1:
+RULE B_4C_P_6C_2414_1:
   CALL: 6C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -17735,7 +13939,7 @@ RULE B_4C_P_6C_2998_1:
   CONDITION: club_len >= 2
   CONDITION: ace_count >= 4
 
-RULE B_4C_P_6C_2998_2:
+RULE B_4C_P_6C_2414_2:
   CALL: 6C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -17746,7 +13950,7 @@ RULE B_4C_P_6C_2998_2:
   CONDITION: club_len >= 2
   CONDITION: hcp >= 20
 
-RULE B_4C_P_6C_2998_3:
+RULE B_4C_P_6C_2414_3:
   CALL: 6C
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -17757,7 +13961,7 @@ RULE B_4C_P_6C_2998_3:
   CONDITION: ace_count == 3
   CONDITION: hcp >= 18
 
-RULE B_4C_P_7C_3002_0:
+RULE B_4C_P_7C_2418_0:
   CALL: 7C
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -17768,126 +13972,7 @@ RULE B_4C_P_7C_3002_0:
   CONDITION: ace_count == 4
   CONDITION: hcp >= 20
 
-RULE B_4C_X_PASS_3006_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 16
-
-RULE B_4C_X_PASS_3006_1:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: ace_count <= 1
-
-RULE B_4C_X_4H_3007_0:
-  CALL: 4H
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 7
-  CONDITION: total_points >= 17
-
-RULE B_4C_X_4S_3008_0:
-  CALL: 4S
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 7
-  CONDITION: total_points >= 17
-
-RULE B_4C_X_5C_3011_1:
-  CALL: 5C
-  PRIORITY: 69
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: ace_count == 2
-  CONDITION: hcp >= 16
-
-RULE B_4C_X_5C_3011_2:
-  CALL: 5C
-  PRIORITY: 69
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: ace_count == 3
-  CONDITION: hcp <= 17
-
-RULE B_4C_X_6C_3013_0:
-  CALL: 6C
-  PRIORITY: 55
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 1
-  CONDITION: ace_count >= 4
-
-RULE B_4C_X_6C_3013_1:
-  CALL: 6C
-  PRIORITY: 55
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 2
-  CONDITION: ace_count >= 4
-
-RULE B_4C_X_6C_3013_2:
-  CALL: 6C
-  PRIORITY: 55
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: club_len >= 2
-  CONDITION: hcp >= 20
-
-RULE B_4C_X_6C_3013_3:
-  CALL: 6C
-  PRIORITY: 55
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: ace_count == 3
-  CONDITION: hcp >= 18
-
-RULE B_4C_X_7C_3017_0:
-  CALL: 7C
-  PRIORITY: 58
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: ace_count == 4
-  CONDITION: hcp >= 20
-
-RULE B_4C_4H_PASS_3021_0:
+RULE B_4C_4H_PASS_2422_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17896,7 +13981,7 @@ RULE B_4C_4H_PASS_3021_0:
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_4C_4S_PASS_3028_0:
+RULE B_4C_4S_PASS_2429_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17905,7 +13990,7 @@ RULE B_4C_4S_PASS_3028_0:
   CONDITION: opp_last_call == '4S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_4C_5C_PASS_3035_0:
+RULE B_4C_5C_PASS_2436_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17914,7 +13999,7 @@ RULE B_4C_5C_PASS_3035_0:
   CONDITION: opp_last_call == '5C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_4D_P_PASS_3036_0:
+RULE B_4D_P_PASS_2437_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17924,7 +14009,7 @@ RULE B_4D_P_PASS_3036_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp <= 16
 
-RULE B_4D_P_PASS_3036_1:
+RULE B_4D_P_PASS_2437_1:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -17934,7 +14019,7 @@ RULE B_4D_P_PASS_3036_1:
   CONDITION: passes_since_last_bid == 1
   CONDITION: ace_count <= 1
 
-RULE B_4D_P_4H_3037_0:
+RULE B_4D_P_4H_2438_0:
   CALL: 4H
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17945,7 +14030,7 @@ RULE B_4D_P_4H_3037_0:
   CONDITION: heart_len >= 7
   CONDITION: total_points >= 17
 
-RULE B_4D_P_4S_3038_0:
+RULE B_4D_P_4S_2439_0:
   CALL: 4S
   PRIORITY: 70
   CONDITION: is_opening == False
@@ -17956,7 +14041,7 @@ RULE B_4D_P_4S_3038_0:
   CONDITION: spade_len >= 7
   CONDITION: total_points >= 17
 
-RULE B_4D_P_5D_3041_1:
+RULE B_4D_P_5D_2442_1:
   CALL: 5D
   PRIORITY: 69
   CONDITION: is_opening == False
@@ -17967,7 +14052,7 @@ RULE B_4D_P_5D_3041_1:
   CONDITION: ace_count == 2
   CONDITION: hcp >= 16
 
-RULE B_4D_P_5D_3041_2:
+RULE B_4D_P_5D_2442_2:
   CALL: 5D
   PRIORITY: 69
   CONDITION: is_opening == False
@@ -17978,7 +14063,7 @@ RULE B_4D_P_5D_3041_2:
   CONDITION: ace_count == 3
   CONDITION: hcp <= 17
 
-RULE B_4D_P_6D_3043_0:
+RULE B_4D_P_6D_2444_0:
   CALL: 6D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -17989,7 +14074,7 @@ RULE B_4D_P_6D_3043_0:
   CONDITION: diamond_len >= 1
   CONDITION: ace_count >= 4
 
-RULE B_4D_P_6D_3043_1:
+RULE B_4D_P_6D_2444_1:
   CALL: 6D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -18000,7 +14085,7 @@ RULE B_4D_P_6D_3043_1:
   CONDITION: diamond_len >= 2
   CONDITION: ace_count >= 4
 
-RULE B_4D_P_6D_3043_2:
+RULE B_4D_P_6D_2444_2:
   CALL: 6D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -18011,7 +14096,7 @@ RULE B_4D_P_6D_3043_2:
   CONDITION: diamond_len >= 2
   CONDITION: hcp >= 20
 
-RULE B_4D_P_6D_3043_3:
+RULE B_4D_P_6D_2444_3:
   CALL: 6D
   PRIORITY: 55
   CONDITION: is_opening == False
@@ -18022,7 +14107,7 @@ RULE B_4D_P_6D_3043_3:
   CONDITION: ace_count == 3
   CONDITION: hcp >= 18
 
-RULE B_4D_P_7D_3047_0:
+RULE B_4D_P_7D_2448_0:
   CALL: 7D
   PRIORITY: 58
   CONDITION: is_opening == False
@@ -18033,126 +14118,7 @@ RULE B_4D_P_7D_3047_0:
   CONDITION: ace_count == 4
   CONDITION: hcp >= 20
 
-RULE B_4D_X_PASS_3051_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 16
-
-RULE B_4D_X_PASS_3051_1:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: ace_count <= 1
-
-RULE B_4D_X_4H_3052_0:
-  CALL: 4H
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: heart_len >= 7
-  CONDITION: total_points >= 17
-
-RULE B_4D_X_4S_3053_0:
-  CALL: 4S
-  PRIORITY: 70
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: spade_len >= 7
-  CONDITION: total_points >= 17
-
-RULE B_4D_X_5D_3056_1:
-  CALL: 5D
-  PRIORITY: 69
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: ace_count == 2
-  CONDITION: hcp >= 16
-
-RULE B_4D_X_5D_3056_2:
-  CALL: 5D
-  PRIORITY: 69
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: ace_count == 3
-  CONDITION: hcp <= 17
-
-RULE B_4D_X_6D_3058_0:
-  CALL: 6D
-  PRIORITY: 55
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 1
-  CONDITION: ace_count >= 4
-
-RULE B_4D_X_6D_3058_1:
-  CALL: 6D
-  PRIORITY: 55
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 2
-  CONDITION: ace_count >= 4
-
-RULE B_4D_X_6D_3058_2:
-  CALL: 6D
-  PRIORITY: 55
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: diamond_len >= 2
-  CONDITION: hcp >= 20
-
-RULE B_4D_X_6D_3058_3:
-  CALL: 6D
-  PRIORITY: 55
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: ace_count == 3
-  CONDITION: hcp >= 18
-
-RULE B_4D_X_7D_3062_0:
-  CALL: 7D
-  PRIORITY: 58
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: ace_count == 4
-  CONDITION: hcp >= 20
-
-RULE B_4D_4H_PASS_3066_0:
+RULE B_4D_4H_PASS_2452_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18161,7 +14127,7 @@ RULE B_4D_4H_PASS_3066_0:
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_4D_4S_PASS_3075_0:
+RULE B_4D_4S_PASS_2461_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18170,7 +14136,7 @@ RULE B_4D_4S_PASS_3075_0:
   CONDITION: opp_last_call == '4S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_4D_5C_PASS_3082_0:
+RULE B_4D_5C_PASS_2468_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18179,16 +14145,7 @@ RULE B_4D_5C_PASS_3082_0:
   CONDITION: opp_last_call == '5C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_4D_5D_PASS_3085_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4D'
-  CONDITION: opp_last_call == '5D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_4H_P_PASS_3086_0:
+RULE B_4H_P_PASS_2471_0:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -18198,7 +14155,7 @@ RULE B_4H_P_PASS_3086_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: ace_count <= 2
 
-RULE B_4H_P_PASS_3086_1:
+RULE B_4H_P_PASS_2471_1:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -18208,7 +14165,7 @@ RULE B_4H_P_PASS_3086_1:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp <= 16
 
-RULE B_4H_P_6H_3092_0:
+RULE B_4H_P_6H_2477_0:
   CALL: 6H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -18219,7 +14176,7 @@ RULE B_4H_P_6H_3092_0:
   CONDITION: ace_count >= 3
   CONDITION: hcp >= 17
 
-RULE B_4H_P_7H_3095_0:
+RULE B_4H_P_7H_2480_0:
   CALL: 7H
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -18230,49 +14187,7 @@ RULE B_4H_P_7H_3095_0:
   CONDITION: ace_count == 4
   CONDITION: hcp >= 17
 
-RULE B_4H_X_PASS_3098_0:
-  CALL: PASS
-  PRIORITY: 20
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: ace_count <= 2
-
-RULE B_4H_X_PASS_3098_1:
-  CALL: PASS
-  PRIORITY: 20
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: hcp <= 16
-
-RULE B_4H_X_6H_3104_0:
-  CALL: 6H
-  PRIORITY: 30
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: ace_count >= 3
-  CONDITION: hcp >= 17
-
-RULE B_4H_X_7H_3107_0:
-  CALL: 7H
-  PRIORITY: 40
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-  CONDITION: ace_count == 4
-  CONDITION: hcp >= 17
-
-RULE B_4H_4S_PASS_3110_0:
+RULE B_4H_4S_PASS_2483_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18281,7 +14196,7 @@ RULE B_4H_4S_PASS_3110_0:
   CONDITION: opp_last_call == '4S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_4H_5C_PASS_3113_0:
+RULE B_4H_5C_PASS_2486_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18290,16 +14205,7 @@ RULE B_4H_5C_PASS_3113_0:
   CONDITION: opp_last_call == '5C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_4H_5D_PASS_3116_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4H'
-  CONDITION: opp_last_call == '5D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_4H_5S_PASS_3119_0:
+RULE B_4H_5S_PASS_2489_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18308,7 +14214,7 @@ RULE B_4H_5S_PASS_3119_0:
   CONDITION: opp_last_call == '5S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_4H_4N_PASS_3121_0:
+RULE B_4H_4N_PASS_2491_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18317,7 +14223,7 @@ RULE B_4H_4N_PASS_3121_0:
   CONDITION: opp_last_call == '4NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_4S_P_PASS_3124_0:
+RULE B_4S_P_PASS_2494_0:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -18327,7 +14233,7 @@ RULE B_4S_P_PASS_3124_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: ace_count <= 2
 
-RULE B_4S_P_PASS_3124_1:
+RULE B_4S_P_PASS_2494_1:
   CALL: PASS
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -18337,7 +14243,7 @@ RULE B_4S_P_PASS_3124_1:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp <= 16
 
-RULE B_4S_P_6S_3130_0:
+RULE B_4S_P_6S_2500_0:
   CALL: 6S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -18348,7 +14254,7 @@ RULE B_4S_P_6S_3130_0:
   CONDITION: ace_count >= 3
   CONDITION: hcp >= 17
 
-RULE B_4S_P_7S_3133_0:
+RULE B_4S_P_7S_2503_0:
   CALL: 7S
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -18359,7 +14265,7 @@ RULE B_4S_P_7S_3133_0:
   CONDITION: ace_count == 4
   CONDITION: hcp >= 17
 
-RULE B_4S_X_PASS_3136_0:
+RULE B_4S_X_PASS_2506_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18368,7 +14274,7 @@ RULE B_4S_X_PASS_3136_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_4S_X_6S_3142_0:
+RULE B_4S_X_6S_2512_0:
   CALL: 6S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -18379,7 +14285,7 @@ RULE B_4S_X_6S_3142_0:
   CONDITION: ace_count >= 3
   CONDITION: hcp >= 17
 
-RULE B_4S_X_7S_3145_0:
+RULE B_4S_X_7S_2515_0:
   CALL: 7S
   PRIORITY: 40
   CONDITION: is_opening == False
@@ -18390,7 +14296,7 @@ RULE B_4S_X_7S_3145_0:
   CONDITION: ace_count == 4
   CONDITION: hcp >= 17
 
-RULE B_4S_5C_PASS_3148_0:
+RULE B_4S_5C_PASS_2518_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18399,25 +14305,7 @@ RULE B_4S_5C_PASS_3148_0:
   CONDITION: opp_last_call == '5C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_4S_5D_PASS_3151_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4S'
-  CONDITION: opp_last_call == '5D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_4S_5H_PASS_3154_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '4S'
-  CONDITION: opp_last_call == '5H'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_4S_4N_PASS_3156_0:
+RULE B_4S_4N_PASS_2521_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18426,7 +14314,7 @@ RULE B_4S_4N_PASS_3156_0:
   CONDITION: opp_last_call == '4NT'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_5C_P_PASS_3159_0:
+RULE B_5C_P_PASS_2524_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18435,16 +14323,7 @@ RULE B_5C_P_PASS_3159_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 1
 
-RULE B_5C_X_PASS_3162_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '5C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_5C_5H_PASS_3165_0:
+RULE B_5C_5H_PASS_2527_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18453,16 +14332,7 @@ RULE B_5C_5H_PASS_3165_0:
   CONDITION: opp_last_call == '5H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_5C_5S_PASS_3167_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '5C'
-  CONDITION: opp_last_call == '5S'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_5D_P_PASS_3169_0:
+RULE B_5D_P_PASS_2529_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18471,34 +14341,7 @@ RULE B_5D_P_PASS_3169_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 1
 
-RULE B_5D_X_PASS_3172_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '5D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_5D_5H_PASS_3175_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '5D'
-  CONDITION: opp_last_call == '5H'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_5D_5S_PASS_3177_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '5D'
-  CONDITION: opp_last_call == '5S'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_5H_P_PASS_3179_0:
+RULE B_5H_P_PASS_2532_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18507,16 +14350,7 @@ RULE B_5H_P_PASS_3179_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 1
 
-RULE B_5H_X_PASS_3182_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '5H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_5H_5S_PASS_3185_0:
+RULE B_5H_5S_PASS_2535_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18525,25 +14359,7 @@ RULE B_5H_5S_PASS_3185_0:
   CONDITION: opp_last_call == '5S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_5S_P_PASS_3186_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '5S'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-
-RULE B_5S_X_PASS_3189_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '5S'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_6C_P_PASS_3192_0:
+RULE B_6C_P_PASS_2536_0:
   CALL: PASS
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -18552,142 +14368,7 @@ RULE B_6C_P_PASS_3192_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 1
 
-RULE B_6C_X_PASS_3193_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '6C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_6D_P_PASS_3194_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '6D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-
-RULE B_6D_X_PASS_3195_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '6D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_6H_P_PASS_3196_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '6H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-
-RULE B_6H_X_PASS_3197_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '6H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_6S_P_PASS_3198_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '6S'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-
-RULE B_6S_X_PASS_3199_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '6S'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_7C_P_PASS_3200_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '7C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-
-RULE B_7C_X_PASS_3201_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '7C'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_7D_P_PASS_3202_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '7D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-
-RULE B_7D_X_PASS_3203_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '7D'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_7H_P_PASS_3204_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '7H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-
-RULE B_7H_X_PASS_3205_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '7H'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_7S_P_PASS_3206_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '7S'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-
-RULE B_7S_X_PASS_3207_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '7S'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1N_P_PASS_3208_0:
+RULE B_1N_P_PASS_2537_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -18697,7 +14378,7 @@ RULE B_1N_P_PASS_3208_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp < 8
 
-RULE B_1N_P_2C_3209_2:
+RULE B_1N_P_2C_2538_2:
   CALL: 2C
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -18708,7 +14389,7 @@ RULE B_1N_P_2C_3209_2:
   CONDITION: hcp >= 8
   CONDITION: hcp <= 9
 
-RULE B_1N_P_2D_3211_0:
+RULE B_1N_P_2D_2540_0:
   CALL: 2D
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -18718,7 +14399,7 @@ RULE B_1N_P_2D_3211_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: heart_len >= 5
 
-RULE B_1N_P_2D_3211_1:
+RULE B_1N_P_2D_2540_1:
   CALL: 2D
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -18731,7 +14412,7 @@ RULE B_1N_P_2D_3211_1:
   CONDITION: hcp < 9
   CONDITION: hcp > 6
 
-RULE B_1N_P_2H_3212_0:
+RULE B_1N_P_2H_2541_0:
   CALL: 2H
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -18741,7 +14422,7 @@ RULE B_1N_P_2H_3212_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: spade_len >= 5
 
-RULE B_1N_P_2S_3213_0:
+RULE B_1N_P_2S_2542_0:
   CALL: 2S
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -18755,7 +14436,7 @@ RULE B_1N_P_2S_3213_0:
   CONDITION: spade_len <= 3
   CONDITION: total_points >= 10
 
-RULE B_1N_P_2S_3213_1:
+RULE B_1N_P_2S_2542_1:
   CALL: 2S
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -18769,7 +14450,7 @@ RULE B_1N_P_2S_3213_1:
   CONDITION: spade_len <= 3
   CONDITION: total_points >= 10
 
-RULE B_1N_P_2S_3214_0:
+RULE B_1N_P_2S_2543_0:
   CALL: 2S
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -18783,7 +14464,7 @@ RULE B_1N_P_2S_3214_0:
   CONDITION: spade_len <= 3
   CONDITION: total_points >= 15
 
-RULE B_1N_P_2NT_3215_0:
+RULE B_1N_P_2NT_2544_0:
   CALL: 2NT
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -18794,7 +14475,7 @@ RULE B_1N_P_2NT_3215_0:
   CONDITION: club_len >= 6
   CONDITION: hcp >= 13
 
-RULE B_1N_P_2NT_3215_1:
+RULE B_1N_P_2NT_2544_1:
   CALL: 2NT
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -18805,7 +14486,7 @@ RULE B_1N_P_2NT_3215_1:
   CONDITION: club_len >= 6
   CONDITION: hcp <= 7
 
-RULE B_1N_P_3C_3216_0:
+RULE B_1N_P_3C_2545_0:
   CALL: 3C
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -18816,7 +14497,7 @@ RULE B_1N_P_3C_3216_0:
   CONDITION: diamond_len >= 6
   CONDITION: hcp >= 13
 
-RULE B_1N_P_3C_3216_1:
+RULE B_1N_P_3C_2545_1:
   CALL: 3C
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -18827,7 +14508,7 @@ RULE B_1N_P_3C_3216_1:
   CONDITION: diamond_len >= 6
   CONDITION: hcp <= 7
 
-RULE B_1N_P_3NT_3220_4_0:
+RULE B_1N_P_3NT_2549_4_0:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -18842,7 +14523,7 @@ RULE B_1N_P_3NT_3220_4_0:
   CONDITION: c_has_king == True
   CONDITION: c_has_queen == True
 
-RULE B_1N_P_3NT_3220_4_1:
+RULE B_1N_P_3NT_2549_4_1:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -18857,7 +14538,7 @@ RULE B_1N_P_3NT_3220_4_1:
   CONDITION: c_has_king == True
   CONDITION: c_has_jack == True
 
-RULE B_1N_P_3NT_3220_4_2:
+RULE B_1N_P_3NT_2549_4_2:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -18872,7 +14553,7 @@ RULE B_1N_P_3NT_3220_4_2:
   CONDITION: c_has_king == True
   CONDITION: c_has_ten == True
 
-RULE B_1N_P_3NT_3220_4_3:
+RULE B_1N_P_3NT_2549_4_3:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -18887,7 +14568,7 @@ RULE B_1N_P_3NT_3220_4_3:
   CONDITION: c_has_queen == True
   CONDITION: c_has_jack == True
 
-RULE B_1N_P_3NT_3220_4_4:
+RULE B_1N_P_3NT_2549_4_4:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -18902,7 +14583,7 @@ RULE B_1N_P_3NT_3220_4_4:
   CONDITION: c_has_queen == True
   CONDITION: c_has_ten == True
 
-RULE B_1N_P_3NT_3220_4_5:
+RULE B_1N_P_3NT_2549_4_5:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -18917,7 +14598,7 @@ RULE B_1N_P_3NT_3220_4_5:
   CONDITION: c_has_jack == True
   CONDITION: c_has_ten == True
 
-RULE B_1N_P_3NT_3220_4_6:
+RULE B_1N_P_3NT_2549_4_6:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -18932,7 +14613,7 @@ RULE B_1N_P_3NT_3220_4_6:
   CONDITION: c_has_queen == True
   CONDITION: c_has_jack == True
 
-RULE B_1N_P_3NT_3220_4_7:
+RULE B_1N_P_3NT_2549_4_7:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -18947,7 +14628,7 @@ RULE B_1N_P_3NT_3220_4_7:
   CONDITION: c_has_queen == True
   CONDITION: c_has_ten == True
 
-RULE B_1N_P_3NT_3220_4_8:
+RULE B_1N_P_3NT_2549_4_8:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -18962,7 +14643,7 @@ RULE B_1N_P_3NT_3220_4_8:
   CONDITION: c_has_jack == True
   CONDITION: c_has_ten == True
 
-RULE B_1N_P_3NT_3220_4_9:
+RULE B_1N_P_3NT_2549_4_9:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -18977,7 +14658,7 @@ RULE B_1N_P_3NT_3220_4_9:
   CONDITION: c_has_jack == True
   CONDITION: c_has_ten == True
 
-RULE B_1N_P_3NT_3220_6_0:
+RULE B_1N_P_3NT_2549_6_0:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -18992,7 +14673,7 @@ RULE B_1N_P_3NT_3220_6_0:
   CONDITION: d_has_king == True
   CONDITION: d_has_queen == True
 
-RULE B_1N_P_3NT_3220_6_1:
+RULE B_1N_P_3NT_2549_6_1:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -19007,7 +14688,7 @@ RULE B_1N_P_3NT_3220_6_1:
   CONDITION: d_has_king == True
   CONDITION: d_has_jack == True
 
-RULE B_1N_P_3NT_3220_6_2:
+RULE B_1N_P_3NT_2549_6_2:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -19022,7 +14703,7 @@ RULE B_1N_P_3NT_3220_6_2:
   CONDITION: d_has_king == True
   CONDITION: d_has_ten == True
 
-RULE B_1N_P_3NT_3220_6_3:
+RULE B_1N_P_3NT_2549_6_3:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -19037,7 +14718,7 @@ RULE B_1N_P_3NT_3220_6_3:
   CONDITION: d_has_queen == True
   CONDITION: d_has_jack == True
 
-RULE B_1N_P_3NT_3220_6_4:
+RULE B_1N_P_3NT_2549_6_4:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -19052,7 +14733,7 @@ RULE B_1N_P_3NT_3220_6_4:
   CONDITION: d_has_queen == True
   CONDITION: d_has_ten == True
 
-RULE B_1N_P_3NT_3220_6_5:
+RULE B_1N_P_3NT_2549_6_5:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -19067,7 +14748,7 @@ RULE B_1N_P_3NT_3220_6_5:
   CONDITION: d_has_jack == True
   CONDITION: d_has_ten == True
 
-RULE B_1N_P_3NT_3220_6_6:
+RULE B_1N_P_3NT_2549_6_6:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -19082,7 +14763,7 @@ RULE B_1N_P_3NT_3220_6_6:
   CONDITION: d_has_queen == True
   CONDITION: d_has_jack == True
 
-RULE B_1N_P_3NT_3220_6_7:
+RULE B_1N_P_3NT_2549_6_7:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -19097,7 +14778,7 @@ RULE B_1N_P_3NT_3220_6_7:
   CONDITION: d_has_queen == True
   CONDITION: d_has_ten == True
 
-RULE B_1N_P_3NT_3220_6_8:
+RULE B_1N_P_3NT_2549_6_8:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -19112,7 +14793,7 @@ RULE B_1N_P_3NT_3220_6_8:
   CONDITION: d_has_jack == True
   CONDITION: d_has_ten == True
 
-RULE B_1N_P_3NT_3220_6_9:
+RULE B_1N_P_3NT_2549_6_9:
   CALL: 3NT
   PRIORITY: 86
   CONDITION: is_opening == False
@@ -19127,7 +14808,7 @@ RULE B_1N_P_3NT_3220_6_9:
   CONDITION: d_has_jack == True
   CONDITION: d_has_ten == True
 
-RULE B_2N_P_PASS_3229_0:
+RULE B_2N_P_PASS_2558_0:
   CALL: PASS
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -19137,7 +14818,7 @@ RULE B_2N_P_PASS_3229_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp < 4
 
-RULE B_2N_P_3D_3232_0:
+RULE B_2N_P_3D_2561_0:
   CALL: 3D
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -19147,7 +14828,7 @@ RULE B_2N_P_3D_3232_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: heart_len >= 5
 
-RULE B_2N_P_3H_3233_0:
+RULE B_2N_P_3H_2562_0:
   CALL: 3H
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -19157,7 +14838,7 @@ RULE B_2N_P_3H_3233_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: spade_len >= 5
 
-RULE B_3N_P_PASS_3243_0:
+RULE B_3N_P_PASS_2572_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -19167,7 +14848,7 @@ RULE B_3N_P_PASS_3243_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp <= 7
 
-RULE B_3N_P_4D_3245_0:
+RULE B_3N_P_4D_2574_0:
   CALL: 4D
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -19177,7 +14858,7 @@ RULE B_3N_P_4D_3245_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: heart_len >= 6
 
-RULE B_3N_P_4H_3246_0:
+RULE B_3N_P_4H_2575_0:
   CALL: 4H
   PRIORITY: 120
   CONDITION: is_opening == False
@@ -19187,25 +14868,7 @@ RULE B_3N_P_4H_3246_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: spade_len >= 6
 
-RULE B_6N_P_PASS_3253_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '6NT'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-
-RULE B_7N_P_PASS_3254_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '7NT'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 1
-
-RULE B_1N_X_PASS_3255_0:
+RULE B_1N_X_PASS_2582_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -19214,7 +14877,7 @@ RULE B_1N_X_PASS_3255_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1N_X_2C_3256_2:
+RULE B_1N_X_2C_2583_2:
   CALL: 2C
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19225,7 +14888,7 @@ RULE B_1N_X_2C_3256_2:
   CONDITION: hcp >= 8
   CONDITION: hcp <= 9
 
-RULE B_1N_X_2D_3258_0:
+RULE B_1N_X_2D_2585_0:
   CALL: 2D
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19235,7 +14898,7 @@ RULE B_1N_X_2D_3258_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: heart_len >= 5
 
-RULE B_1N_X_2D_3258_1:
+RULE B_1N_X_2D_2585_1:
   CALL: 2D
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19248,7 +14911,7 @@ RULE B_1N_X_2D_3258_1:
   CONDITION: hcp < 9
   CONDITION: hcp > 6
 
-RULE B_1N_X_2H_3259_0:
+RULE B_1N_X_2H_2586_0:
   CALL: 2H
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -19258,7 +14921,7 @@ RULE B_1N_X_2H_3259_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: spade_len >= 5
 
-RULE B_1N_X_2S_3260_0:
+RULE B_1N_X_2S_2587_0:
   CALL: 2S
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19272,7 +14935,7 @@ RULE B_1N_X_2S_3260_0:
   CONDITION: spade_len <= 3
   CONDITION: total_points >= 10
 
-RULE B_1N_X_2S_3260_1:
+RULE B_1N_X_2S_2587_1:
   CALL: 2S
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19286,7 +14949,7 @@ RULE B_1N_X_2S_3260_1:
   CONDITION: spade_len <= 3
   CONDITION: total_points >= 10
 
-RULE B_1N_X_2S_3261_0:
+RULE B_1N_X_2S_2588_0:
   CALL: 2S
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19300,7 +14963,7 @@ RULE B_1N_X_2S_3261_0:
   CONDITION: spade_len <= 3
   CONDITION: total_points >= 15
 
-RULE B_1N_X_2NT_3262_0:
+RULE B_1N_X_2NT_2589_0:
   CALL: 2NT
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19311,7 +14974,7 @@ RULE B_1N_X_2NT_3262_0:
   CONDITION: club_len >= 6
   CONDITION: hcp >= 13
 
-RULE B_1N_X_2NT_3262_1:
+RULE B_1N_X_2NT_2589_1:
   CALL: 2NT
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19322,7 +14985,7 @@ RULE B_1N_X_2NT_3262_1:
   CONDITION: club_len >= 6
   CONDITION: hcp <= 7
 
-RULE B_1N_X_3C_3263_0:
+RULE B_1N_X_3C_2590_0:
   CALL: 3C
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19333,7 +14996,7 @@ RULE B_1N_X_3C_3263_0:
   CONDITION: diamond_len >= 6
   CONDITION: hcp >= 13
 
-RULE B_1N_X_3C_3263_1:
+RULE B_1N_X_3C_2590_1:
   CALL: 3C
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19344,7 +15007,7 @@ RULE B_1N_X_3C_3263_1:
   CONDITION: diamond_len >= 6
   CONDITION: hcp <= 7
 
-RULE B_1N_X_3NT_3268_0:
+RULE B_1N_X_3NT_2595_0:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -19354,7 +15017,7 @@ RULE B_1N_X_3NT_3268_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 11
 
-RULE B_1N_X_XX_3276_0:
+RULE B_1N_X_XX_2603_0:
   CALL: XX
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -19365,7 +15028,7 @@ RULE B_1N_X_XX_3276_0:
   CONDITION: club_len >= 5
   CONDITION: hcp <= 3
 
-RULE B_1N_X_XX_3276_1:
+RULE B_1N_X_XX_2603_1:
   CALL: XX
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -19376,16 +15039,7 @@ RULE B_1N_X_XX_3276_1:
   CONDITION: diamond_len >= 5
   CONDITION: hcp <= 3
 
-RULE B_6N_X_PASS_3277_0:
-  CALL: PASS
-  PRIORITY: 10
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '6NT'
-  CONDITION: opp_last_call == 'NONE'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_7N_X_PASS_3278_0:
+RULE B_7N_X_PASS_2604_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -19394,7 +15048,7 @@ RULE B_7N_X_PASS_3278_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1N_2C_PASS_3279_0:
+RULE B_1N_2C_PASS_2605_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -19403,7 +15057,7 @@ RULE B_1N_2C_PASS_3279_0:
   CONDITION: opp_last_call == '2C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1N_2C_2D_3280_0:
+RULE B_1N_2C_2D_2606_0:
   CALL: 2D
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -19414,7 +15068,7 @@ RULE B_1N_2C_2D_3280_0:
   CONDITION: heart_len >= 5
   CONDITION: heart_hcp >= 6
 
-RULE B_1N_2C_2H_3281_0:
+RULE B_1N_2C_2H_2607_0:
   CALL: 2H
   PRIORITY: 90
   CONDITION: is_opening == False
@@ -19425,7 +15079,7 @@ RULE B_1N_2C_2H_3281_0:
   CONDITION: spade_len >= 5
   CONDITION: spade_hcp >= 6
 
-RULE B_1N_2C_2S_3282_0:
+RULE B_1N_2C_2S_2608_0:
   CALL: 2S
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19439,7 +15093,7 @@ RULE B_1N_2C_2S_3282_0:
   CONDITION: spade_len <= 3
   CONDITION: total_points >= 10
 
-RULE B_1N_2C_2S_3282_1:
+RULE B_1N_2C_2S_2608_1:
   CALL: 2S
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19453,7 +15107,7 @@ RULE B_1N_2C_2S_3282_1:
   CONDITION: spade_len <= 3
   CONDITION: total_points >= 10
 
-RULE B_1N_2C_2S_3283_0:
+RULE B_1N_2C_2S_2609_0:
   CALL: 2S
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19467,7 +15121,7 @@ RULE B_1N_2C_2S_3283_0:
   CONDITION: spade_len <= 3
   CONDITION: total_points >= 15
 
-RULE B_1N_2C_2NT_3284_0:
+RULE B_1N_2C_2NT_2610_0:
   CALL: 2NT
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19478,7 +15132,7 @@ RULE B_1N_2C_2NT_3284_0:
   CONDITION: club_len >= 6
   CONDITION: hcp >= 13
 
-RULE B_1N_2C_2NT_3284_1:
+RULE B_1N_2C_2NT_2610_1:
   CALL: 2NT
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19490,7 +15144,7 @@ RULE B_1N_2C_2NT_3284_1:
   CONDITION: hcp >= 4
   CONDITION: hcp <= 7
 
-RULE B_1N_2C_3C_3285_0:
+RULE B_1N_2C_3C_2611_0:
   CALL: 3C
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19501,7 +15155,7 @@ RULE B_1N_2C_3C_3285_0:
   CONDITION: diamond_len >= 6
   CONDITION: hcp >= 13
 
-RULE B_1N_2C_3C_3285_1:
+RULE B_1N_2C_3C_2611_1:
   CALL: 3C
   PRIORITY: 80
   CONDITION: is_opening == False
@@ -19513,7 +15167,7 @@ RULE B_1N_2C_3C_3285_1:
   CONDITION: hcp >= 4
   CONDITION: hcp <= 7
 
-RULE B_1N_2C_3NT_3291_0:
+RULE B_1N_2C_3NT_2617_0:
   CALL: 3NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -19524,7 +15178,7 @@ RULE B_1N_2C_3NT_3291_0:
   CONDITION: hcp >= 8
   CONDITION: club_len >= 6
 
-RULE B_1N_2C_3NT_3291_1:
+RULE B_1N_2C_3NT_2617_1:
   CALL: 3NT
   PRIORITY: 60
   CONDITION: is_opening == False
@@ -19535,7 +15189,7 @@ RULE B_1N_2C_3NT_3291_1:
   CONDITION: hcp >= 8
   CONDITION: diamond_len >= 6
 
-RULE B_1N_2D_PASS_3302_0:
+RULE B_1N_2D_PASS_2628_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -19545,7 +15199,7 @@ RULE B_1N_2D_PASS_3302_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1N_2D_2NT_3303_0:
+RULE B_1N_2D_2NT_2629_0:
   CALL: 2NT
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19557,7 +15211,7 @@ RULE B_1N_2D_2NT_3303_0:
   CONDITION: hcp <= 8
   CONDITION: hcp >= 5
 
-RULE B_1N_2D_2NT_3303_1:
+RULE B_1N_2D_2NT_2629_1:
   CALL: 2NT
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19569,7 +15223,7 @@ RULE B_1N_2D_2NT_3303_1:
   CONDITION: hcp <= 8
   CONDITION: hcp >= 5
 
-RULE B_1N_2D_3H_3304_0:
+RULE B_1N_2D_3H_2630_0:
   CALL: 3H
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19581,7 +15235,7 @@ RULE B_1N_2D_3H_3304_0:
   CONDITION: h_stopper >= 2
   CONDITION: s_stopper < 2
 
-RULE B_1N_2D_3S_3305_0:
+RULE B_1N_2D_3S_2631_0:
   CALL: 3S
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19593,7 +15247,7 @@ RULE B_1N_2D_3S_3305_0:
   CONDITION: s_stopper >= 2
   CONDITION: h_stopper < 2
 
-RULE B_1N_2D_3NT_3306_0:
+RULE B_1N_2D_3NT_2632_0:
   CALL: 3NT
   PRIORITY: 100
   CONDITION: is_opening == False
@@ -19603,7 +15257,7 @@ RULE B_1N_2D_3NT_3306_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 9
 
-RULE B_1N_2D_5C_3308_0:
+RULE B_1N_2D_5C_2634_0:
   CALL: 5C
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -19614,7 +15268,7 @@ RULE B_1N_2D_5C_3308_0:
   CONDITION: club_len >= 7
   CONDITION: club_hcp >= 10
 
-RULE B_1N_2D_5D_3309_0:
+RULE B_1N_2D_5D_2635_0:
   CALL: 5D
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -19625,7 +15279,7 @@ RULE B_1N_2D_5D_3309_0:
   CONDITION: diamond_len >= 7
   CONDITION: diamond_hcp >= 10
 
-RULE B_1N_2H_PASS_3313_0:
+RULE B_1N_2H_PASS_2639_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -19635,7 +15289,7 @@ RULE B_1N_2H_PASS_3313_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1N_2H_2S_3314_0:
+RULE B_1N_2H_2S_2640_0:
   CALL: 2S
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -19647,7 +15301,7 @@ RULE B_1N_2H_2S_3314_0:
   CONDITION: hcp <= 6
   CONDITION: hcp >= 4
 
-RULE B_1N_2H_2NT_3315_0:
+RULE B_1N_2H_2NT_2641_0:
   CALL: 2NT
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19658,7 +15312,7 @@ RULE B_1N_2H_2NT_3315_0:
   CONDITION: hcp >= 9
   CONDITION: h_stopper >= 2
 
-RULE B_1N_2H_2NT_3315_1:
+RULE B_1N_2H_2NT_2641_1:
   CALL: 2NT
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19670,7 +15324,7 @@ RULE B_1N_2H_2NT_3315_1:
   CONDITION: spade_len >= 5
   CONDITION: hcp <= 8
 
-RULE B_1N_2H_2NT_3315_2:
+RULE B_1N_2H_2NT_2641_2:
   CALL: 2NT
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19682,7 +15336,7 @@ RULE B_1N_2H_2NT_3315_2:
   CONDITION: club_len >= 5
   CONDITION: hcp <= 8
 
-RULE B_1N_2H_2NT_3315_3:
+RULE B_1N_2H_2NT_2641_3:
   CALL: 2NT
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19694,7 +15348,7 @@ RULE B_1N_2H_2NT_3315_3:
   CONDITION: diamond_len >= 5
   CONDITION: hcp <= 8
 
-RULE B_1N_2H_3C_3316_0:
+RULE B_1N_2H_3C_2642_0:
   CALL: 3C
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -19705,7 +15359,7 @@ RULE B_1N_2H_3C_3316_0:
   CONDITION: club_len >= 5
   CONDITION: hcp >= 9
 
-RULE B_1N_2H_3D_3317_0:
+RULE B_1N_2H_3D_2643_0:
   CALL: 3D
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -19716,7 +15370,7 @@ RULE B_1N_2H_3D_3317_0:
   CONDITION: diamond_len >= 5
   CONDITION: hcp >= 9
 
-RULE B_1N_2H_3S_3318_0:
+RULE B_1N_2H_3S_2644_0:
   CALL: 3S
   PRIORITY: 35
   CONDITION: is_opening == False
@@ -19727,7 +15381,7 @@ RULE B_1N_2H_3S_3318_0:
   CONDITION: spade_len >= 5
   CONDITION: hcp >= 9
 
-RULE B_1N_2H_3NT_3319_0:
+RULE B_1N_2H_3NT_2645_0:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -19738,7 +15392,7 @@ RULE B_1N_2H_3NT_3319_0:
   CONDITION: hcp >= 9
   CONDITION: h_stopper < 2
 
-RULE B_1N_2H_X_3325_0:
+RULE B_1N_2H_X_2651_0:
   CALL: X
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -19751,7 +15405,7 @@ RULE B_1N_2H_X_3325_0:
   CONDITION: club_len >= 2
   CONDITION: diamond_len >= 2
 
-RULE B_1N_2S_PASS_3326_0:
+RULE B_1N_2S_PASS_2652_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -19761,7 +15415,7 @@ RULE B_1N_2S_PASS_3326_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1N_2S_2NT_3327_0:
+RULE B_1N_2S_2NT_2653_0:
   CALL: 2NT
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19772,7 +15426,7 @@ RULE B_1N_2S_2NT_3327_0:
   CONDITION: hcp >= 9
   CONDITION: s_stopper >= 2
 
-RULE B_1N_2S_2NT_3327_1:
+RULE B_1N_2S_2NT_2653_1:
   CALL: 2NT
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19784,7 +15438,7 @@ RULE B_1N_2S_2NT_3327_1:
   CONDITION: heart_len >= 5
   CONDITION: hcp <= 8
 
-RULE B_1N_2S_2NT_3327_2:
+RULE B_1N_2S_2NT_2653_2:
   CALL: 2NT
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19796,7 +15450,7 @@ RULE B_1N_2S_2NT_3327_2:
   CONDITION: club_len >= 5
   CONDITION: hcp <= 8
 
-RULE B_1N_2S_2NT_3327_3:
+RULE B_1N_2S_2NT_2653_3:
   CALL: 2NT
   PRIORITY: 95
   CONDITION: is_opening == False
@@ -19808,7 +15462,7 @@ RULE B_1N_2S_2NT_3327_3:
   CONDITION: diamond_len >= 5
   CONDITION: hcp <= 8
 
-RULE B_1N_2S_3C_3328_0:
+RULE B_1N_2S_3C_2654_0:
   CALL: 3C
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -19819,7 +15473,7 @@ RULE B_1N_2S_3C_3328_0:
   CONDITION: club_len >= 5
   CONDITION: hcp >= 9
 
-RULE B_1N_2S_3D_3329_0:
+RULE B_1N_2S_3D_2655_0:
   CALL: 3D
   PRIORITY: 25
   CONDITION: is_opening == False
@@ -19830,7 +15484,7 @@ RULE B_1N_2S_3D_3329_0:
   CONDITION: diamond_len >= 5
   CONDITION: hcp >= 9
 
-RULE B_1N_2S_3H_3330_0:
+RULE B_1N_2S_3H_2656_0:
   CALL: 3H
   PRIORITY: 35
   CONDITION: is_opening == False
@@ -19841,7 +15495,7 @@ RULE B_1N_2S_3H_3330_0:
   CONDITION: heart_len >= 5
   CONDITION: hcp >= 9
 
-RULE B_1N_2S_3NT_3331_0:
+RULE B_1N_2S_3NT_2657_0:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -19852,7 +15506,7 @@ RULE B_1N_2S_3NT_3331_0:
   CONDITION: hcp >= 9
   CONDITION: s_stopper < 2
 
-RULE B_1N_2S_X_3337_0:
+RULE B_1N_2S_X_2663_0:
   CALL: X
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -19865,7 +15519,7 @@ RULE B_1N_2S_X_3337_0:
   CONDITION: club_len >= 2
   CONDITION: diamond_len >= 2
 
-RULE B_1N_3C_PASS_3338_0:
+RULE B_1N_3C_PASS_2664_0:
   CALL: PASS
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -19874,7 +15528,7 @@ RULE B_1N_3C_PASS_3338_0:
   CONDITION: opp_last_call == '3C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1N_3C_PASS_3338_1:
+RULE B_1N_3C_PASS_2664_1:
   CALL: PASS
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -19884,7 +15538,7 @@ RULE B_1N_3C_PASS_3338_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1N_3C_3D_3339_0:
+RULE B_1N_3C_3D_2665_0:
   CALL: 3D
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -19895,7 +15549,7 @@ RULE B_1N_3C_3D_3339_0:
   CONDITION: diamond_len >= 5
   CONDITION: hcp >= 8
 
-RULE B_1N_3C_3H_3340_0:
+RULE B_1N_3C_3H_2666_0:
   CALL: 3H
   PRIORITY: 38
   CONDITION: is_opening == False
@@ -19907,7 +15561,7 @@ RULE B_1N_3C_3H_3340_0:
   CONDITION: heart_hcp >= 10
   CONDITION: hcp <= 15
 
-RULE B_1N_3C_3S_3341_0:
+RULE B_1N_3C_3S_2667_0:
   CALL: 3S
   PRIORITY: 38
   CONDITION: is_opening == False
@@ -19919,7 +15573,7 @@ RULE B_1N_3C_3S_3341_0:
   CONDITION: spade_hcp >= 10
   CONDITION: hcp <= 15
 
-RULE B_1N_3C_3NT_3342_0:
+RULE B_1N_3C_3NT_2668_0:
   CALL: 3NT
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -19930,7 +15584,7 @@ RULE B_1N_3C_3NT_3342_0:
   CONDITION: hcp >= 9
   CONDITION: c_stopper >= 2
 
-RULE B_1N_3C_4H_3345_0:
+RULE B_1N_3C_4H_2671_0:
   CALL: 4H
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -19942,7 +15596,7 @@ RULE B_1N_3C_4H_3345_0:
   CONDITION: heart_hcp >= 10
   CONDITION: hcp <= 15
 
-RULE B_1N_3C_4S_3346_0:
+RULE B_1N_3C_4S_2672_0:
   CALL: 4S
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -19954,7 +15608,7 @@ RULE B_1N_3C_4S_3346_0:
   CONDITION: spade_hcp >= 10
   CONDITION: hcp <= 15
 
-RULE B_1N_3C_X_3355_0:
+RULE B_1N_3C_X_2681_0:
   CALL: X
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -19967,7 +15621,7 @@ RULE B_1N_3C_X_3355_0:
   CONDITION: heart_len >= 4
   CONDITION: diamond_len >= 1
 
-RULE B_1N_3C_X_3355_1:
+RULE B_1N_3C_X_2681_1:
   CALL: X
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -19980,7 +15634,7 @@ RULE B_1N_3C_X_3355_1:
   CONDITION: heart_len >= 3
   CONDITION: diamond_len >= 3
 
-RULE B_1N_3C_X_3355_2:
+RULE B_1N_3C_X_2681_2:
   CALL: X
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -19993,7 +15647,7 @@ RULE B_1N_3C_X_3355_2:
   CONDITION: heart_len >= 4
   CONDITION: diamond_len >= 3
 
-RULE B_2N_3C_PASS_3356_0:
+RULE B_2N_3C_PASS_2682_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -20002,7 +15656,7 @@ RULE B_2N_3C_PASS_3356_0:
   CONDITION: opp_last_call == '3C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1N_3D_PASS_3365_0:
+RULE B_1N_3D_PASS_2691_0:
   CALL: PASS
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -20011,7 +15665,7 @@ RULE B_1N_3D_PASS_3365_0:
   CONDITION: opp_last_call == '3D'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1N_3D_PASS_3365_1:
+RULE B_1N_3D_PASS_2691_1:
   CALL: PASS
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -20021,7 +15675,7 @@ RULE B_1N_3D_PASS_3365_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1N_3D_3H_3366_0:
+RULE B_1N_3D_3H_2692_0:
   CALL: 3H
   PRIORITY: 38
   CONDITION: is_opening == False
@@ -20033,7 +15687,7 @@ RULE B_1N_3D_3H_3366_0:
   CONDITION: heart_hcp >= 10
   CONDITION: hcp <= 15
 
-RULE B_1N_3D_3S_3367_0:
+RULE B_1N_3D_3S_2693_0:
   CALL: 3S
   PRIORITY: 38
   CONDITION: is_opening == False
@@ -20045,7 +15699,7 @@ RULE B_1N_3D_3S_3367_0:
   CONDITION: spade_hcp >= 10
   CONDITION: hcp <= 15
 
-RULE B_1N_3D_3NT_3368_0:
+RULE B_1N_3D_3NT_2694_0:
   CALL: 3NT
   PRIORITY: 32
   CONDITION: is_opening == False
@@ -20056,7 +15710,7 @@ RULE B_1N_3D_3NT_3368_0:
   CONDITION: hcp >= 9
   CONDITION: d_stopper >= 2
 
-RULE B_1N_3D_4H_3371_0:
+RULE B_1N_3D_4H_2697_0:
   CALL: 4H
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -20068,7 +15722,7 @@ RULE B_1N_3D_4H_3371_0:
   CONDITION: heart_hcp >= 10
   CONDITION: hcp <= 15
 
-RULE B_1N_3D_4S_3372_0:
+RULE B_1N_3D_4S_2698_0:
   CALL: 4S
   PRIORITY: 50
   CONDITION: is_opening == False
@@ -20080,7 +15734,7 @@ RULE B_1N_3D_4S_3372_0:
   CONDITION: spade_hcp >= 10
   CONDITION: hcp <= 15
 
-RULE B_1N_3D_X_3381_0:
+RULE B_1N_3D_X_2707_0:
   CALL: X
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -20093,7 +15747,7 @@ RULE B_1N_3D_X_3381_0:
   CONDITION: heart_len >= 4
   CONDITION: club_len >= 1
 
-RULE B_1N_3D_X_3381_1:
+RULE B_1N_3D_X_2707_1:
   CALL: X
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -20106,7 +15760,7 @@ RULE B_1N_3D_X_3381_1:
   CONDITION: heart_len >= 3
   CONDITION: club_len >= 3
 
-RULE B_1N_3D_X_3381_2:
+RULE B_1N_3D_X_2707_2:
   CALL: X
   PRIORITY: 15
   CONDITION: is_opening == False
@@ -20119,7 +15773,7 @@ RULE B_1N_3D_X_3381_2:
   CONDITION: heart_len >= 4
   CONDITION: club_len >= 3
 
-RULE B_2N_3D_PASS_3382_0:
+RULE B_2N_3D_PASS_2708_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -20128,7 +15782,7 @@ RULE B_2N_3D_PASS_3382_0:
   CONDITION: opp_last_call == '3D'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1N_3H_PASS_3391_0:
+RULE B_1N_3H_PASS_2717_0:
   CALL: PASS
   PRIORITY: -3
   CONDITION: is_opening == False
@@ -20138,7 +15792,7 @@ RULE B_1N_3H_PASS_3391_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1N_3H_3NT_3393_0:
+RULE B_1N_3H_3NT_2719_0:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -20148,7 +15802,7 @@ RULE B_1N_3H_3NT_3393_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 9
 
-RULE B_1N_3H_3NT_3393_1:
+RULE B_1N_3H_3NT_2719_1:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -20159,7 +15813,7 @@ RULE B_1N_3H_3NT_3393_1:
   CONDITION: hcp >= 9
   CONDITION: h_stopper >= 2
 
-RULE B_1N_3H_4C_3394_0:
+RULE B_1N_3H_4C_2720_0:
   CALL: 4C
   PRIORITY: 39
   CONDITION: is_opening == False
@@ -20170,7 +15824,7 @@ RULE B_1N_3H_4C_3394_0:
   CONDITION: club_len >= 6
   CONDITION: hcp >= 8
 
-RULE B_1N_3H_4D_3396_0:
+RULE B_1N_3H_4D_2722_0:
   CALL: 4D
   PRIORITY: 39
   CONDITION: is_opening == False
@@ -20181,7 +15835,7 @@ RULE B_1N_3H_4D_3396_0:
   CONDITION: diamond_len >= 6
   CONDITION: hcp >= 8
 
-RULE B_1N_3H_4S_3399_0:
+RULE B_1N_3H_4S_2725_0:
   CALL: 4S
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -20193,7 +15847,7 @@ RULE B_1N_3H_4S_3399_0:
   CONDITION: hcp >= 8
   CONDITION: hcp <= 15
 
-RULE B_1N_3H_X_3410_1:
+RULE B_1N_3H_X_2736_1:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -20204,7 +15858,7 @@ RULE B_1N_3H_X_3410_1:
   CONDITION: hcp >= 9
   CONDITION: spade_len >= 4
 
-RULE B_1N_3H_X_3410_2:
+RULE B_1N_3H_X_2736_2:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -20217,7 +15871,7 @@ RULE B_1N_3H_X_3410_2:
   CONDITION: club_len >= 3
   CONDITION: diamond_len >= 3
 
-RULE B_2N_3H_PASS_3411_0:
+RULE B_2N_3H_PASS_2737_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -20226,7 +15880,7 @@ RULE B_2N_3H_PASS_3411_0:
   CONDITION: opp_last_call == '3H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1N_3S_PASS_3422_0:
+RULE B_1N_3S_PASS_2748_0:
   CALL: PASS
   PRIORITY: -3
   CONDITION: is_opening == False
@@ -20236,7 +15890,7 @@ RULE B_1N_3S_PASS_3422_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
 
-RULE B_1N_3S_3NT_3423_0:
+RULE B_1N_3S_3NT_2749_0:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -20246,7 +15900,7 @@ RULE B_1N_3S_3NT_3423_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 9
 
-RULE B_1N_3S_3NT_3423_1:
+RULE B_1N_3S_3NT_2749_1:
   CALL: 3NT
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -20257,7 +15911,7 @@ RULE B_1N_3S_3NT_3423_1:
   CONDITION: hcp >= 9
   CONDITION: s_stopper >= 2
 
-RULE B_1N_3S_4C_3424_0:
+RULE B_1N_3S_4C_2750_0:
   CALL: 4C
   PRIORITY: 39
   CONDITION: is_opening == False
@@ -20268,7 +15922,7 @@ RULE B_1N_3S_4C_3424_0:
   CONDITION: club_len >= 6
   CONDITION: hcp >= 8
 
-RULE B_1N_3S_4D_3426_0:
+RULE B_1N_3S_4D_2752_0:
   CALL: 4D
   PRIORITY: 39
   CONDITION: is_opening == False
@@ -20279,7 +15933,7 @@ RULE B_1N_3S_4D_3426_0:
   CONDITION: diamond_len >= 6
   CONDITION: hcp >= 8
 
-RULE B_1N_3S_4H_3429_0:
+RULE B_1N_3S_4H_2755_0:
   CALL: 4H
   PRIORITY: 30
   CONDITION: is_opening == False
@@ -20291,7 +15945,7 @@ RULE B_1N_3S_4H_3429_0:
   CONDITION: hcp >= 8
   CONDITION: hcp <= 15
 
-RULE B_1N_3S_X_3439_1:
+RULE B_1N_3S_X_2765_1:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -20302,7 +15956,7 @@ RULE B_1N_3S_X_3439_1:
   CONDITION: hcp >= 9
   CONDITION: heart_len >= 4
 
-RULE B_1N_3S_X_3439_2:
+RULE B_1N_3S_X_2765_2:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -20315,7 +15969,7 @@ RULE B_1N_3S_X_3439_2:
   CONDITION: club_len >= 3
   CONDITION: diamond_len >= 3
 
-RULE B_2N_3S_PASS_3440_0:
+RULE B_2N_3S_PASS_2766_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -20324,7 +15978,7 @@ RULE B_2N_3S_PASS_3440_0:
   CONDITION: opp_last_call == '3S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1N_4C_PASS_3447_0:
+RULE B_1N_4C_PASS_2773_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -20334,7 +15988,7 @@ RULE B_1N_4C_PASS_3447_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1N_4C_4H_3448_0:
+RULE B_1N_4C_4H_2774_0:
   CALL: 4H
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -20346,7 +16000,7 @@ RULE B_1N_4C_4H_3448_0:
   CONDITION: hcp >= 10
   CONDITION: hcp <= 15
 
-RULE B_1N_4C_4S_3449_0:
+RULE B_1N_4C_4S_2775_0:
   CALL: 4S
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -20358,7 +16012,7 @@ RULE B_1N_4C_4S_3449_0:
   CONDITION: hcp >= 10
   CONDITION: hcp <= 15
 
-RULE B_1N_4C_X_3457_0:
+RULE B_1N_4C_X_2783_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -20368,7 +16022,7 @@ RULE B_1N_4C_X_3457_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_2N_4C_PASS_3458_0:
+RULE B_2N_4C_PASS_2784_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -20377,16 +16031,7 @@ RULE B_2N_4C_PASS_3458_0:
   CONDITION: opp_last_call == '4C'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3N_4C_PASS_3461_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3NT'
-  CONDITION: opp_last_call == '4C'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1N_4D_PASS_3462_0:
+RULE B_1N_4D_PASS_2787_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -20396,7 +16041,7 @@ RULE B_1N_4D_PASS_3462_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1N_4D_4H_3463_0:
+RULE B_1N_4D_4H_2788_0:
   CALL: 4H
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -20408,7 +16053,7 @@ RULE B_1N_4D_4H_3463_0:
   CONDITION: hcp >= 10
   CONDITION: hcp <= 15
 
-RULE B_1N_4D_4S_3464_0:
+RULE B_1N_4D_4S_2789_0:
   CALL: 4S
   PRIORITY: 20
   CONDITION: is_opening == False
@@ -20420,7 +16065,7 @@ RULE B_1N_4D_4S_3464_0:
   CONDITION: hcp >= 10
   CONDITION: hcp <= 15
 
-RULE B_1N_4D_X_3472_0:
+RULE B_1N_4D_X_2797_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -20430,25 +16075,7 @@ RULE B_1N_4D_X_3472_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_2N_4D_PASS_3473_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '2NT'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_3N_4D_PASS_3476_0:
-  CALL: PASS
-  PRIORITY: 0
-  CONDITION: is_opening == False
-  CONDITION: my_last_call == 'NONE'
-  CONDITION: partner_last_call == '3NT'
-  CONDITION: opp_last_call == '4D'
-  CONDITION: passes_since_last_bid == 0
-
-RULE B_1N_4H_PASS_3477_0:
+RULE B_1N_4H_PASS_2798_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -20458,7 +16085,7 @@ RULE B_1N_4H_PASS_3477_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1N_4H_X_3485_0:
+RULE B_1N_4H_X_2806_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -20468,7 +16095,7 @@ RULE B_1N_4H_X_3485_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_2N_4H_PASS_3486_0:
+RULE B_2N_4H_PASS_2807_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -20477,7 +16104,7 @@ RULE B_2N_4H_PASS_3486_0:
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3N_4H_PASS_3491_0:
+RULE B_3N_4H_PASS_2812_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -20486,7 +16113,7 @@ RULE B_3N_4H_PASS_3491_0:
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_1N_4S_PASS_3492_0:
+RULE B_1N_4S_PASS_2813_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -20496,7 +16123,7 @@ RULE B_1N_4S_PASS_3492_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
 
-RULE B_1N_4S_X_3500_0:
+RULE B_1N_4S_X_2821_0:
   CALL: X
   PRIORITY: 10
   CONDITION: is_opening == False
@@ -20506,7 +16133,7 @@ RULE B_1N_4S_X_3500_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
 
-RULE B_2N_4S_PASS_3501_0:
+RULE B_2N_4S_PASS_2822_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
@@ -20515,7 +16142,1046 @@ RULE B_2N_4S_PASS_3501_0:
   CONDITION: opp_last_call == '4S'
   CONDITION: passes_since_last_bid == 0
 
-RULE B_3N_4S_PASS_3506_0:
+RULE B_5D_PASS_2835_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '5D'
+  CONDITION: partner_last_call == 'NONE'
+
+RULE B_1C_6S_PASS_2855_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '6S'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_1C_7S_PASS_2856_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '7S'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_1D_6C_PASS_2857_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '6C'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_1D_6H_PASS_2858_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '6H'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_1D_6S_PASS_2859_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '6S'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_1D_7H_PASS_2860_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '7H'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_1D_7S_PASS_2861_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '7S'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_1H_6D_PASS_2862_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '6D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_1S_6C_PASS_2863_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '6C'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_1S_6D_PASS_2864_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '6D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_1S_6H_PASS_2865_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '6H'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_2C_4S_PASS_2866_0:
+  CALL: PASS
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2C'
+  CONDITION: opp_last_call == '4S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp >= 8
+
+RULE B_2C_4S_X_2867_0:
+  CALL: X
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2C'
+  CONDITION: opp_last_call == '4S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp <= 7
+
+RULE B_2D_6S_PASS_2868_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '6S'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_2H_X_2NT_2871_0:
+  CALL: 2NT
+  PRIORITY: 60
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp >= 15
+
+RULE B_2H_X_2NT_2871_1:
+  CALL: 2NT
+  PRIORITY: 60
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp >= 13
+  CONDITION: controls >= 5
+
+RULE B_2H_X_3H_2874_0:
+  CALL: 3H
+  PRIORITY: 40
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_hcp >= 6
+  CONDITION: hcp <= 9
+  CONDITION: heart_len >= 3
+
+RULE B_2H_4D_PASS_2888_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_2H_4D_4H_2889_0:
+  CALL: 4H
+  PRIORITY: 70
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 4
+  CONDITION: hcp >= 6
+
+RULE B_2H_6D_PASS_2890_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '6D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_2H_7D_PASS_2891_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '7D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_2S_X_2NT_2893_0:
+  CALL: 2NT
+  PRIORITY: 60
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp >= 15
+
+RULE B_2S_X_2NT_2893_1:
+  CALL: 2NT
+  PRIORITY: 60
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp >= 13
+  CONDITION: controls >= 5
+
+RULE B_2S_X_3H_2896_0:
+  CALL: 3H
+  PRIORITY: 69
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp >= 17
+  CONDITION: heart_len >= 6
+
+RULE B_2S_X_3S_2897_0:
+  CALL: 3S
+  PRIORITY: 40
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: spade_hcp >= 6
+  CONDITION: hcp <= 9
+  CONDITION: spade_len >= 3
+
+RULE B_2S_4D_PASS_2910_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_2S_4D_4S_2911_0:
+  CALL: 4S
+  PRIORITY: 70
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: spade_len >= 4
+  CONDITION: hcp >= 6
+
+RULE B_2S_4S_PASS_2912_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '4S'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_2S_6C_PASS_2913_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '6C'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_2S_6D_PASS_2914_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '6D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_2S_6H_PASS_2915_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '6H'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_2S_7C_PASS_2916_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '7C'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_2S_7D_PASS_2917_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '7D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_3C_6S_PASS_2918_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3C'
+  CONDITION: opp_last_call == '6S'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_3D_6H_PASS_2919_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == '6H'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_3D_6S_PASS_2920_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == '6S'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_3H_X_PASS_2921_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_3H_X_3NT_2922_0:
+  CALL: 3NT
+  PRIORITY: 40
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp >= 15
+
+RULE B_3H_X_4H_2928_0:
+  CALL: 4H
+  PRIORITY: 59
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 3
+  CONDITION: total_points >= 7
+
+RULE B_3H_X_4H_2929_0:
+  CALL: 4H
+  PRIORITY: 60
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 2
+  CONDITION: total_points >= 9
+
+RULE B_3H_X_4S_2930_1:
+  CALL: 4S
+  PRIORITY: 47
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: losing_trick_count <= 3
+  CONDITION: spade_len >= 6
+
+RULE B_3H_4D_4H_2947_0:
+  CALL: 4H
+  PRIORITY: 70
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3H'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 3
+  CONDITION: heart_hcp >= 10
+
+RULE B_3H_6D_PASS_2948_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3H'
+  CONDITION: opp_last_call == '6D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_3S_4D_4S_2950_0:
+  CALL: 4S
+  PRIORITY: 70
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3S'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: spade_len >= 3
+  CONDITION: spade_hcp >= 10
+
+RULE B_3S_6C_PASS_2952_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3S'
+  CONDITION: opp_last_call == '6C'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_3S_6D_PASS_2953_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3S'
+  CONDITION: opp_last_call == '6D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_3S_6H_PASS_2954_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3S'
+  CONDITION: opp_last_call == '6H'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_4C_X_PASS_2956_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp <= 16
+
+RULE B_4C_X_PASS_2956_1:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: ace_count <= 1
+
+RULE B_4C_X_4H_2957_0:
+  CALL: 4H
+  PRIORITY: 70
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 7
+  CONDITION: total_points >= 17
+
+RULE B_4C_X_4S_2958_0:
+  CALL: 4S
+  PRIORITY: 70
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: spade_len >= 7
+  CONDITION: total_points >= 17
+
+RULE B_4C_X_5C_2961_1:
+  CALL: 5C
+  PRIORITY: 69
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: ace_count == 2
+  CONDITION: hcp >= 16
+
+RULE B_4C_X_5C_2961_2:
+  CALL: 5C
+  PRIORITY: 69
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: ace_count == 3
+  CONDITION: hcp <= 17
+
+RULE B_4C_X_6C_2963_0:
+  CALL: 6C
+  PRIORITY: 55
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 1
+  CONDITION: ace_count >= 4
+
+RULE B_4C_X_6C_2963_1:
+  CALL: 6C
+  PRIORITY: 55
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 2
+  CONDITION: ace_count >= 4
+
+RULE B_4C_X_6C_2963_2:
+  CALL: 6C
+  PRIORITY: 55
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 2
+  CONDITION: hcp >= 20
+
+RULE B_4C_X_6C_2963_3:
+  CALL: 6C
+  PRIORITY: 55
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: ace_count == 3
+  CONDITION: hcp >= 18
+
+RULE B_4C_X_7C_2967_0:
+  CALL: 7C
+  PRIORITY: 58
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: ace_count == 4
+  CONDITION: hcp >= 20
+
+RULE B_4D_X_PASS_2971_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp <= 16
+
+RULE B_4D_X_PASS_2971_1:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: ace_count <= 1
+
+RULE B_4D_X_4H_2972_0:
+  CALL: 4H
+  PRIORITY: 70
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 7
+  CONDITION: total_points >= 17
+
+RULE B_4D_X_4S_2973_0:
+  CALL: 4S
+  PRIORITY: 70
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: spade_len >= 7
+  CONDITION: total_points >= 17
+
+RULE B_4D_X_5D_2976_1:
+  CALL: 5D
+  PRIORITY: 69
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: ace_count == 2
+  CONDITION: hcp >= 16
+
+RULE B_4D_X_5D_2976_2:
+  CALL: 5D
+  PRIORITY: 69
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: ace_count == 3
+  CONDITION: hcp <= 17
+
+RULE B_4D_X_6D_2978_0:
+  CALL: 6D
+  PRIORITY: 55
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 1
+  CONDITION: ace_count >= 4
+
+RULE B_4D_X_6D_2978_1:
+  CALL: 6D
+  PRIORITY: 55
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: ace_count >= 4
+
+RULE B_4D_X_6D_2978_2:
+  CALL: 6D
+  PRIORITY: 55
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: hcp >= 20
+
+RULE B_4D_X_6D_2978_3:
+  CALL: 6D
+  PRIORITY: 55
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: ace_count == 3
+  CONDITION: hcp >= 18
+
+RULE B_4D_X_7D_2982_0:
+  CALL: 7D
+  PRIORITY: 58
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: ace_count == 4
+  CONDITION: hcp >= 20
+
+RULE B_4D_5D_PASS_2986_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == '5D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_4H_X_PASS_2987_0:
+  CALL: PASS
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: ace_count <= 2
+
+RULE B_4H_X_PASS_2987_1:
+  CALL: PASS
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp <= 16
+
+RULE B_4H_X_6H_2993_0:
+  CALL: 6H
+  PRIORITY: 30
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: ace_count >= 3
+  CONDITION: hcp >= 17
+
+RULE B_4H_X_7H_2996_0:
+  CALL: 7H
+  PRIORITY: 40
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: ace_count == 4
+  CONDITION: hcp >= 17
+
+RULE B_4H_5D_PASS_2999_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4H'
+  CONDITION: opp_last_call == '5D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_4S_5D_PASS_3002_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4S'
+  CONDITION: opp_last_call == '5D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_4S_5H_PASS_3005_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4S'
+  CONDITION: opp_last_call == '5H'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_5C_X_PASS_3007_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '5C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_5C_5S_PASS_3010_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '5C'
+  CONDITION: opp_last_call == '5S'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_5D_X_PASS_3012_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '5D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_5D_5H_PASS_3015_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '5D'
+  CONDITION: opp_last_call == '5H'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_5D_5S_PASS_3017_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '5D'
+  CONDITION: opp_last_call == '5S'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_5H_X_PASS_3019_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '5H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_5S_P_PASS_3022_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '5S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+
+RULE B_5S_X_PASS_3025_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '5S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_6C_X_PASS_3028_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '6C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_6D_P_PASS_3029_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '6D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+
+RULE B_6D_X_PASS_3030_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '6D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_6H_P_PASS_3031_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '6H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+
+RULE B_6H_X_PASS_3032_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '6H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_6S_P_PASS_3033_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '6S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+
+RULE B_6S_X_PASS_3034_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '6S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_7C_P_PASS_3035_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '7C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+
+RULE B_7C_X_PASS_3036_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '7C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_7D_P_PASS_3037_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '7D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+
+RULE B_7D_X_PASS_3038_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '7D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_7H_P_PASS_3039_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '7H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+
+RULE B_7H_X_PASS_3040_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '7H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_7S_P_PASS_3041_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '7S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+
+RULE B_7S_X_PASS_3042_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '7S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_6N_P_PASS_3043_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '6NT'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+
+RULE B_7N_P_PASS_3044_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '7NT'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+
+RULE B_6N_X_PASS_3045_0:
+  CALL: PASS
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '6NT'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_3N_4C_PASS_3046_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3NT'
+  CONDITION: opp_last_call == '4C'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_2N_4D_PASS_3047_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2NT'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_3N_4D_PASS_3050_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3NT'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: passes_since_last_bid == 0
+
+RULE B_3N_4S_PASS_3051_0:
   CALL: PASS
   PRIORITY: 0
   CONDITION: is_opening == False
