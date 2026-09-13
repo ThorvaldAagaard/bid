@@ -1848,6 +1848,46 @@ be authored here, not imported.
 being ranked — otherwise it is scored against itself, which is the
 self-play mirror §6.34 exists to break.
 
+### 6.41 Brill's keycard ANSWERS are translatable — but they need an agreed-trump feature first
+
+§6.40 concluded Brill cannot be a slam donor because its *asking* rules are
+engine-internal. That is only half true, and the other half is the useful
+part. `research/fetch_brill.py` stops 2 calls deep, which is exactly one call
+short: partner's answer to our 4NT ask sits at `<prefix>-4N-P-*`.
+
+Targeted capture (`research/fetch_brill_slam.py`, ~1 min): **217 positions
+define calls — 148 of them true Roman Keycard Blackwood 0314**, 69
+quantitative/other. The answers are pure hand tests, not engine verdicts:
+
+    5C  (havekeycards == 0 or havekeycards == 3)
+    5D  (havekeycards == 1 or havekeycards == 4)
+    5H  ((havekeycards == 2 or havekeycards == 5) and not trumpqueen)
+    5S  ((havekeycards == 2 or havekeycards == 5) and trumpqueen)
+    5N  (havekeycards == 2 and a void in a non-trump suit)
+    6x  ((havekeycards == 1 or havekeycards == 3) and x == 0)   [void-show]
+
+Structurally that is fully convertible. What blocks it is not the scheme —
+it is two features, and both need the same missing piece of state:
+
+- **`havekeycards`** counts four aces **plus the king of trump**. The repo's
+  `keycard_count_1430` is currently just `ace_count`, so it is **off by one
+  whenever the hand holds the trump king**. For a slam convention that is not
+  a rounding error, it is the wrong answer.
+- **`trumpqueen`** — no feature exists, and it cannot be written as a
+  conjunction of `*_has_queen` booleans without knowing which suit is trump.
+
+**This sharpens §6.39.** The route to slam is no longer a vague gap: there is
+now an authoritative spec to build against. But the prerequisite is an
+`agreed_trump` feature (the auction-agreed strain, or `None`) — not the
+convention itself. Adding it would unlock RKCB, Gerber **and** the Grand Slam
+Force in one go, and it is a small, self-contained change to
+`bid/features.py`. That is a better first step than authoring the convention
+against a keycard count that is known to be wrong.
+
+Note this also corrects the framing in §6.40: brill.dsl scores 0 rules for
+responding to 4NT not because Brill hides it, but because the sweep stopped
+one call short.
+
 ## 7. Roadmap (prioritized)
 
 0. ~~Autonomous staged loop~~ — DONE (§6.5); run with `PYTHONPATH=.. python3 autoloop.py --tiers 24,96 --progress-secs 300`.
