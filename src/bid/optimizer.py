@@ -927,7 +927,14 @@ class SystemOptimizer:
 
     @staticmethod
     def create_autonomous_evolved_system() -> DecisionNet:
-        """Autonomous Evolved Bidding System from Continuous Improvement Pipeline."""
+        """Hand-authored 2/1 archetype with convention protocols layered on.
+
+        Despite the historical name and `net.name`, nothing here is autonomous
+        or evolved: it is `create_modern_2over1()` plus a fixed list of
+        hand-written convention protocols and `AI_RESP_*` rules. The method
+        name is kept for API compatibility; the leaderboard now labels it
+        accurately (see eval_vs_dds.build_leaderboard).
+        """
         # Start from 2/1 base and include all discovered protocols & gambling pools
         net = SystemOptimizer.create_modern_2over1()
         net.name = "Autonomous_Evolved_AI"

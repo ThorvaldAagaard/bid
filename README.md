@@ -162,7 +162,479 @@ python3 -m bid.flywheel --deals 96 --rounds 2 --sds-primary
 # hill-climb directly on the SDS objective instead of DDS-par score
 python3 -m bid.autoloop --policy-prior data/cot_model/ckpt.pt
 # policy-guided PIDM pruning using the trained student as a prior
+python3 -m bid.flywheel --deals 96 --rounds 2 --metric mean_imp_loss --panel
+# IMP-capped objective, scored against a frozen opponent panel (recommended)
 ```
+
+**Two objective switches** (`--metric`, `--panel`) address the failure mode where
+the version counter advances without the anchor ledger moving:
+
+- `--metric mean_imp_loss` — hill-climbs IMPs lost per board instead of raw
+  points. The IMP scale saturates at 24, so one −910 slam swing can no longer
+  outweigh thirty ordinary boards (raw regret spans +23…−174 while IMP
+  loss/board spans only 2.7…4.6). The acceptance floor and validation
+  tolerance scale with the metric automatically (`MIN_DELTA_BY_METRIC`,
+  `val_tolerance`); `metric_gain()` flips the sign so positive always means
+  *better*.
+- `--panel` — E/W is played by a frozen panel of unrelated archetypes
+  (SAYC, Precision, 2/1 GF) rotated per deal, instead of a copy of the
+  evolving system. In self-play both sides share one rule set, so any
+  adaptive behaviour cancels and the loop converges to a fixed point of the
+  system rather than to bidding strength. Cost is unchanged versus self-play.
+
+For reporting rather than screening, `eval_vs_dds --panel` plays every system
+against the panel over **both seat orientations** and ranks by
+`--metric h2h_score`; because par cancels when both orientations are averaged,
+that score is a pure head-to-head result rather than a par-relative one:
+
+```bash
+python3 -m bid.eval_vs_dds --boards 32 --panel --metric h2h_score
+```
+
+### `--id3`: the speedup-learning family
+
+`--id3` adds the BIDI speedup-learning step to the patch pool: PIDM labels
+ambiguous states ($|\varphi(s)| > 1$) sampled from the seeded training deals,
+ID3 fits a tree per rule intersection, which is attached to the net as a
+refinement.
+
+This is the only family that **invents new structure**. Everything else —
+curated families, threshold `tighten`/`loosen`, gating variants, drops — can
+only move thresholds inside a structure a human already wrote, which is why
+28 versions of hill-climbing never closed the gap to the champion archetype.
+
+**Refinements now persist — this was the bug that killed the whole path.**
+`export_dsl` used to write only a depth-1 sketch of an attached classifier
+(`SPLIT_FEATURE` / `THRESHOLD` / `IF`) and `load_decision_net_dsl` read only
+`RESOLVED_CALL`, so an attached ID3 tree was silently destroyed by every
+save → load cycle: `intersection_nodes` came back empty and $\varphi(s)$
+re-widened. That is why speedup learning was dead code even before it went
+unreferenced — and why the live DSLs contained **zero** `INTERSECTION` blocks.
+
+Trees are now serialized in full:
+
+```
+INTERSECTION R_1H ^ R_1NT:
+  TREE:
+    SPLIT hcp <= 16.5 fallback 1H
+      LEAF 1H
+      LEAF 1NT
+```
+
+`SPLIT` carries a `fallback` (the node's majority call) so a missing feature
+degrades the way `ID3Node.predict` does instead of picking a direction at
+random. The block is parsed by `eval_vs_dds.parse_id3_tree` and by the same
+indentation grammar in `web/bid_dsl.js`, which registers the tree into the
+existing `net.refinements` hook — so the browser engine resolves intersections
+identically to Python. `tests/web/id3_dsl_test.mjs` asserts that parity.
+
+**Attach, don't compile.** `id3_tree_to_rules` (also in `learner.py`) can
+compile a tree into ordinary rules, which is useful for engines that cannot
+parse `TREE:` blocks. It is *not* what `--id3` uses, because it is only an
+approximation: a refinement fires when the matched rule set is **exactly** the
+intersection key, whereas ANDing the key rules' conditions matches a
+**superset** — including states where other rules also fire. Several rules are
+named `NO_x_WITH_MAJOR_y` and fire on little more than `heart_len >= 3`, so
+compiled rules came out as broad as `is_opening AND heart_len >= 3 AND
+spade_len >= 4 -> 1C` at priority 40. Measured on 24 held-out boards
+(seed 7, SAYC/Precision panel, both seats):
+
+| variant | h2h pts/bd | IMP loss/bd |
+| --- | --- | --- |
+| no ID3 | −10.2 | 6.68 |
+| compiled to rules | −14.0 | 6.94 |
+| **attached tree** | **+0.1** | 6.89 |
+
+The attached tree is ~14 pts/board better than compiling, which is the whole
+gap between "fires only at the intersection" and "fires anywhere the guard
+holds". Attach is what `--id3` uses.
+
+**Does it actually improve bidding? No — not measurably.** The 24-board
+head-to-head above (+10.3 pts/bd) does not survive a larger sample. At 96
+deals, 60 harvested states, on two independent bases, with two held-out
+validation seeds:
+
+| base | baseline | +ID3 | train Δ | val 1 | val 2 | verdict |
+| --- | --- | --- | --- | --- | --- | --- |
+| improved | 6.804 | 6.873 | −0.069 | −0.098 | +0.176 | does not transfer |
+| champion | 5.735 | 5.824 | −0.088 | −0.196 | +0.029 | does not transfer |
+
+(IMP/board, lower is better.) Both bases get worse on train and the validation
+seeds disagree in sign — noise, not a generalising patch. The root cause is
+data, not machinery: 60 ambiguous states collapse to **1** patch, because a
+hand-authored system has already disambiguated by hand anything it hits often.
+What remains is a long tail of intersections seen once or twice, which
+`min_examples=3` now correctly refuses to fit.
+
+`--id3` is therefore **off by default and should be treated as
+infrastructure, not as an improvement**. The persistence fix is real and worth
+keeping — trees no longer vanish on save — but do not expect `--id3` to raise
+the score. Full analysis in `research/status.md` §6.14.
+
+```bash
+python3 -m bid.flywheel --deals 96 --rounds 2 --id3 --panel --metric mean_imp_loss --jobs 8
+```
+
+### `--jobs`: buying evaluation resolution
+
+Screening resolution is the binding constraint on whether a measured gain is
+real (§6.12: at 16–48 deals nothing transfers to the validation seeds). Boards
+are independent, so `--jobs N` scores the deal set across processes. Measured
+on 96 deals: **60.5 s → 27.7 s (2.2x)**.
+
+Two honest caveats:
+
+- **2.2x, not linear.** Workers must use `spawn` — forking a process that has
+  already initialised native DDS deadlocks inside `libdds` — and each worker
+  pays ~2.5 s to re-import the package and re-init DDS, on *every* call. Small
+  deal sets are therefore faster serially, so `MIN_BOARDS_PER_WORKER` (8) makes
+  `evaluate_system` fall back to serial below the threshold rather than silently
+  getting slower. The result dict reports `jobs_used` so this is visible.
+- **Not comparable to serial numbers.** Serial consumes one RNG in board order;
+  parallel seeds per chunk. Absolute figures differ between modes, but a given
+  parallel configuration is reproducible and base/candidate stay paired, which
+  is what the gates rely on. Pick one mode per experiment.
+
+> ### ⚠️ Read this before trusting any flywheel result
+>
+> **The screening is too coarse to resolve the changes it is judging.** Scoring
+> the *same* system on five independent 96-deal sets does not give the same
+> answer:
+>
+> | system | 11 | 22 | 33 | 44 | 55 | mean | sd | range |
+> | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+> | champion | 6.529 | 6.735 | 6.971 | 6.118 | 6.490 | 6.569 | 0.316 | 0.853 |
+> | improved | 7.304 | 7.618 | 6.843 | 6.480 | 7.167 | 7.082 | 0.437 | 1.137 |
+>
+> One 96-deal measurement carries a **±0.62 to ±0.86** 95% interval. Two
+> consequences:
+>
+> 1. `--metric`'s acceptance floor of `0.03` IMP/board is **~20x below the
+>    noise**. It is a train-set *effect size* filter (there the base/candidate
+>    comparison is paired and exact), **not** a significance threshold. Do not
+>    read a cleared floor as evidence of improvement.
+> 2. The validation gate is **one-sided**: with `VAL_SEEDS = (7, 13)` it accepts
+>    when `d > -tol`, i.e. it rejects clear regressions but *accepts anything
+>    neutral — including a no-op*. Resolving a gain needs it to exceed
+>    `1.96 × 0.42 / √2 ≈ 0.58` IMP/board; confirming one at the 0.03 floor would
+>    need hundreds of 96-deal sets.
+>
+> This is the mechanism behind the project's headline failure:
+> `improved_system.dsl` is at **v28** — twenty-eight rounds of patches that each
+> passed a gate unable to reject noise — and ended up *worse* than the
+> hand-authored champion. **The loop did not fail to find improvements; it was
+> never able to tell whether it had found one.**
+>
+> **What to do about it.** Per-board pairing was measured and buys less than
+> hoped — the per-board sd of the *difference* between two systems is ~4.0
+> versus ~3.1–4.3 for the metric itself, because the systems go wrong on
+> largely different boards. So the budget is set almost entirely by board
+> count: `se = 4.0 / sqrt(n_boards)`.
+>
+> | to resolve | boards |
+> | --- | --- |
+> | 0.5 IMP/bd | 246 |
+> | 0.3 | 683 |
+> | 0.1 | 6,147 |
+> | 0.03 (current floor) | 68,296 |
+>
+> At ~0.29 s/board with `--jobs 8`, **~6,000 boards costs about 30 minutes**.
+> Resolving 0.1 IMP/board is genuinely affordable — the 96-deal default
+> resolves only ~0.8, which is a configuration choice, not a hardware limit.
+> Use `boards_needed(target)` to size a run before trusting its verdict.
+>
+> **The gap the loop needed to see was smaller than its own screen.** Measured
+> at 2,054 boards (§6.18), champion beats `improved_system.dsl` by
+> **+0.275 ± 0.084 IMP/board** (t = 3.26) — significant, but below the 0.8 that
+> 96 boards can resolve. The flywheel could not tell the system it was
+> producing from the one it should have been producing. An earlier figure of
+> 1.069 for this gap was a training-seed artifact, inflated ~4x.
+>
+> **Acting on it.** Every run prints its own resolution up front, so a 48-deal
+> run no longer looks like a well-powered one:
+>
+> ```bash
+> # ~750 boards resolves 0.29 IMP/board — enough to see the real gap.
+> # --state keeps the experiment from bumping the real version counter.
+> python3 -m bid.flywheel --deals 750 --rounds 2 \
+>     --metric mean_imp_loss --panel --jobs 8 \
+>     --val-seeds 7,13,21,29,35 \
+>     --target system/champion_evolved.dsl \
+>     --state /tmp/flywheel_experiment.json
+> ```
+>
+> `--val-seeds` buys generalisation resolution linearly (2 sets → 0.58 IMP/bd,
+> 5 sets → 0.37); `--deals` buys screening resolution as `1/sqrt(n)`.
+>
+> **But resolution is not the only problem.** Re-tested at 806 boards where
+> 0.276 *is* visible, **0 of 7 curated families reached significance, and 3
+> (BALANCING, NT_SAFETY, OVERCALLS) had exactly zero effect** — identical score
+> on all 806 boards. Not because their guards never fire: they match 51–288
+> times at N/S seats, usually proposing a call not already in φ(s). It is
+> because of how the two components interact — see §6.19 and §6.21.
+>
+> **The search barely runs.** `PIDMEngine.decide` short-circuits on a single
+> candidate (`if len(actions) == 1: return action`) — no worlds sampled, no
+> lookahead, no DDS. And φ(s) is a singleton at **92.8%** of champion's
+> decisions (87.1% for `improved_system.dsl`):
+>
+> | system | \|φ\|=1 | 2 | 3+ | search runs |
+> | --- | --- | --- | --- | --- |
+> | champion | 92.8% | 6.7% | 0.5% | **7.2%** |
+> | improved | 87.1% | 11.4% | 1.6% | **12.9%** |
+>
+> So the DecisionNet is the decision procedure ~93% of the time, and the
+> expensive machinery (RBMBMC sampling, lookahead, native DDS) is exercised on
+> ~7%. Consistent with that, **strengthening the search does nothing**:
+> sampling 2/6/0.06 → 4/12/0.25 gives −0.030 ± 0.082 (t = −0.36) and costs 1.7x;
+> lookahead depth 1 → 2 gives *exactly* 0.000 in the same wall-clock (§6.20).
+>
+> **And ablating the search changes nothing.** A `NoSearchEngine` that always
+> takes the fast path scores 6.2039 vs 6.2209 with search — the search is worth
+> **−0.017 ± 0.013 IMP/board** (t = −1.30, CI upper +0.009). The ambiguous 7%
+> is also not where the value is: boards containing one lose 0.677 IMP/board
+> *less* than unambiguous ones, and are 26.0% of boards but 23.9% of IMP lost
+> (§6.22–§6.23).
+>
+> **Bottom line.** Every lever measured at 400–2,054 boards is
+> indistinguishable from zero — rule families (+0.03, CI upper +0.09), stronger
+> sampling (−0.030), deeper lookahead (exactly 0.000), ID3 (negative), and the
+> search itself (−0.017). The one thing that has ever moved this system is a
+> human writing better rules: champion beats 28 rounds of automated patches by
+> **+0.275 ± 0.084**. That is a structural conclusion about the approach, not a
+> tuning problem.
+>
+> **So where should a human work?** Champion loses 6.458 IMP/board, and only
+> 12.4% of boards are at par — the worst decile holds just 22.8% of the loss,
+> so this is a broad shortfall, not a fixable tail. Of the attributed loss:
+>
+> | flaw | boards | share | ≈IMP/case |
+> | --- | --- | --- | --- |
+> | MISSED_SLAM | 43 | 33.7% | 14 |
+> | MISSED_GAME | 98 | 32.6% | 9 |
+> | OVERBID_DOWN | 123 | 25.1% | 6 |
+> | SOFT_DEFENSE | 79 | 8.6% | 4 |
+>
+> **Underbidding is ~66% of it** (slam + game), from 41% of flagged boards —
+> note `severity_pts` is in *points*, not IMP, and diagnostics only fire below
+> −10 points, so 463 boards with loss carry no label at all.
+>
+> **Ablation then sharpened the target (§6.25).** Deleting champion's 32
+> game-or-higher rules costs **+0.1835 ± 0.178 IMP/board** — the largest effect
+> any rule group has shown — but those same rules also account for 58 of the
+> 116 overbids. The lever is **discrimination, not aggression**. Two more
+> findings change the plan:
+>
+> - **Slam is structurally unreachable.** Champion's only 5-level calls are two
+>   sacrifice rules that never fire, so there is no cue-bid/Blackwood route to
+>   6: **0 slams in 206 boards** where par wanted 14. Its 6-level rules fire
+>   only inside search continuations.
+> - **Do not read the par gap as timidity.** Champion stops at 1–2 on 67.3% of
+>   boards it should declare, vs par's 24.8% — but SAYC stops on **93.1%** and
+>   improved on 76.2%. Par is double-dummy; everyone falls short. What matters
+>   is the ranking, and it matches the scoreboard: champion bids game 31.7%,
+>   improved 18.8%, SAYC 2.0%.
+>
+> Highest-value concrete work: a live 5-level ladder, and closing the responder
+> coverage hole (34.3% of underbid boards are *one bid then three passes* at
+> 22–25 combined HCP).
+>
+> **Priced, and the answer is "not yet" (§6.27).** Every one of those passes is
+> a fallback — φ(s) = {PASS}, no rule matched, 41 of 41 — so it really is a
+> coverage hole. But filling it with `improved_system`'s answer measures
+> **−0.027 ± 0.145 IMP/board** (824 boards, paired): it removes 20 missed games
+> and slams and adds **45 overbids**. Underbids become overbids, ~1:2.6. The
+> hole is worth ~0 until something supplies better *discrimination*, which is
+> the same wall §6.19–§6.25 keep hitting.
+>
+> **The hole is not the cause, and it is now closed (§6.33).** Filling the same
+> hole with a *conservative* donor — only the 16 level-1 rules of
+> `improved_system`, so underbids become live auctions rather than overbids —
+> is significantly **worse**: **−0.098 ± 0.042 IMP/board (t −2.36)** on 836
+> boards, ~209 interventions producing **0 extra games** and +12 overbids,
+> about −0.39 IMP each. So the two donors span the trade-off and neither
+> produces games: the aggressive one buys them by overbidding, the conservative
+> one buys nothing at all. Bidding on hands champion chose to pass is worse
+> than passing, however meek the bid.
+>
+> (An earlier version of this experiment used champion's *own* level-1 rules as
+> donor and reported 0 fills. That result was vacuous:
+> `DecisionNet.actions()` falls back to PASS only when **no** rule matched, so a
+> donor that is a **subset** of champion's rules provably cannot fire there. A
+> null is only evidence once the patch is confirmed to have fired *and* the
+> contrast is not impossible by construction.)
+>
+> **Corrected by §6.39: the ladder to game already exists; the 5 level does
+> not.** Inspecting the rules (rather than inferring from behaviour) shows
+> champion has **29 raise rules** and **21 level-4 rules**, including
+> `1S→2S`, `1S→3S` (limit), `2S/3S→4S` and `1M→4M` — so "build a ladder" is
+> the wrong instruction. What is absent is the 5 level: exactly two level-5
+> rules, both non-vulnerable sacrifices over the opponents' 4M, and six level-6
+> rules that jump straight to 6 on 20–23+ HCP. No Blackwood, no 5-level cue bid,
+> no slam try — which is why §6.25 measured 0 slams in 206 boards and §6.38
+> finds MISSED_SLAM the largest and most stable category (34.4%). The concrete
+> work is a 4NT ace-asking bid with 5-level responses (or 5-level cue bids):
+> small, well-understood, currently absent. Champion's residual game shortfall
+> is guard thresholds, not structure — `SUP_GAME_4S_AFTER_RAISE` needs hcp 16–22
+> *and* 5+ spades, so a 15-count opener has no rule and stops at 2S.
+>
+> (Earlier text, superseded:) ~~**What is actually missing is a bidding
+> ladder.**~~ Champion stops at 1–2 on
+> 67.3% of boards *with* its rules firing (§6.25), and inserting a call where
+> no rule fires does not reach game either (§6.33) — because the rest of the
+> ladder still stops low. Every mechanism here — candidate generation, PIDM
+> search, ID3, co-training, convention invention — optimises **one decision in
+> isolation**. Reaching game requires a *sequence*. That is the most economical
+> explanation for why 28 automated rounds added nothing and one human writing
+> 90 rules added +0.275.
+>
+> **The headline metric is not a loss — and fixing it is nearly free (§6.28).**
+> `mean_imp_loss` is `abs(deviation from double-dummy par)`, so beating par
+> scores exactly like missing it. Measured on champion (830 boards): 45.3% of
+> boards **beat** par (+2,900 IMP) against 41.8% that lost (−2,378), so
+> **54.9% of the reported "loss" is actually gain**, and the mean signed value
+> is *+0.63* IMP/board. Half of that is artifact: par belongs to E/W on 51.5%
+> of boards, and the panel opponents (SAYC 10 rules, Precision 8, 2/1 GF 15 —
+> `gib.dsl`/`precision.dsl`/`blue_club.dsl` all parse to 0 rules, so nothing
+> stronger exists) cannot bid their own games, giving us phantom +18 IMP boards.
+> Worse, `abs()` cancels the signal exactly where two systems disagree in sign.
+> The new signed metric `mean_imp_diff` measures the champion→improved gap at
+> **+1.267 ± 0.318 (t 7.81) on 836 boards**, where the abs metric gives a
+> non-significant +0.071 on the same boards and needed 2,054 to reach t 3.26.
+>
+> **But two thirds of that gap is artifact — the opponents are 10–20× too weak
+> (§6.34).** The panel is built from 10/8/15-rule skeletons, while `system/`
+> already contains three hand-authored systems that have never been used as
+> opponents: `blue_club.dsl` (183 rules), `precision.dsl` (166) and `gib.dsl`
+> (159) — 2,328 lines that parse to **0 rules** under the DecisionNet loader
+> because they are a *legacy* dialect (`OPEN 1C:` / `HCP:` / `SHAPE:`), reachable
+> only via `SystemTranslator` + `DecisionNet.wrapped_system`. Scored against
+> those instead (606 boards, paired):
+>
+> | panel | champion signed | improved signed | champion − improved |
+> |---|---|---|---|
+> | current skeletons | +0.2756 | −0.9901 | **+1.2657 (t 6.55)** |
+> | legacy systems | +0.3812 | −0.0842 | **+0.4653 (t 1.78)** |
+>
+> The gap shrinks to about a third. **Measured properly at 2,006 boards (§6.37)
+> the gap is +0.732 (t 5.41) against the legacy systems — smaller than +1.246
+> (t 11.85) against the skeletons, a 41% reduction, but still significant.** The
+> 606-board figure above was underpowered, not null. The artifact is
+> asymmetric: champion's own score is stable (−0.106 ± 0.327), while
+> `improved`'s moves by −0.906 ± 0.455 — the weak panel made the *worse* system
+> look far worse. It also **reclassifies flaws**: MISSED_GAME falls 80→54 for
+> champion and 107→40 for improved, while SOFT_DEFENSE rises 54→82 and 59→111,
+> with no change in our own bidding — when opponents bid competently they buy
+> the contract and the board becomes a defensive one. So the loss attribution
+> behind §6.24/§6.25/§6.31 is opponent-dependent too. At 2,006 boards (§6.37)
+> the effect is stark: improved's MISSED_GAME falls from **352 to 161** while
+> champion's falls 230→166 — so under competent opponents the two miss
+> essentially the same number of games (161 vs 166), and improved's remaining
+> 0.73 IMP/board deficit is overbidding (322 vs 254) and defence (350 vs 286),
+> not underbidding.
+>
+> **Champion's own score is panel-invariant; improved's is not.** Signed +0.6281
+> vs +0.6291 for champion across the two panels (a difference of 0.001), against
+> −0.6176 vs −0.1027 for improved (a swing of 0.515). Champion's strength does
+> not depend on who it is playing.
+>
+> **Re-derived under competent opponents (§6.38) — where to author survives, why
+> does not.** The method reproduces §6.24 on the skeleton panel (missed slam
+> 37.5% + missed game 29.8% = 67.3%), so the shift is real. Against the legacy
+> systems:
+>
+> | flaw | skeleton share | legacy share | legacy boards |
+> |---|---|---|---|
+> | MISSED_SLAM | 37.5% | 34.4% | 116 |
+> | OVERBID_DOWN | 24.1% | 23.5% | 256 |
+> | MISSED_GAME | 29.8% | **20.8%** | 167 |
+> | SOFT_DEFENSE | 8.5% | **19.9%** | **286** |
+>
+> Missed game + missed slam falls from **67.3% to 55.2%**; failing to compete
+> over the contract more than doubles and becomes the **most frequent** flaw.
+> But the §6.31 ordering is confirmed: per board slam is worth about twice game
+> (−6.30 vs −3.19), while in total game is worth about twice slam (−1,699 vs
+> −844 IMP) because there are 4× as many game boards — a 2.0× ratio against
+> §6.31's 2.3×. So **do game accuracy first**, and treat competition/defence as a
+> large region the default panel hid entirely — **but not yet as a proven
+> target**: `SOFT_DEFENSE` is a catch-all (`diagnostics.py:191` tags every board
+> the opponents declare; `:221` is the fallback for any unmatched loss), and its
+> severity is the board's whole shortfall rather than what competing would have
+> recovered. Since double-dummy par already prices the sacrifice option, boards
+> whose par belongs to E/W are ones where bidding on was not profitable by
+> construction. Split the category before spending effort there — especially as
+> §6.33 (−0.098/board) and §6.27 (−0.027) both found that bidding more actively
+> *loses* IMPs.
+>
+> Adopt the signed metric because `abs()` is not a loss — not because it is
+> cheaper, since the "~3× resolution" figure is calibrated on the weak panel
+> and disappears under a strong one. Fix the opponents as well: add a
+> `--panel legacy` option rather than replacing the panel (28 recorded versions
+> are scored against the current one), and make the legacy systems picklable
+> first — their rule tests were closures, so they could not be sent to `spawn`
+> workers and every strong-panel number above had to run with `jobs=1`.
+>
+> **Both are now available from the CLI (§6.36).**
+>
+> ```bash
+> # strong opponents (183/166/159 rules instead of 10/8/15), ranked by the
+> # signed metric; bare --panel still means the original skeletons
+> PYTHONPATH=src python3 -m bid.eval_vs_dds --boards 48 --panel legacy \
+>     --metric mean_imp_diff
+> ```
+>
+> `--panel` accepts `default` or `legacy` (plain `--panel` = `default`, unchanged
+> behaviour), and `--metric` accepts `mean_imp_diff`, which is signed — positive
+> means beating double-dummy par. `evaluate_panel` previously did not compute it,
+> so selecting it would have raised `KeyError`; it now prints an **IMP diff/bd**
+> column next to the unsigned IMP loss/bd. Regression tests in
+> `tests/test_legacy_pickling.py` lock the default panel at exactly
+> `[SAYC, Precision, 2/1 GF]` / `[10, 8, 15]` rules, since 28 recorded versions
+> were scored against it.
+>
+> **That blocker is now fixed (§6.35).** The closure captured only picklable
+> data, so `SystemTranslator._add_rule_from_data` now builds a module-level
+> callable object `LegacyTrigger` carrying the same five values, instead of a
+> nested function. Verified behaviour-preserving: 1,500 call comparisons between
+> fresh and pickled systems, **0 mismatches**; 39 legacy-system tests pass; and
+> 96 boards against the strong panel give bit-identical results at `jobs=1`
+> (19.9 s) and `jobs=8` (10.2 s). Regression tests in
+> `tests/test_legacy_pickling.py`.
+> Use `--metric mean_imp_diff`. `imp_loss` is left as-is: 28 recorded versions
+> depend on it.
+>
+> **Calibrated, with a correction (§6.28).** On 5 independent 96-deal sets the
+> signed metric is *noisier per system* (sd 0.76–0.80 vs 0.32–0.44) because its
+> level depends on how many boards are "E/W declares par" — **never compare
+> signed levels across different deal sets**. But the paired delta is ~2.6×
+> larger for only ~1.4× more noise: **t 5.11 vs 2.81 on the same 480 boards**.
+> So the real gain is **~3× fewer boards**, not the ~14× a single unstable abs
+> point estimate suggests; the defensible claim is that it turns a marginal or
+> null result into a decisive one. (The abs noise sd was reproduced at 0.426
+> vs the published 0.42, validating §6.16.)
+>
+> **The clearest single number (§6.30).** Head-to-head (each system plays both
+> seats against the same opponent, so no par and no opponent-side artifact):
+> **champion beats SAYC by 26.5 pts/board; `improved_system.dsl` LOSES to SAYC
+> by 37.7.** SAYC is a 10-rule skeleton that reaches game on 2% of boards.
+> Twenty-eight rounds of "validated" patches produced a system that cannot beat
+> it. Power: abs t +0.54, signed t +7.81, head-to-head t +10.72 — but h2h costs
+> 2 plays/board, so per unit compute it ties the signed metric (7.58 vs 7.81).
+> Use h2h where the *level* must be stable across deal sets, `mean_imp_diff` for
+> routine paired screening.
+>
+> **Reproducibility note (§6.26).** Evaluations used to be non-deterministic:
+> the world sampler drew from an unseeded global RNG, so two runs of the same
+> config differed. `seed_board()` now seeds per board from the board index, in
+> both the serial and parallel paths — runs are bit-identical, serial and
+> parallel agree, and the paired sd dropped 2.59 → 2.13 (~1.5× fewer boards for
+> the same resolution).
+>
+> `SCREENING_NOISE_SD`, `BOARD_IMP_LOSS_SD`, `min_detectable_effect()` and
+> `paired_imp_test()` in `eval_vs_dds.py` encode the measurements; the
+> hill-climb prints each candidate's paired diff, 95% CI and t, and
+> `validate_and_save` warns when a round's gain is below what the screen can
+> resolve. Full analysis: `research/status.md` §6.16–§6.17.
 
 Long-run hygiene (both `flywheel.py` and `autoloop.py`):
 - **Eval-seed rotation** — screening/validation seeds derive from the current
@@ -493,7 +965,7 @@ work (they add validation gates, versioning, and the neural student).
 
 ### Finding the Best Bidding System (World Championship Tournament)
 
-Run a multi-board round-robin tournament (evaluating competing archetypes like Precision Strong Club, Modern 2/1 GF, SAYC, and Autonomous Evolved AI) to find the champion system:
+Run a multi-board round-robin tournament (evaluating competing archetypes like Precision Strong Club, Modern 2/1 GF, SAYC, and a 2/1 + conventions archetype) to find the champion system:
 
 ```bash
 python3 -m bid.main --tournament --boards 50
@@ -672,7 +1144,8 @@ bid/
 ├── system/              # Bidding system definitions & DSL files (SAYC, Precision, Improved)
 ├── data/                # traces/, cot_dataset/, cot_model/, player_models/, conventions/
 ├── web/                 # Static browser review UI (JS engine port + WASM DDS + snapshot)
-├── tests/               # Unit and integration test suite (155 tests)
+├── tests/               # Unit and integration test suite (256 tests)
+├── tests/web/           # JS engine checks, run with node (387 + 12 checks)
 ├── research/
 │   ├── bid-invention.md # Research document on BIDI, RBMBMC, VOI, and CoT distillation
 │   └── experiments/     # Archived diagnostic and one-off experimental scripts

@@ -22,9 +22,11 @@ Usage: PYTHONPATH=.. python3 flywheel.py [--deals 48] [--rounds 3] [--pool-cap 1
 
 import argparse
 import copy
+import hashlib
 import json
 import os
 import random
+import re
 import shutil
 import time
 from typing import Callable, Dict, List, Optional, Tuple
@@ -33,10 +35,13 @@ from bid.models import Strain, Seat, Call, CallType
 from bid.decision_net import DecisionNetRule, RuleCondition, DecisionNet
 from bid.arena import BiddingArena
 from bid.pidm import PIDMEngine
-from bid.sampling import RBMBMCSampler
+from bid.sampling import RBMBMCSampler, PartialState, Deal
 from bid.diagnostics import ParDiagnosticEngine
 
-from bid.eval_vs_dds import build_deals, evaluate_system, load_decision_net_dsl, SYSTEM_DIR, precompute
+from bid.eval_vs_dds import (build_deals, evaluate_system, load_decision_net_dsl,
+                             min_detectable_effect, paired_imp_test, resolution_of,
+                             SYSTEM_DIR, precompute, build_opponent_panel,
+                             LOWER_IS_BETTER, MIN_DELTA_BY_METRIC)
 
 TARGET = os.path.join(SYSTEM_DIR, "improved_system.dsl")
 STATE_PATH = os.path.join(SYSTEM_DIR, "flywheel_state.json")
@@ -78,21 +83,46 @@ def mark_failed(state: dict, sig: str) -> None:
     state.setdefault("failed_at", {})[sig] = int(state.get("version", 0))
 
 
-def passes_effect_floor(delta: float) -> bool:
+def passes_effect_floor(delta: float, metric: str = "avg_score") -> bool:
     """Reject noise-level 'improvements'.
 
     The PIDM sampler has wall-clock timeouts, so re-scoring an identical net
     is not perfectly repeatable; a +0.04 mean with near-zero variance can
-    otherwise pass the z-test and burn a saved version on a no-op."""
-    return delta >= MIN_PATCH_DELTA
+    otherwise pass the z-test and burn a saved version on a no-op.
+
+    `delta` is always a *gain* (higher is better) — see `metric_gain`.  The
+    floor scales with the metric: IMPs/board run ~1-5 units, points/board run
+    in the hundreds, so a single 0.5 threshold is meaningless across them.
+    """
+    return delta >= MIN_DELTA_BY_METRIC.get(metric, MIN_PATCH_DELTA)
 
 
-def winner_gate(ok: bool, delta: float) -> bool:
+def metric_gain(current: float, new: float, metric: str) -> float:
+    """Signed improvement of `new` over `current`, normalised so positive == better.
+
+    Point-regret metrics are higher-is-better; the IMP-loss metrics are
+    lower-is-better, so their sign is flipped here rather than at every call
+    site (it is easy to get that backwards and silently select *worse* patches).
+    """
+    d = new - current
+    return -d if metric in LOWER_IS_BETTER else d
+
+
+def val_tolerance(metric: str) -> float:
+    """How much validation regression to tolerate before rejecting a round.
+
+    Scaled to the metric for the same reason as the effect floor: -5 is a
+    rounding error in points/board but an unrecoverable collapse in IMPs/board.
+    """
+    return 0.15 if metric in LOWER_IS_BETTER else 5.0
+
+
+def winner_gate(ok: bool, delta: float, metric: str = "avg_score") -> bool:
     """Stage-2 winner decision: surviving the escalation ladder is not
-    enough — the final delta must also clear MIN_PATCH_DELTA.  Kept as a
+    enough — the final delta must also clear the effect floor.  Kept as a
     pure function so the no-op-patch regression stays unit-tested: ok=True
     with a noise delta must NOT produce a winner."""
-    return bool(ok) and passes_effect_floor(delta)
+    return bool(ok) and passes_effect_floor(delta, metric)
 
 
 def expire_failed(state: dict, expiry_versions: int = FAIL_EXPIRY_VERSIONS) -> int:
@@ -128,6 +158,10 @@ def add_rules(net, rules):
     for r in rules:
         if r.rule_id not in existing:
             net.add_rule(r)
+            # track as we go: the set is only correct for the first rule
+            # otherwise, so a batch carrying duplicate ids (e.g. two ID3
+            # intersections hashed to the same name) would all be inserted.
+            existing.add(r.rule_id)
 
 
 def replace_rule(net, new_rule):
@@ -364,15 +398,43 @@ def mutate_bounds(rule: DecisionNetRule, direction: str) -> Optional[DecisionNet
 # ---------------- flywheel ----------------
 
 class Flywheel:
-    def __init__(self, arena, n_deals, pool_cap, rng_seed=123, sds_scorer=None, sds_primary=False):
+    def __init__(self, arena, n_deals, pool_cap, rng_seed=123, sds_scorer=None, sds_primary=False,
+                 metric="avg_score", panel=False, target=TARGET, id3=False,
+                 jobs=1, val_seeds=VAL_SEEDS, state_path=STATE_PATH):
         self.arena = arena
+        # Validation sets are the only defence against a patch that merely
+        # overfits the training deals. Two sets can only resolve ~0.58 IMP/bd
+        # (§6.16), so this is configurable: --val-seeds 7,13,21,29,35 buys
+        # real resolution at linear cost.
+        self.val_seeds = tuple(val_seeds)
+        # Redirection exists so an experiment cannot bump the real version
+        # counter or archive into system/history/ by accident.
+        self.state_path = state_path
         self.sds_scorer = sds_scorer
+        # Boards are independent, so screening parallelises near-linearly.
+        # This is what makes a statistically meaningful deal budget affordable.
+        self.jobs = max(1, int(jobs or 1))
+        # BIDI speedup learning: let ID3 invent splits instead of only nudging
+        # thresholds on rules a human already wrote.
+        self.id3 = id3
+        # Which DSL the hill-climb starts from and writes back to.  It matters:
+        # local patches cannot close a structural gap, so seeding from the
+        # strongest known system compounds much better than seeding from a weak
+        # one and hoping 28 rounds of threshold nudges catch up.
+        self.target = target
         self.sds_primary = sds_primary and sds_scorer is not None
+        # `metric` selects what the hill-climb maximises.  "avg_score" is the
+        # historical raw-points objective; "mean_imp_loss" is IMP-capped and
+        # therefore far less dominated by single slam-level disasters.
+        self.metric = "avg_score_sds" if self.sds_primary else metric
+        # Scoring against a frozen heterogeneous panel instead of a copy of
+        # itself stops the loop optimising a self-play fixed point.
+        self.panel = build_opponent_panel() if panel else None
         self.rng = random.Random(rng_seed)
         self.train_deals = build_deals(n_deals, seed=TRAIN_SEED)
         self.dd_train = precompute(self.train_deals)
         self.val_sets = {}
-        for s in VAL_SEEDS:
+        for s in self.val_seeds:
             d = build_deals(n_deals, seed=s)
             self.val_sets[s] = (d, precompute(d))
         self.state = self._load_state()
@@ -380,19 +442,20 @@ class Flywheel:
         self.pool_cap = pool_cap
 
     def _load_state(self) -> dict:
-        if os.path.exists(STATE_PATH):
-            with open(STATE_PATH) as f:
+        if os.path.exists(self.state_path):
+            with open(self.state_path) as f:
                 return normalize_state(json.load(f))
         return normalize_state({"version": 5, "failed": [], "applied": []})
 
     def _save_state(self):
-        with open(STATE_PATH, "w") as f:
+        with open(self.state_path, "w") as f:
             json.dump(self.state, f, indent=2)
 
     def evl(self, net, deals, dd):
         return evaluate_system(self.arena, "cand", net, deals, dd,
                                run_diagnostics=True, seed=EVAL_SEED,
-                               sds_scorer=self.sds_scorer)
+                               sds_scorer=self.sds_scorer,
+                               opponent_panel=self.panel, jobs=self.jobs)
 
     def sig_failed(self, sig) -> bool:
         return sig in self.state["failed"]
@@ -405,6 +468,9 @@ class Flywheel:
 
         for name, fn in CURATED.items():
             entries.append((f"curated:{name}", name, fn))
+
+        if self.id3:
+            entries.extend(self.build_id3_patches(net))
 
         fams: Dict[str, List] = {}
         for r in ParDiagnosticEngine.generate_corrective_rules_for_diagnostics(diagnostics):
@@ -454,6 +520,123 @@ class Flywheel:
         return capped
 
     @staticmethod
+    def harvest_ambiguous_states(net: DecisionNet, deals: List[Deal], limit: int):
+        """Walk real auctions and collect every decision where |phi(s)| > 1.
+
+        The previous version only ever built opening states (`history=[]`), so
+        every tree was fitted on opening hands: it could never learn a
+        refinement for the far more common case of an ambiguity that only
+        appears *after* partner has bid, and the auction-context features were
+        constant across the whole training set.  Replaying actual auctions
+        yields roughly an order of magnitude more states and — more importantly
+        — states that carry real history.
+        """
+        states = []
+        for deal in deals:
+            if len(states) >= limit:
+                break
+            history: List[Call] = []
+            curr = deal.dealer
+            while True:
+                ps = PartialState(curr, deal.hands[curr], history,
+                                  deal.dealer, deal.vuln)
+                if ps.is_auction_over() or len(history) >= 20:
+                    break
+                try:
+                    acts = net.actions(ps.my_hand, ps.history, ps.my_seat,
+                                       ps.dealer)
+                except Exception:
+                    break
+                if len(acts) > 1:
+                    # snapshot: history is mutated as the auction advances
+                    states.append(PartialState(curr, deal.hands[curr],
+                                               list(history), deal.dealer,
+                                               deal.vuln))
+                    if len(states) >= limit:
+                        break
+                history.append(acts[0])
+                curr = Seat((curr.value + 1) % 4)
+        return states
+
+    def build_id3_patches(self, net: DecisionNet, n_states: int = 60,
+                          min_examples: int = 3):
+        """The BIDI speedup-learning step: discover ambiguous states on the
+        seeded training deals, label them with PIDM, fit an ID3 tree per
+        intersection, and compile each tree to rules.
+
+        This is the missing capability.  Every other family in the pool is a
+        hand-authored rule or a perturbation of one (tighten/loosen, gating,
+        drops), so the hill-climb can only move thresholds inside a structure a
+        human already wrote — it cannot close a structural gap.  ID3 invents
+        the discriminating split itself.
+
+        Cost is one PIDM call per ambiguous state, so it is capped and gated
+        behind --id3.  States come from `self.train_deals` (already seeded)
+        rather than `Deal.random_deal` so rounds are reproducible.
+        """
+        from bid.learner import DecisionNetLearner, ID3DecisionTree
+
+        teacher = PIDMEngine(sampler=RBMBMCSampler(sample_size=4, max_iterations=12,
+                                                   timeout_sec=0.25),
+                             max_lookahead_depth=1)
+        learner = DecisionNetLearner(teacher)
+        models = {s: net for s in Seat}
+
+        states = self.harvest_ambiguous_states(net, self.train_deals, n_states)
+        if not states:
+            return []
+
+        labeled = learner.tag_states(states, models)
+        groups: Dict[Tuple[str, ...], Tuple[list, list]] = {}
+        for features, call, key in labeled:
+            groups.setdefault(key, ([], []))
+            groups[key][0].append(features)
+            groups[key][1].append(call)
+
+        variants: Dict[str, list] = {}
+        for r in net.rules:
+            variants.setdefault(r.rule_id, []).append(r)
+        # A reused rule id (lint reports these as warnings, not errors) makes
+        # the guard ambiguous: we would silently compile against whichever
+        # variant landed last in the dict.  Refuse those intersections.
+        ambiguous_ids = {rid for rid, rs in variants.items() if len(rs) > 1}
+
+        by_id = {r.rule_id: r for r in net.rules}
+        fitted = []
+        for key, (X, y) in sorted(groups.items()):
+            if any(rid in ambiguous_ids for rid in key):
+                continue
+            key_rules = [by_id[rid] for rid in key if rid in by_id]
+            if not key_rules:
+                continue
+            # A tree fitted on one or two labelled examples is a leaf that just
+            # memorises the teacher on those boards. Require enough mass that
+            # the split is a generalisation, not a lookup.
+            if len(X) < min_examples:
+                continue
+            tree = ID3DecisionTree(max_depth=3)
+            tree.fit(X, y)
+            fitted.append((key, tree))
+
+        if not fitted:
+            return []
+
+        sig = "curated:ID3"
+        if self.sig_failed(sig):
+            return []
+
+        def patch(n):
+            # Attach rather than compile.  A refinement fires only when the
+            # matched rule set is EXACTLY the intersection key, whereas
+            # compiled rules (AND of the key rules' conditions) fire on a
+            # superset and measurably overrode unrelated auctions.  Trees now
+            # survive save->load, so this is both exact and persistent.
+            for key, tree in fitted:
+                n.attach_refinement(key, tree)
+
+        return [(sig, "ID3", patch)]
+
+    @staticmethod
     def flaw_dump(res, max_boards=6) -> List[str]:
         lines = []
         diags = sorted(res["diagnostics"], key=lambda d: -d.severity_pts)[:max_boards]
@@ -464,9 +647,9 @@ class Flywheel:
         return lines
 
     def run_round(self, round_no: int, current: DecisionNet, cur_train) -> Tuple[DecisionNet, object, List[str]]:
-        metric = "avg_score_sds" if self.sds_primary else "avg_score"
+        metric = self.metric
         print(f"\n{'='*92}\n ROUND {round_no} | train {metric} "
-              f"{cur_train[metric]:+.1f} | flaws {dict(cur_train['flaws'])}\n{'='*92}")
+              f"{cur_train[metric]:+.3f} | flaws {dict(cur_train['flaws'])}\n{'='*92}")
         print("   Worst boards:")
         for line in self.flaw_dump(cur_train):
             print(line)
@@ -485,14 +668,26 @@ class Flywheel:
                 cand = current.clone()
                 fn(cand)
                 res = self.evl(cand, self.train_deals, self.dd_train)
-                delta = res[metric] - cur_train[metric]
+                delta = metric_gain(cur_train[metric], res[metric], metric)
                 tested.append((sig, delta))
-                ok = (passes_effect_floor(delta)
+                # Paired, board-by-board significance of this candidate. The
+                # effect floor alone cannot say whether a delta is real: with
+                # ~4.0 IMP per-board sd, 96 boards resolve only ~0.8 IMP/board.
+                self.last_paired = paired_imp_test(cur_train, res) \
+                    if metric in LOWER_IS_BETTER else None
+                ok = (passes_effect_floor(delta, metric)
                       and res["par_accuracy"] >= cur_train["par_accuracy"] - 5
                       and res["avg_imp_loss"] <= cur_train["avg_imp_loss"] + 0.15)
                 if ok and delta > best_delta:
                     best_sig, best_name, best_fn, best_delta, best_res = sig, name, fn, delta, res
-                print(f"     {name:<34} {delta:+8.1f}")
+                p = self.last_paired
+                if p and p.get("n"):
+                    flag = "sig" if abs(p["t"]) > 1.96 else "   "
+                    print(f"     {name:<34} {delta:+8.3f}  "
+                          f"[{p['mean_diff']:+.3f} +/-{1.96*p['se']:.3f} "
+                          f"t{p['t']:+5.2f} {flag} n~{p['n_needed']:.0f}]")
+                else:
+                    print(f"     {name:<34} {delta:+8.3f}")
             for sig, delta in tested:
                 if delta <= 0:
                     newly_failed.append(sig)
@@ -500,26 +695,49 @@ class Flywheel:
                 print("     no improving patch this pass")
                 break
             best_fn(current)
-            applied.append({"sig": best_sig, "name": best_name, "delta": round(best_delta, 1)})
+            precision = 3 if metric in LOWER_IS_BETTER else 1
+            applied.append({"sig": best_sig, "name": best_name,
+                            "delta": round(best_delta, precision)})
             pool = [p for p in pool if p[0] != best_sig]
             cur_train = best_res
-            print(f"     APPLIED {best_name} ({best_delta:+.1f}) | rules {len(current.rules)}")
+            print(f"     APPLIED {best_name} ({best_delta:+.{precision}f}) | rules {len(current.rules)}")
 
         for sig in dict.fromkeys(newly_failed):
             self.fail(sig)
         return current, cur_train, applied
 
     def validate_and_save(self, original, orig_train, orig_val, current, cur_train, applied):
-        metric = "avg_score_sds" if self.sds_primary else "avg_score"
-        final_val = {s: self.evl(current, *self.val_sets[s]) for s in VAL_SEEDS}
-        train_gain = cur_train[metric] - orig_train[metric]
-        print(f"\n   VALIDATION ({metric}): train {train_gain:+.1f}", end="")
+        metric = self.metric
+        tol = val_tolerance(metric)
+        final_val = {s: self.evl(current, *self.val_sets[s]) for s in self.val_seeds}
+        train_gain = metric_gain(orig_train[metric], cur_train[metric], metric)
+        print(f"\n   VALIDATION ({metric}): train {train_gain:+.3f}", end="")
         val_ok = True
-        for s in VAL_SEEDS:
-            d = final_val[s][metric] - orig_val[s][metric]
-            val_ok = val_ok and d > -5
-            print(f" | val{s} {d:+.1f}", end="")
+        val_deltas = []
+        for s in self.val_seeds:
+            d = metric_gain(orig_val[s][metric], final_val[s][metric], metric)
+            val_ok = val_ok and d > -tol
+            val_deltas.append(d)
+            print(f" | val{s} {d:+.3f}", end="")
         print()
+
+        # The gate above is one-sided: it rejects a clear regression but
+        # accepts anything neutral, including a no-op. Say so explicitly when
+        # the gain is smaller than the screening can resolve, otherwise a
+        # noise-level round looks identical to a validated one in the log.
+        mde = min_detectable_effect(len(self.val_seeds), metric)
+        mean_val = sum(val_deltas) / len(val_deltas)
+        if mean_val < mde:
+            if mde == float("inf"):
+                print(f"   NOTE: mean validation gain {mean_val:+.3f} — no noise "
+                      f"calibration for metric '{metric}', resolvability unknown.")
+            else:
+                print(f"   WARNING: mean validation gain {mean_val:+.3f} is below "
+                      f"the resolution of {len(self.val_seeds)} deal set(s) "
+                      f"(~+/-{mde:.3f} at 95%). Not distinguishable from "
+                      f"resampling noise — treat this round as unproven, not "
+                      f"as an improvement. More --val-seeds buys resolution; "
+                      f"see research/status.md S6.16.")
 
         sds_delta = None
         if self.sds_scorer is not None:
@@ -536,15 +754,16 @@ class Flywheel:
 
         if applied and train_gain > 0 and val_ok:
             v = self.state["version"]
+            stem = os.path.splitext(os.path.basename(self.target))[0]
             os.makedirs(HISTORY_DIR, exist_ok=True)
-            shutil.copy(TARGET, os.path.join(HISTORY_DIR, f"improved_system_v{v}.dsl"))
+            shutil.copy(self.target, os.path.join(HISTORY_DIR, f"{stem}_v{v}.dsl"))
             self.state["version"] = v + 1
             n_expired = expire_failed(self.state)
-            current.name = f"ImprovedSystem_v{self.state['version']}"
-            current.save_dsl(TARGET)
+            current.name = f"{stem}_v{self.state['version']}"
+            current.save_dsl(self.target)
             self.state["applied"].extend(applied)
             self._save_state()
-            print(f"   SAVED v{self.state['version']} -> {TARGET} (archived v{v})"
+            print(f"   SAVED v{self.state['version']} -> {self.target} (archived v{v})"
                   + (f", expired {n_expired} stale failure sigs" if n_expired else ""))
             return True
         print("   NOT SAVED (validation failed or no patches)")
@@ -561,6 +780,42 @@ def main():
     parser.add_argument("--sds", action="store_true", help="Gate saves on SDS two-hand score")
     parser.add_argument("--sds-primary", action="store_true",
                         help="Hill-climb directly on the SDS two-hand objective")
+    parser.add_argument("--metric", default="avg_score",
+                        choices=["avg_score", "mean_imp_loss"],
+                        help="Objective to hill-climb. mean_imp_loss is IMP-capped "
+                             "(24 max) so one slam disaster cannot decide a round; "
+                             "avg_score is raw points/board (historical default)")
+    parser.add_argument("--panel", action="store_true",
+                        help="Score against a fixed heterogeneous opponent panel "
+                             "instead of a copy of the evolving system, so the loop "
+                             "cannot converge to a self-play fixed point")
+    parser.add_argument("--id3", action="store_true",
+                        help="EXPERIMENTAL — measured net-negative so far. Add the BIDI "
+                             "speedup-learning family: PIDM labels ambiguous states, ID3 "
+                             "finds the discriminating split, and the tree is compiled to "
+                             "rules. Measured net-negative at 96 deals (§6.14): "
+                        "kept for the persistence fixes, not for the gain")
+    parser.add_argument("--jobs", type=int, default=1,
+                        help="Score the deal set across N processes (boards are "
+                             "independent). Near-linear speedup; use it to afford a "
+                             "deal budget large enough for the deltas to be real")
+    parser.add_argument("--id3-states", type=int, default=60,
+                        help="How many ambiguous states to label with PIDM for the "
+                             "ID3 family (default 60). More states = less "
+                             "data-starved trees, at ~0.5s each")
+    parser.add_argument("--val-seeds", default=",".join(str(s) for s in VAL_SEEDS),
+                        help="Comma-separated validation deal seeds. Two sets "
+                             "resolve only ~0.58 IMP/board (§6.16); add more to "
+                             "buy resolution — cost is linear in the count")
+    parser.add_argument("--state", default=STATE_PATH,
+                        help="Patch-state file. Point this elsewhere to "
+                             "experiment without bumping the real version "
+                             "counter or archiving into system/history/")
+    parser.add_argument("--target", default=TARGET,
+                        help="DSL to improve and write back (default improved_system.dsl). "
+                             "Point this at the strongest known system — e.g. "
+                             "system/champion_system.dsl — since local patches cannot "
+                             "close a large structural gap on their own")
     args = parser.parse_args()
 
     t0 = time.time()
@@ -572,10 +827,40 @@ def main():
         sds_scorer = SDSScorer(num_worlds=20, seed=2024)
         mode = "SDS-primary hill-climb" if args.sds_primary else "SDS save-gate"
         print(f"{mode} enabled")
-    fw = Flywheel(BiddingArena(engine=engine), args.deals, args.pool_cap,
-                  sds_scorer=sds_scorer, sds_primary=args.sds_primary)
+    try:
+        val_seeds = tuple(int(s) for s in args.val_seeds.split(",") if s.strip())
+    except ValueError:
+        parser.error("--val-seeds must be comma-separated integers")
+    if not val_seeds:
+        parser.error("--val-seeds needs at least one seed")
 
-    original = load_decision_net_dsl(TARGET)
+    fw = Flywheel(BiddingArena(engine=engine), args.deals, args.pool_cap,
+                  sds_scorer=sds_scorer, sds_primary=args.sds_primary,
+                  metric=args.metric, panel=args.panel, target=args.target,
+                  id3=args.id3, jobs=args.jobs, val_seeds=val_seeds,
+                  state_path=args.state)
+    if args.panel:
+        print(f"opponent panel: {', '.join(n for n, _ in fw.panel)} "
+              f"(frozen, not the evolving system)")
+    print(f"objective: {fw.metric}")
+
+    # Say up front what this budget can actually see. Without this, a run at
+    # the 48-deal default looks exactly like a well-powered one.
+    res = resolution_of(args.deals, fw.metric)
+    if res == float("inf"):
+        print(f"resolution: uncalibrated for '{fw.metric}' — treat deltas as "
+              f"unverifiable")
+    else:
+        print(f"resolution: {args.deals} boards resolve ~{res:.2f} "
+              f"(IMP/board at 95%); {len(val_seeds)} val set(s) resolve "
+              f"~{min_detectable_effect(len(val_seeds), fw.metric):.2f} on "
+              f"generalisation")
+        if res > 0.5:
+            print(f"  !! a {res:.2f} IMP/board resolution cannot see the "
+                  f"~0.28 IMP/board gap measured in §6.18 — raise --deals "
+                  f"(~750 boards resolves 0.29)")
+
+    original = load_decision_net_dsl(fw.target)
     orig_train = fw.evl(original, fw.train_deals, fw.dd_train)
     orig_val = {s: fw.evl(original, *fw.val_sets[s]) for s in VAL_SEEDS}
     print(f"Start: train {orig_train['avg_score']:+.1f} | "

@@ -248,6 +248,36 @@ class DecisionNet:
             new_net.intersection_nodes[k] = node
         return new_net
 
+    @staticmethod
+    def export_tree_lines(node, indent: int = 4) -> List[str]:
+        """Serialise an ID3 tree as an indented SPLIT/LEAF block.
+
+        `SPLIT <feature> <= <threshold>` is followed by its two children at
+        indent + 2, left (<= threshold) first.  A missing child is emitted as a
+        LEAF carrying the parent's majority prediction, which mirrors
+        ID3Node.predict's fallback and keeps the block balanced so parsers
+        never have to handle a null branch.
+        """
+        if node is None:
+            return []
+        pad = " " * indent
+        if getattr(node, "is_leaf", False):
+            return [f"{pad}LEAF {node.prediction}"]
+        # `fallback` is the node's majority prediction.  ID3Node.predict returns
+        # it when the split feature is absent at inference time (e.g. the
+        # feature set changed since the tree was fitted); without it a parser
+        # has to guess a direction and the JS port would diverge from Python.
+        split = f"{pad}SPLIT {node.feature_name} <= {node.threshold}"
+        if getattr(node, "prediction", None) is not None:
+            split += f" fallback {node.prediction}"
+        out = [split]
+        for child in (node.left_child, node.right_child):
+            if child is not None:
+                out.extend(DecisionNet.export_tree_lines(child, indent + 2))
+            else:
+                out.append(f"{' ' * (indent + 2)}LEAF {node.prediction}")
+        return out
+
     def export_dsl(self) -> str:
         """Exports the current refined DecisionNet rules and attached ID3 exception trees to DSL code."""
         lines = [
@@ -291,12 +321,10 @@ class DecisionNet:
                         if root.is_leaf:
                             lines.append(f"  RESOLVED_CALL: {root.prediction}")
                         else:
-                            lines.append(f"  SPLIT_FEATURE: {root.feature_name}")
-                            lines.append(f"  THRESHOLD: {root.threshold}")
-                            if root.left_child and root.left_child.prediction:
-                                lines.append(f"    IF <= {root.threshold} -> {root.left_child.prediction}")
-                            if root.right_child and root.right_child.prediction:
-                                lines.append(f"    IF >  {root.threshold} -> {root.right_child.prediction}")
+                            # Full tree, not the old depth-1 SPLIT_FEATURE sketch
+                            # that no loader ever read back.
+                            lines.append("  TREE:")
+                            lines.extend(self.export_tree_lines(root, 4))
 
         return "\n".join(lines) + "\n"
 

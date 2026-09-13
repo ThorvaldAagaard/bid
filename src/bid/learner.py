@@ -2,7 +2,7 @@ from typing import List, Dict, Tuple, Optional, Any, Set
 import math
 from bid.models import Hand, Call, CallType, Seat
 from bid.features import BridgeFeatures
-from bid.decision_net import DecisionNet
+from bid.decision_net import DecisionNet, DecisionNetRule, RuleCondition
 from bid.sampling import Deal, PartialState
 from bid.pidm import PIDMEngine
 
@@ -169,6 +169,72 @@ class ID3DecisionTree:
         if self.root is None:
             return Call(CallType.PASS)
         return self.root.predict(features)
+
+def id3_leaf_paths(tree: "ID3DecisionTree") -> List[Tuple[List[RuleCondition], Optional[Call]]]:
+    """Every root-to-leaf path of a fitted ID3 tree, as (conditions, call)."""
+    paths: List[Tuple[List[RuleCondition], Optional[Call]]] = []
+
+    def walk(node, conds):
+        if node is None:
+            return
+        if node.is_leaf:
+            paths.append((list(conds), node.prediction))
+            return
+        walk(node.left_child,
+             conds + [RuleCondition(node.feature_name, "<=", node.threshold)])
+        walk(node.right_child,
+             conds + [RuleCondition(node.feature_name, ">", node.threshold)])
+
+    if tree is not None and tree.root is not None:
+        walk(tree.root, [])
+    return paths
+
+
+def id3_tree_to_rules(tree: "ID3DecisionTree",
+                      intersection_rules: List[DecisionNetRule],
+                      base_id: str,
+                      base_priority: int = 10,
+                      description: str = "") -> List[DecisionNetRule]:
+    """Compile a fitted ID3 tree into ordinary DecisionNetRules.
+
+    Why compile instead of attaching: `DecisionNet.export_dsl` writes only a
+    depth-1 sketch of an attached classifier (SPLIT_FEATURE / THRESHOLD / IF)
+    and `load_decision_net_dsl` reads only `RESOLVED_CALL`, so an attached ID3
+    tree is silently dropped by every save -> load cycle.  Emitting plain rules
+    round-trips for free, needs no new DSL syntax (so the hand-ported browser
+    engine stays in sync), makes the learned split visible in the review UI,
+    and lets the flywheel's tighten/loosen operators tune it afterwards.
+
+    Each leaf path becomes one rule whose conditions are
+
+        all conditions of every rule in the intersection
+        + the feature thresholds along that path
+
+    ANDing the intersection's own conditions is what keeps the rule honest.
+    The tree was trained only on states where every one of those rules matched,
+    so without that guard the split would also fire in auctions it never saw —
+    an opening-position split would start overriding competitive auctions.
+    """
+    guard: List[RuleCondition] = []
+    for r in intersection_rules:
+        for c in r.conditions:
+            if all((c.key, c.op, str(c.value)) != (g.key, g.op, str(g.value))
+                   for g in guard):
+                guard.append(RuleCondition(c.key, c.op, c.value))
+
+    tag = "^".join(sorted(r.rule_id for r in intersection_rules))
+    out: List[DecisionNetRule] = []
+    for i, (path_conds, call) in enumerate(id3_leaf_paths(tree)):
+        if call is None:
+            continue
+        conds = ([RuleCondition(c.key, c.op, c.value) for c in guard]
+                 + [RuleCondition(c.key, c.op, c.value) for c in path_conds])
+        out.append(DecisionNetRule(
+            f"{base_id}_P{i}", call, conds,
+            description=description or f"ID3 refinement of {tag}",
+            priority=base_priority))
+    return out
+
 
 class DecisionNetLearner:
     """

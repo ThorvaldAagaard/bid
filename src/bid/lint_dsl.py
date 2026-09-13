@@ -125,6 +125,21 @@ def lint_rules(rules: List[RuleView]) -> Tuple[List[str], List[str]]:
             warnings.append(f"rule id reused with different bodies: {rid} "
                             f"({len(group)} variants)")
 
+    # 2b. same id, same guard and call, opposite polarity.  One variant adds
+    # the call the other forbids, so the net behaviour depends on evaluation
+    # order. This is categorically a defect, not a variant family — it is what
+    # a patch that re-emits an existing rule_id without carrying NEGATIVE
+    # forward produces. Warnings do not fail the lint, so it must be an issue.
+    for rid, group in sorted(by_id.items()):
+        polarities = {}
+        for r in group:
+            key = (str(r.call), r.cond_set)
+            polarities.setdefault(key, set()).add(r.is_negative)
+        for (call, _guard), pols in sorted(polarities.items(), key=lambda kv: kv[0][0]):
+            if len(pols) > 1:
+                issues.append(f"polarity conflict on {rid}: same guard and call "
+                              f"({call}) declared both NEGATIVE and positive")
+
     # 3. contradicted conditions inside one rule
     for r in rules:
         by_key = {}

@@ -41,8 +41,13 @@ CONVENTIONS_DIR = os.path.join(SYSTEM_DIR, "conventions")
 # name -> (relative path, engine, display label).  'net' files are parsed by
 # eval_vs_dds.load_decision_net_dsl, 'legacy' files by translator/SystemTranslator.
 REVIEW_SYSTEMS = {
-    "improved": ("system/improved_system.dsl", "net", "Improved (current teacher)"),
-    "champion": ("system/champion_system.dsl", "net", "Champion (auto-evolved)"),
+    # Labels corrected 2026-09-12. champion_system.dsl is HAND-AUTHORISED (90
+    # SUP_* rules), not the output of any loop — calling it "auto-evolved"
+    # repeated the false claim already corrected in §6.15. And improved_system
+    # is not "the current teacher" in any sense that implies it is the best
+    # system: §6.30 measures it losing to SAYC by 37.7 pts/board head-to-head.
+    "improved": ("system/improved_system.dsl", "net", "Improved (flywheel output)"),
+    "champion": ("system/champion_system.dsl", "net", "Champion (hand-authored)"),
     "precision": ("system/precision.dsl", "legacy", "Precision Big Club"),
     "blue_club": ("system/blue_club.dsl", "legacy", "Italian Blue Club"),
     "gib": ("system/gib.dsl", "legacy", "GIB"),

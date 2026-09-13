@@ -43,6 +43,29 @@ RULE R_SHADOWED:
   CONDITION: hcp >= 16
   CONDITION: diamond_len >= 6
   CONDITION: spade_len >= 2
+
+RULE R_POLARITY:
+  CALL: 2H
+  PRIORITY: 20
+  NEGATIVE: True
+  CONDITION: heart_len >= 5
+
+RULE R_POLARITY:
+  CALL: 2H
+  PRIORITY: 20
+  CONDITION: heart_len >= 5
+
+RULE R_FAMILY:
+  CALL: 3C
+  PRIORITY: 10
+  NEGATIVE: True
+  CONDITION: club_len >= 6
+
+RULE R_FAMILY:
+  CALL: 3C
+  PRIORITY: 10
+  NEGATIVE: True
+  CONDITION: club_len >= 7
 """
 
 
@@ -64,6 +87,31 @@ class TestLintDetection(unittest.TestCase):
 
     def test_clean_rule_not_flagged(self):
         self.assertFalse(any("R_GOOD" in i for i in self.issues))
+
+    def test_detects_polarity_conflict(self):
+        """Same id/guard/call declared both NEGATIVE and positive.
+
+        This is a hard defect, not a variant family: one rule vetoes the call
+        the other adds. It is what a patch re-emitting an existing rule_id
+        without carrying NEGATIVE forward produces.
+        """
+        self.assertTrue(any("R_POLARITY" in i and "polarity conflict" in i
+                            for i in self.issues))
+
+    def test_polarity_conflict_is_an_issue_not_a_warning(self):
+        """Warnings do not fail the lint, so this must land in issues."""
+        self.assertFalse(any("polarity conflict" in w for w in self.warnings))
+
+    def test_negative_variant_family_stays_a_warning(self):
+        """Same id, distinct guards, same polarity: a legitimate family.
+
+        Guards that catch this must not over-fire, or every hand-written
+        negative-rule family becomes unlintable.
+        """
+        self.assertTrue(any("R_FAMILY" in w and "reused" in w
+                            for w in self.warnings))
+        self.assertFalse(any("R_FAMILY" in i and "polarity conflict" in i
+                             for i in self.issues))
 
 
 class TestLiveSystemsAreClean(unittest.TestCase):

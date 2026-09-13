@@ -7,6 +7,130 @@ from bid.system import Rule, BiddingSystem
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
+
+class LegacyTrigger:
+    """Auction-history trigger for legacy-dialect rules, as a picklable object.
+
+    This used to be a closure defined inside
+    ``SystemTranslator._add_rule_from_data``.  A nested function cannot be
+    pickled by reference, so any ``BiddingSystem`` built from a legacy DSL
+    (``system/gib.dsl``, ``precision.dsl``, ``blue_club.dsl``) raised
+
+        AttributeError: Can't get local object
+        'SystemTranslator._add_rule_from_data.<locals>.trigger'
+
+    as soon as it was sent to a ``spawn`` worker — which is what
+    ``evaluate_system(jobs>1)`` must use (see §6.34).  That silently confined
+    every legacy system to single-process evaluation.
+
+    The behaviour is identical; only the captured state moved from the closure
+    cell to instance attributes.  ``Rule`` only ever calls ``trigger(history)``,
+    so a callable object is a drop-in replacement.
+    """
+
+    __slots__ = ("trig_type", "steps", "passed_hand", "partner_passed_hand",
+                 "opener_seats")
+
+    def __init__(self, trig_type, steps, passed_hand, partner_passed_hand,
+                 opener_seats):
+        self.trig_type = trig_type
+        self.steps = steps
+        self.passed_hand = passed_hand
+        self.partner_passed_hand = partner_passed_hand
+        self.opener_seats = opener_seats
+
+    def __call__(self, history: List[Call]) -> bool:
+        passed_hand = self.passed_hand
+        partner_passed_hand = self.partner_passed_hand
+        opener_seats = self.opener_seats
+        trig_type = self.trig_type
+        steps = self.steps
+
+        if passed_hand is not None:
+            if len(history) < 4:
+                is_passed = False
+            else:
+                first_turn_idx = len(history) % 4
+                is_passed = (history[first_turn_idx].type == CallType.PASS)
+            if is_passed != passed_hand:
+                return False
+
+        if partner_passed_hand is not None:
+            partner_seat = (len(history) + 2) % 4
+            if len(history) <= partner_seat:
+                is_partner_passed = False
+            else:
+                is_partner_passed = (history[partner_seat].type == CallType.PASS)
+            if is_partner_passed != partner_passed_hand:
+                return False
+
+        if opener_seats is not None:
+            first_bid_idx = -1
+            for idx, c in enumerate(history):
+                if c.type == CallType.BID:
+                    first_bid_idx = idx
+                    break
+            if first_bid_idx not in opener_seats:
+                return False
+
+        if trig_type == 'OPEN':
+            return len(history) == 0 or (len(history) < 4 and all(c.type == CallType.PASS for c in history))
+
+        if trig_type == 'SEQUENCE':
+            if not history and not steps:
+                return True
+            if not history:
+                return False
+
+            hist_idx = len(history) - 1
+            step_idx = len(steps) - 1
+
+            while step_idx >= 0:
+                if hist_idx < 0:
+                    return False
+
+                call_target, is_direct = steps[step_idx]
+
+                if is_direct:
+                    # Direct mode: No intervening pass allowed
+                    if history[hist_idx] != call_target:
+                        return False
+                    hist_idx -= 1
+                else:
+                    # Standard mode: Typically implies Partner's bid + Opponent Pass
+                    pass_found = False
+
+                    # Consume passes
+                    while hist_idx >= 0 and history[hist_idx].type == CallType.PASS:
+                        pass_found = True
+                        hist_idx -= 1
+
+                    # Standard Rules require matching at least one pass if history implies response
+                    # BUT for uncontested response, we MUST have a pass.
+                    if not pass_found:
+                        return False
+
+                    if hist_idx < 0:
+                        return False
+
+                    if history[hist_idx] != call_target:
+                        return False
+
+                    hist_idx -= 1
+
+                step_idx -= 1
+
+            # Strict Match Check: Ensure no remaining non-pass calls in history
+            while hist_idx >= 0:
+                if history[hist_idx].type != CallType.PASS:
+                    return False
+                hist_idx -= 1
+
+            return True
+
+        return False
+
+
 class SystemTranslator:
     def __init__(self):
         print("DEBUG: SystemTranslator Moving Steps Logic Outside")
@@ -262,91 +386,10 @@ class SystemTranslator:
             # DEBUG
             # print(f"DEBUG TRANS: Rule {data['bid']} Steps={[(str(c), d) for c,d in steps]} Shape={data['shape']}")
         
-        def trigger(history: List[Call]) -> bool:
-            if passed_hand is not None:
-                if len(history) < 4:
-                    is_passed = False
-                else:
-                    first_turn_idx = len(history) % 4
-                    is_passed = (history[first_turn_idx].type == CallType.PASS)
-                if is_passed != passed_hand:
-                    return False
+        # Picklable callable object instead of a closure — see LegacyTrigger.
+        trigger = LegacyTrigger(trig_type, steps, passed_hand,
+                                partner_passed_hand, opener_seats)
 
-            if partner_passed_hand is not None:
-                partner_seat = (len(history) + 2) % 4
-                if len(history) <= partner_seat:
-                    is_partner_passed = False
-                else:
-                    is_partner_passed = (history[partner_seat].type == CallType.PASS)
-                if is_partner_passed != partner_passed_hand:
-                    return False
-
-            if opener_seats is not None:
-                first_bid_idx = -1
-                for idx, c in enumerate(history):
-                    if c.type == CallType.BID:
-                        first_bid_idx = idx
-                        break
-                if first_bid_idx not in opener_seats:
-                    return False
-
-            if trig_type == 'OPEN':
-                return len(history) == 0 or (len(history) < 4 and all(c.type == CallType.PASS for c in history))
-            
-            if trig_type == 'SEQUENCE':
-                if not history and not steps:
-                    return True
-                if not history:
-                    return False
-                
-                hist_idx = len(history) - 1
-                step_idx = len(steps) - 1
-                
-                while step_idx >= 0:
-                    if hist_idx < 0:
-                        return False
-                    
-                    call_target, is_direct = steps[step_idx]
-                    
-                    if is_direct:
-                        # Direct mode: No intervening pass allowed
-                        if history[hist_idx] != call_target:
-                            return False
-                        hist_idx -= 1
-                    else:
-                        # Standard mode: Typically implies Partner's bid + Opponent Pass
-                        pass_found = False
-                        
-                        # Consume passes
-                        while hist_idx >= 0 and history[hist_idx].type == CallType.PASS:
-                            pass_found = True
-                            hist_idx -= 1
-                        
-                        # Standard Rules require matching at least one pass if history implies response
-                        # BUT for uncontested response, we MUST have a pass.
-                        if not pass_found:
-                            return False
-                            
-                        if hist_idx < 0:
-                            return False
-                        
-                        if history[hist_idx] != call_target:
-                            return False
-                        
-                        hist_idx -= 1
-                    
-                    step_idx -= 1
-                
-                # Strict Match Check: Ensure no remaining non-pass calls in history
-                while hist_idx >= 0:
-                    if history[hist_idx].type != CallType.PASS:
-                        return False
-                    hist_idx -= 1
-
-                return True
-
-            return False 
-            
         prio = data.get('priority', 10)
         prio += data.get('priority_bonus', 0)
         

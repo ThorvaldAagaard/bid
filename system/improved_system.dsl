@@ -380,22 +380,10 @@ RULE NO_C_WITH_MAJOR_SPA:
   CONDITION: is_opening == True
   CONDITION: spade_len >= 5
 
-RULE NO_C_WITH_MAJOR_SPA:
-  CALL: 1C
-  PRIORITY: 30
-  CONDITION: is_opening == True
-  CONDITION: spade_len >= 5
-
 RULE NO_D_WITH_MAJOR_HEA:
   CALL: 1D
   PRIORITY: 30
   NEGATIVE: True
-  CONDITION: is_opening == True
-  CONDITION: heart_len >= 5
-
-RULE NO_D_WITH_MAJOR_HEA:
-  CALL: 1D
-  PRIORITY: 30
   CONDITION: is_opening == True
   CONDITION: heart_len >= 5
 
@@ -561,13 +549,6 @@ RULE FW_NO_2_TRUMP_RAISE:
   CALL: 2H
   PRIORITY: 24
   NEGATIVE: True
-  CONDITION: partner_last_bid_strain == H
-  CONDITION: support_in_partner_suit <= 2
-  CONDITION: hcp <= 10
-
-RULE FW_NO_2_TRUMP_RAISE:
-  CALL: 2H
-  PRIORITY: 24
   CONDITION: partner_last_bid_strain == H
   CONDITION: support_in_partner_suit <= 2
   CONDITION: hcp <= 10
