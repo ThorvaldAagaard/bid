@@ -148,6 +148,11 @@ class Tokenizer:
         return s
 
 
+# System DSLs that are captured references rather than pipeline systems; their
+# rule ids are deliberately kept out of the frozen CoT vocabulary.
+_VOCAB_EXCLUDED_DSL = frozenset({"brill.dsl"})
+
+
 def build_frozen_vocab(repo_root: Optional[str] = None) -> Dict[str, int]:
     """Compiles the static canonical vocabulary of all semantic atoms."""
     if repo_root is None:
@@ -171,6 +176,12 @@ def build_frozen_vocab(repo_root: Optional[str] = None) -> Dict[str, int]:
     rules = set()
     dsl_files = glob.glob(os.path.join(repo_root, "system", "*.dsl")) + \
                 glob.glob(os.path.join(repo_root, "system", "history", "*.dsl"))
+    # Captured reference systems live in system/ but are not traced by the
+    # pipeline, so their rule ids must not enter the frozen vocabulary:
+    # brill.dsl alone carries 1,830 rule ids, which would quadruple the vocab
+    # (404 -> 2234) with atoms no trace will ever contain.
+    dsl_files = [f for f in dsl_files
+                 if os.path.basename(f) not in _VOCAB_EXCLUDED_DSL]
     for f in dsl_files:
         try:
             with open(f) as fh:

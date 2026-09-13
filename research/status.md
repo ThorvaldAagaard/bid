@@ -1805,6 +1805,49 @@ currently absent. Ordering is unchanged — §6.31 and §6.38 still put **game
 accuracy first** (total prize −1,699 vs −844 IMP) — but slam is now a specific
 missing component rather than a vague one.
 
+### 6.40 The converted Brill system is mid-pack, and fails exactly where the conversion was lossy
+
+`system/brill.dsl` (1,830 rules) was generated from `system/brill.md` by
+`research/brill_to_dsl.py`. Scored the same way as everything else — 400
+boards, seed 1, `--metric mean_imp_diff`, vs native DD par (no panel):
+
+| # | System | Avg NS | Regret | IMP Loss/Bd | Par Acc | Game Conv |
+|---|---|---|---|---|---|---|
+| 1 | 2/1 + conventions | +82.5 | +72.4 | 2.99 | 61.1 % | 26.2 % |
+| 5 | champion_system.dsl | +1.5 | −8.7 | 3.50 | 55.4 % | 41.0 % |
+| 8 | **brill.dsl** | **−2.1** | **−12.3** | **3.86** | 53.7 % | **1.6 %** |
+| 12 | improved_system.dsl | −14.0 | −24.2 | 4.04 | 52.0 % | 26.2 % |
+
+**It underbids, structurally.** Game conversion is 1.6 % against a deal set
+with 122 makable NS games; champion reaches 41.0 %. Par Accuracy (53.7 %) is
+middling, not catastrophic — brill.dsl is not bidding wild contracts, it is
+stopping too low. That is precisely the failure mode the conversion predicts:
+every clause Brill gated on an untranslatable atom was DROPPED, never
+relaxed, so what survives is the constructive/partscore layer with the game
+and slam layers removed.
+
+**It is still better than the pipeline's own default.** −2.1 vs −14.0 for
+`improved_system.dsl`, which §6.32 shows is what `TARGET` points at. A
+first-pass automatic conversion of a published system beats 28 rounds of
+flywheel output. Worth sitting with.
+
+**A caution about n.** A 24-board run put brill.dsl **2nd of 12** with the
+best Par Accuracy (53.3 %) and the lowest IMP loss (4.27). At 400 boards that
+reversed completely — 8th, with the worst game conversion in the field. The
+24-board number was noise; recorded, it would have been a false result. This
+is the same trap as §6.13, in a new place.
+
+**Consequence for §6.39.** Brill is not the slam donor it first appeared to
+be. Its slam apparatus (RKC0314, Grand Slam Force) is expressed as
+engine-internal verdicts — `CanBid6_*`, `CanAsk_*_RKC` — that Brill never
+publishes, so none of it survives translation. The one component the champion
+most needs is the one component Brill will not give up. Any slam work has to
+be authored here, not imported.
+
+**If brill.dsl is ever used as an opponent**, exclude it from the systems
+being ranked — otherwise it is scored against itself, which is the
+self-play mirror §6.34 exists to break.
+
 ## 7. Roadmap (prioritized)
 
 0. ~~Autonomous staged loop~~ — DONE (§6.5); run with `PYTHONPATH=.. python3 autoloop.py --tiers 24,96 --progress-secs 300`.
