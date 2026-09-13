@@ -2147,6 +2147,61 @@ The 6- and 7-level positions are excluded from the fit: there the double
 sits at priority −900, i.e. it is a fallback rather than a winner, so
 "X iff penalty" does not hold.
 
+### 6.46 The misses split three ways, and only one of them is the wall
+
+§6.44 attributes misses to dropped clauses. That is only part of it. Taking
+all 750 misses and asking what actually went wrong:
+
+| class | n | % of misses | reachable? |
+|---|---|---|---|
+| blocked only by Brill verdicts | 429 | 57 % | no — §6.45 |
+| rule *was* emitted, but did not fire | 239 | 32 % | **yes, probably** |
+| blocked by a mix incl. non-verdict atoms | 65 | 9 % | partly |
+| no rule emitted at all | 17 | 2 % | yes (redoubles at 6X-X) |
+
+The middle class is the interesting one and §6.44 is blind to it. Those
+rules translated — brill.dsl contains them — they just do not fire on hands
+where Brill's version does, which means the translation is **stricter than
+the original**. Dropping clauses cannot do that; only a wrong translation
+can.
+
+Two thirds of that class (158 of 239, 6.3 % of all comparisons) contain an
+atom the converter marks APPROXIMATE — `X_points`, `losers`, `balish`,
+`stopper`, `quicktricks`. Those are the prime suspects.
+
+**`X_points -> X_hcp` is provably wrong.** At `1C-2N`, the 3C rule is
+`C >= 4 and C_points >= 7 and C_points <= 11`; Brill bids 3C on
+`J3.T4.J765.AQT96`, whose clubs are worth 6 HCP. `club_hcp >= 7` is false,
+and brill.dsl duly passes.
+
+**What it might be.** `1H-1N` gives a clean read, because 4H there is top
+priority and gated on `H_points >= 11 and H >= 4`. Sweeping heart length
+against heart HCP (20 hands):
+
+| heart length | 4 | 5 | 6 | 7 |
+|---|---|---|---|---|
+| min HCP that bids 4H | never (≤10 tested) | 9 | 7 | 6 |
+
+That is exactly `H_points = suit_hcp + 2 × (suit_len − 4)` — 20/20 hands
+fit, including all the near-misses. But it contradicts the `C_points` case
+above, where `QJ82` (4 clubs, 3 HCP) would give 3 and cannot reach 7, yet
+Brill bids 3C. **Unresolved.**
+
+The reason it is unresolved, and the caveat for anyone using this harness:
+**`/bid`'s `requires` is an explanation hint, not a verified firing
+condition.** The very first probe returned `requires: H >= 6` for a hand
+with three hearts. It is usually right — the 1H-1N sweep is far too
+monotone to be noise — but it cannot be treated as ground truth, which is
+why the two `X_points` readings disagree.
+
+So `X_points` has deliberately **not** been changed. The mapping that fits
+the good data, `suit_hcp + 2*(len-4)`, is *more permissive* than
+`suit_hcp`, so adopting it on contested evidence would relax the system —
+the one failure mode this project refuses. The next step is to settle it
+with `/bid?details=true`, whose `analysis` array names the winning rule and
+its requires explicitly, which removes the ambiguity the top-level field
+has.
+
 ## 7. Roadmap (prioritized)
 
 0. ~~Autonomous staged loop~~ — DONE (§6.5); run with `PYTHONPATH=.. python3 autoloop.py --tiers 24,96 --progress-secs 300`.
