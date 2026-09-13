@@ -2103,6 +2103,50 @@ Brill's decisions over the whole hand space. It is not board-level playing
 strength, which is what §6.40 measures (brill.dsl finishing 8/12). A position
 like `4C-4S` is probed with hands that would never reach it in real play.
 
+### 6.45 `penalty` is the biggest blocker, and it cannot be fitted either
+
+`penalty` is 7 % of all comparisons — more than any other atom — and it gates
+the doubles that dominate the most-missed list. It was also the one blocker
+that looked like it might be a *hand* feature rather than a deal verdict,
+because a penalty double is classically a trump-stack decision: length and
+strength in their suit.
+
+At 28 positions Brill offers exactly two options — a double gated solely on
+`penalty` at priority 90, and a pass below it — so Brill bids X **iff**
+`penalty` is true. That gives clean labels from `/bid` with no inference.
+`research/brill_fit_penalty.py` collected 1,120 of them (28 positions x 40
+random hands, levels 2–5, 24 % positive) and fitted a decision tree over
+hand features plus trump-suit-relative ones.
+
+| depth | held-out AUC | precision @ recall ~0.6 | best high-precision point |
+|---|---|---|---|
+| 3 | 0.93 | 0.61 | 0.70 @ 0.49 |
+| 4 | 0.93 | 0.61 | 0.86 @ 0.27 |
+| 5 | 0.91 | 0.64 | 0.75 @ 0.46 |
+| 6 | 0.90 | 0.63 | 0.75 @ 0.42 |
+
+The ranking is good; the decision rule is not. Both ends of the trade-off
+are bad: **at usable recall the rule adds one wrong double for every two
+right ones, and reaching 0.86 precision means giving up three quarters of
+the doubles.** The residual is not noise — whether a penalty double is right
+genuinely depends on partner's hand and on how the play goes, so it is not
+recoverable from our thirteen cards.
+
+So `penalty` is left untranslated. Encoding a 0.6-precision rule would
+*relax* brill.dsl, which is exactly what "drop a clause, never relax one"
+exists to prevent.
+
+The broader consequence matters more than the atom itself: this is the first
+verdict anyone tried to fit, and it failed the same way the §6.44 evidence
+predicted — the `(GameEval)` annotations, the sampled hands. `cansacrifice`,
+`game` and `*_compgame` should be expected to behave identically. Treat the
+~72 % verdict wall as **structural**, and stop planning to climb it with
+hand features.
+
+The 6- and 7-level positions are excluded from the fit: there the double
+sits at priority −900, i.e. it is a fallback rather than a winner, so
+"X iff penalty" does not hold.
+
 ## 7. Roadmap (prioritized)
 
 0. ~~Autonomous staged loop~~ — DONE (§6.5); run with `PYTHONPATH=.. python3 autoloop.py --tiers 24,96 --progress-secs 300`.
