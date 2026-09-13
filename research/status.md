@@ -1888,6 +1888,52 @@ Note this also corrects the framing in §6.40: brill.dsl scores 0 rules for
 responding to 4NT not because Brill hides it, but because the sweep stopped
 one call short.
 
+### 6.42 How much of Brill is reachable, and what each fix would buy
+
+Measured by re-running the converter with each class of atom temporarily
+made translatable (`research/brill_to_dsl.py`, 3,515 rows):
+
+| Cumulative fix | Rules | Rows emitted | |
+|---|---|---|---|
+| baseline (today) | 1,830 | 1,256 | 35.7 % |
+| +A longest-suit | 1,975 | 1,334 | 38.0 % |
+| +B `ruleof21` | 2,020 | 1,361 | 38.7 % |
+| +C `singlesuited` | 2,048 | 1,381 | 39.3 % |
+| **+D suit quality** | **2,461** | **1,775** | **50.5 %** |
+| **+E `loserlevel`** | **3,052** | **2,001** | **56.9 %** |
+| +F auction-shape | 3,273 | 2,157 | 61.4 % |
+| +G sacrifice | 3,438 | 2,296 | 65.3 % |
+| +H cover/monster | 3,760 | 2,570 | 73.1 % |
+| +I `Fit()` | 3,764 | 2,570 | 73.1 % |
+| +K unclassified | 3,950 | 2,669 | **75.9 %** |
+| +J verdicts (the wall) | 5,055 | 3,486 | 99.2 % |
+
+So: **~76 % is reachable by adding features to `bid/features.py`.** The last
+~23 % is Brill's own computed verdicts — `game`, `slammish`, `CanBid6_*`,
+`CanAsk_*_RKC`, `*_compgame` — which are evaluator *outputs*, not hand
+tests. Recovering them means reimplementing Brill's evaluator, not adding
+features. `Fit()` buys nothing (+0); drop it from consideration.
+
+Rows blocked by exactly one class (i.e. what fixing it alone frees):
+verdicts 813, suit quality 367, cover/monster 215, loserlevel 176,
+auction-shape 159, sacrifice 106, longest-suit 67, unclassified 55,
+ruleof21 15, singlesuited 12.
+
+Two levers are outsized: **suit quality (+394 rows)** and **loserlevel
+(+226)**. Both need new features whose exact semantics Brill does not
+publish, so they would have to be inferred from usage and then validated —
+that is real work with a guessing step, not a mechanical addition.
+
+Separately from features, two other ceilings apply:
+
+- **Crawl depth.** Everything above is the 2-call sweep (384 auctions).
+  Depth 3 is ~22k auctions; the full engine has 1,037,464 rules, so
+  exhaustive capture is impossible regardless of features.
+- **Prose not yet used.** Part 1's responding/competing/slam sections
+  (Drury, New Minor Forcing, Fourth Suit Forcing, Texas, Gerber,
+  Cappelletti, Michaels, Unusual NT, negative doubles) are still
+  unencoded — only the openings were taken from prose (§6.40).
+
 ## 7. Roadmap (prioritized)
 
 0. ~~Autonomous staged loop~~ — DONE (§6.5); run with `PYTHONPATH=.. python3 autoloop.py --tiers 24,96 --progress-secs 300`.
