@@ -1932,6 +1932,13 @@ Two levers are outsized: **suit quality (+394 rows)** and **loserlevel
 publish, so they would have to be inferred from usage and then validated —
 that is real work with a guessing step, not a mechanical addition.
 
+> **Caveat.** The table ranks by ROW COUNT, not by how often a rule actually
+> decides a call. §6.44 re-weights it against Brill's own engine and the order
+> changes a lot: `penalty` alone is worth more than every longest-suit atom
+> put together, and longest-suit — nominally +78 rows here — turns out to
+> decide only 0.4 % of calls. Read this table as "how many rows become
+> translatable", not "how much the system improves".
+
 Separately from features, two other ceilings apply:
 
 - **Crawl depth.** Everything above is the 2-call sweep (349 auctions).
@@ -2012,6 +2019,89 @@ exists to prevent. **Not captured, deliberately.**
 316 positions found **zero** content changes — the only difference anywhere
 is a stray trailing backslash in one expression. The earlier "+23 new rows"
 was whitespace.
+
+### 6.44 Measured against Brill's own engine: 69.3 %, and the wall is higher than it looked
+
+Every check until now was indirect — does a rule parse, does a condition key
+exist, do eight hand-picked cases come out right. None of them said how often
+`brill.dsl` actually agrees with Brill. Brill's `/bid` endpoint does:
+
+```
+GET /bid?hand=AKQ2.J54.T98.762&ctx=1H-P&seat=S&dealer=N
+-> {"bid": "1S", "requires": "totalpoints >= 6 and spades >= 4
+    and (spadelongest or hcp < 12)", "means": "4+ spades, 5+ hcp"}
+```
+
+`research/brill_live_check.py` uses it to put the two side by side: for every
+captured position, take N random hands, ask Brill, ask `brill.dsl` through
+`DecisionNet.actions()`, and compare. Dealer is pinned at North, so the hand
+to act is N + (calls already made) — opener North, second seat East, third
+seat South, which is also what `auction_context()` assumes.
+
+**2,528 comparisons (316 positions x 8 random hands):**
+
+| | |
+|---|---|
+| exact top-1 | **69.3 %** |
+| in top 3 | 70.3 % |
+| anywhere in the candidate list | 70.3 % |
+| dsl silent | 0.0 % |
+
+Two things fall out of that. First, the DSL is never mute — it always offers
+*something*, it just offers the wrong thing. Second, top-1 and "anywhere" are
+within a point of each other: **when the DSL misses, Brill's call is not in
+its candidate list at all.** That is the fingerprint of dropped clauses, not
+of bad priority ordering, and it is direct confirmation that
+"drop a clause, never relax one" is doing what it claims.
+
+**Where the 30 % goes.** Attributing each miss to the atoms that block every
+disjunct of the winning `requires` (so this is weighted by how often a rule
+actually fires, unlike §6.42):
+
+```
+penalty          186      preemptgame()     76
+game             141      slammish          54
+cansacrifice()    95      *_compgame        86
+makessense        79      stoppersOK        24
+verdict-shaped: 72 % of all blocker occurrences (79 % counting makessense)
+```
+
+**So the wall is bigger than §6.42 measured.** §6.42 said ~23 % of rows are
+blocked by Brill's verdicts; by *impact* it is ~72–79 %. And `/bid`'s
+`analysis` field shows why it is structural, not merely undocumented: the
+engine annotates these answers `(GameEval)` and prints sampled hands
+alongside them — `cansacrifice` and the `*_compgame` family are evaluated
+against a *deal*, not against our hand. No hand feature can reproduce them.
+
+That reorders the work. §6.42's tiered list is row-count ranked and it
+misleads:
+
+- `penalty` — 7 % of all comparisons, the single biggest blocker, and it
+  gates the doubles that dominate the most-missed list. Not in §6.42's table
+  at all.
+- `cansacrifice()` — 3.6 %.
+- longest-suit (`clublongest` &c.) — nominally +78 rows, but 0.4 % by
+  impact. Not worth doing first.
+- `loserlevel` — +226 rows in §6.42, 1 blocker occurrence in 2,528.
+
+**Two semantics pinned empirically**, which `/bid` makes possible because the
+answer *is* the engine's verdict rather than a guess:
+
+- `clublongest` is **non-strict** — no other suit longer. A 4=3=2=4 hand with
+  13 HCP opens 1C, so clubs merely tying spades is enough. (This matters: the
+  strict reading would have been the "safe" guess and it would have been
+  wrong.)
+- `ruleof21` is `hcp + two longest suits >= 20`, despite the name. At 11 HCP,
+  5-4-3-1 (sum 20) opens 1S and 5-3-3-2 (sum 19) passes. One anomaly is
+  unresolved: 5-2-2-4 (sum 20) passes, so either the formula has a term I
+  have not found or another rule is overriding — do not encode it until that
+  is resolved.
+
+**What this does and does not measure.** The hands are uniformly random, so
+this is *rule-logic fidelity* — how completely the conversion reproduces
+Brill's decisions over the whole hand space. It is not board-level playing
+strength, which is what §6.40 measures (brill.dsl finishing 8/12). A position
+like `4C-4S` is probed with hands that would never reach it in real play.
 
 ## 7. Roadmap (prioritized)
 
