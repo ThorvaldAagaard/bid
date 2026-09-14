@@ -15,6 +15,35 @@ class ProtocolOpType:
     AMBIGUATE = "AMBIGUATE"
     POOL = "POOL"
 
+# Who made each call in a `trigger_sequence`. "P" = partner, "M" = me,
+# "O" = opponent. Only needed when the default inference is wrong — see
+# `infer_trigger_seats`.
+TRIGGER_PARTNER = "P"
+TRIGGER_ME = "M"
+TRIGGER_OPPONENT = "O"
+
+_TRIGGER_FEATURE = {TRIGGER_PARTNER: "partner_last_call",
+                    TRIGGER_ME: "my_last_call",
+                    TRIGGER_OPPONENT: "opp_last_call"}
+
+
+def infer_trigger_seats(seq: List[Call]) -> List[str]:
+    """Default seat assignment, read from the END of the trigger backwards.
+
+    The last call is always the partner's — a convention step is written from
+    the point of view of the hand *answering* the trigger — and earlier calls
+    then alternate me / partner / me. That is right for Stayman (1NT=me,
+    2C=partner), Jacoby, Texas, Drury and Smolen.
+
+    It is WRONG when an opponent's call sits in the sequence. Michaels
+    (1C=opponent, 2C=partner) and Cappelletti (1NT=opponent, 2D=partner) need
+    an explicit `trigger_seats`.
+    """
+    n = len(seq)
+    return [TRIGGER_PARTNER if (n - 1 - i) % 2 == 0 else TRIGGER_ME
+            for i in range(n)]
+
+
 class ProtocolStep:
     def __init__(self,
                  name: str,
@@ -22,35 +51,67 @@ class ProtocolStep:
                  trigger_sequence: List[Call],
                  target_feature: str,
                  call_mapping: Dict[Any, Call],
-                 description: str = ""):
+                 description: str = "",
+                 trigger_seats: Optional[List[str]] = None):
         self.name = name
         self.op_type = op_type
         self.trigger_sequence = list(trigger_sequence)
         self.target_feature = target_feature
         self.call_mapping = call_mapping
         self.description = description
+        # Seat of each call in `trigger_sequence`. None => infer (see above).
+        self.trigger_seats = list(trigger_seats) if trigger_seats else None
+
+    def auction_conditions(self) -> List[RuleCondition]:
+        """Compile `trigger_sequence` into auction-state conditions.
+
+        Without this the step is context-free: Stayman compiled to a bare
+        `heart_len >= 4 -> 2H` that fired on EVERY auction, and Blackwood to
+        `ace_count == 2 -> 5H`. Each seat has exactly one feature available
+        (`partner_last_call` / `my_last_call` / `opp_last_call`), so only the
+        most recent call per seat can be pinned.
+        """
+        seq = self.trigger_sequence
+        if not seq:
+            return []
+        seats = self.trigger_seats or infer_trigger_seats(seq)
+        if len(seats) != len(seq):
+            seats = infer_trigger_seats(seq)
+        conds: List[RuleCondition] = []
+        for seat in (TRIGGER_PARTNER, TRIGGER_ME, TRIGGER_OPPONENT):
+            idx = None
+            for i in range(len(seq) - 1, -1, -1):
+                if seats[i] == seat:
+                    idx = i
+                    break
+            if idx is None:
+                continue
+            conds.append(RuleCondition(_TRIGGER_FEATURE[seat], "==", str(seq[idx])))
+        return conds
 
     def generate_rules(self, priority: int = 30) -> List[DecisionNetRule]:
         """Convert protocol step into executable DecisionNetRules."""
         rules = []
+        auction = self.auction_conditions()
         for val, call in self.call_mapping.items():
             rule_id = f"{self.name}_{val}_{call}"
             # Create feature condition
             if isinstance(val, tuple) and len(val) == 2:
                 # Range [min, max]
-                conditions = [
+                value_conds = [
                     RuleCondition(self.target_feature, ">=", val[0]),
                     RuleCondition(self.target_feature, "<=", val[1])
                 ]
             else:
-                conditions = [RuleCondition(self.target_feature, "==", val)]
+                value_conds = [RuleCondition(self.target_feature, "==", val)]
 
             rule = DecisionNetRule(
                 rule_id=rule_id,
                 call=call,
-                conditions=conditions,
+                conditions=auction + value_conds,
                 description=f"{self.op_type} {self.target_feature}={val} -> {call}",
-                priority=priority
+                priority=priority,
+                intent=self.op_type
             )
             rules.append(rule)
         return rules
@@ -187,6 +248,7 @@ class ConventionProtocol:
             name="Michaels_Response",
             op_type=ProtocolOpType.COMMAND,
             trigger_sequence=[Call(CallType.BID, 1, Strain.CLUBS), Call(CallType.BID, 2, Strain.CLUBS)],
+            trigger_seats=[TRIGGER_OPPONENT, TRIGGER_PARTNER],
             target_feature="heart_len",
             call_mapping={
                 (3, 13): Call(CallType.BID, 2, Strain.HEARTS),
@@ -204,6 +266,7 @@ class ConventionProtocol:
             name="Unusual_2NT_Response",
             op_type=ProtocolOpType.COMMAND,
             trigger_sequence=[Call(CallType.BID, 1, Strain.HEARTS), Call(CallType.BID, 2, Strain.NT)],
+            trigger_seats=[TRIGGER_OPPONENT, TRIGGER_PARTNER],
             target_feature="diamond_len",
             call_mapping={
                 (3, 13): Call(CallType.BID, 3, Strain.DIAMONDS),
@@ -221,6 +284,7 @@ class ConventionProtocol:
             name="Cappelletti_2D_Response",
             op_type=ProtocolOpType.COMMAND,
             trigger_sequence=[Call(CallType.BID, 1, Strain.NT), Call(CallType.BID, 2, Strain.DIAMONDS)],
+            trigger_seats=[TRIGGER_OPPONENT, TRIGGER_PARTNER],
             target_feature="heart_len",
             call_mapping={
                 (3, 13): Call(CallType.BID, 2, Strain.HEARTS),

@@ -6,25 +6,29 @@
 #         (1,040,694 rules in the live engine)
 # Convert: python3 research/brill_to_dsl.py
 #
-# 3052 Brill call definitions -> 1552 DSL rules.
+# 3052 Brill call definitions -> 1932 DSL rules.
 #
 # CAVEATS — read before trusting this file:
 #   * Only the tree 2 calls deep was captured.
 #   * Clauses containing atoms with no DSL equivalent are
 #     DROPPED, never relaxed.  Brill's own computed verdicts
 #     (game / slammish / CanBid6_* / CanAsk_*_RKC / loserlevel)
-#     and its suit-quality tests (realsolid / trump /
-#     rebiddable / monsterslam) are NOT reproduced.  The system
-#     here is therefore thinner than Brill, especially for
-#     slams and sacrifices — it will underbid rather than
-#     overbid, which is the safe direction.
+#     and most of its suit-quality tests (trump / rebiddable /
+#     monsterslam) are NOT reproduced.  `realsolid('X')` IS,
+#     measured from Brill's engine rather than guessed (§6.53).
+#     The system here is therefore thinner than Brill,
+#     especially for slams and sacrifices — it will underbid
+#     rather than overbid, which is the safe direction.
 #   * Approximations in use:
 #       losers        -> losing_trick_count
 #       X_points      -> X_hcp
 #       balish        -> is_semi_balanced
 #       stopper('X')  -> X_stopper >= 2
-#   * Dropped entirely (needs a feature-to-feature compare):
-#       Xlongest / bestsuit(X) / bestmajor(X) / bestminor(X)
+#   * Feature-to-feature compares, precomputed in features.py
+#     as booleans rather than dropped (§6.51, §6.53):
+#       Xlongest -> X_is_longest      bestsuit(X)  -> X_is_longest
+#       bestmajor(X) -> X_is_best_major   bestminor(X) -> X_is_best_minor
+#       realsolid('X') -> X_realsolid
 #
 # WHAT IS MISSING, AND WHY IT CANNOT BE FIXED HERE
 #   * Tree rules for the 1M openings, the weak twos and the 3-level
@@ -60,6 +64,47 @@ RULE B_1C_PASS_0_1:
   CONDITION: opp_last_call == '1C'
   CONDITION: partner_last_call == 'NONE'
   CONDITION: club_len >= 7
+
+RULE B_1C_1D_1_0:
+  CALL: 1D
+  PRIORITY: 21
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: diamond_len >= 5
+  CONDITION: hcp >= 10
+  CONDITION: hcp <= 17
+  CONDITION: d_is_longest == True
+  CONDITION: d_top3_honors >= 1
+
+RULE B_1C_1H_2_0:
+  CALL: 1H
+  PRIORITY: 72
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: heart_len >= 6
+  CONDITION: hcp >= 7
+  CONDITION: heart_hcp >= 10
+  CONDITION: hcp <= 17
+  CONDITION: h_is_longest == True
+  CONDITION: h_top3_honors >= 1
+
+RULE B_1C_1S_3_0:
+  CALL: 1S
+  PRIORITY: 72
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: spade_len >= 6
+  CONDITION: hcp >= 7
+  CONDITION: spade_hcp >= 10
+  CONDITION: hcp <= 17
+  CONDITION: s_is_longest == True
+  CONDITION: s_top3_honors >= 1
 
 RULE B_1C_1NT_4_0:
   CALL: 1NT
@@ -243,6 +288,66 @@ RULE B_1C_4S_24_0_4:
   CONDITION: hcp <= 10
   CONDITION: s_has_ten == True
 
+RULE B_1C_6D_28_0:
+  CALL: 6D
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1C_6H_29_0:
+  CALL: 6H
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1C_6S_30_0:
+  CALL: 6S
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1C_7D_31_0:
+  CALL: 7D
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_1C_7H_32_0:
+  CALL: 7H
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_1C_7S_33_0:
+  CALL: 7S
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1C_X_34_1:
   CALL: X
   PRIORITY: 74
@@ -281,6 +386,34 @@ RULE B_1D_PASS_35_1:
   CONDITION: opp_last_call == '1D'
   CONDITION: partner_last_call == 'NONE'
   CONDITION: diamond_len >= 7
+
+RULE B_1D_1H_36_0:
+  CALL: 1H
+  PRIORITY: 72
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: heart_len >= 6
+  CONDITION: hcp >= 7
+  CONDITION: heart_hcp >= 10
+  CONDITION: hcp <= 17
+  CONDITION: h_is_longest == True
+  CONDITION: h_top3_honors >= 1
+
+RULE B_1D_1S_37_0:
+  CALL: 1S
+  PRIORITY: 72
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: spade_len >= 6
+  CONDITION: hcp >= 7
+  CONDITION: spade_hcp >= 10
+  CONDITION: hcp <= 17
+  CONDITION: s_is_longest == True
+  CONDITION: s_top3_honors >= 1
 
 RULE B_1D_1NT_38_0:
   CALL: 1NT
@@ -464,6 +597,66 @@ RULE B_1D_4S_58_0_4:
   CONDITION: hcp <= 10
   CONDITION: s_has_ten == True
 
+RULE B_1D_6C_62_0:
+  CALL: 6C
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1D_6H_63_0:
+  CALL: 6H
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1D_6S_64_0:
+  CALL: 6S
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1D_7C_65_0:
+  CALL: 7C
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_1D_7H_66_0:
+  CALL: 7H
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_1D_7S_67_0:
+  CALL: 7S
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1D_X_68_1:
   CALL: X
   PRIORITY: 74
@@ -537,6 +730,66 @@ RULE B_1H_1NT_71_1:
   CONDITION: hcp >= 15
   CONDITION: hcp <= 17
   CONDITION: is_semi_balanced == True
+
+RULE B_1H_6C_93_0:
+  CALL: 6C
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1H_6D_94_0:
+  CALL: 6D
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1H_6S_95_0:
+  CALL: 6S
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1H_7C_96_0:
+  CALL: 7C
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_1H_7D_97_0:
+  CALL: 7D
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_1H_7S_98_0:
+  CALL: 7S
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1H_X_99_0:
   CALL: X
@@ -613,6 +866,66 @@ RULE B_1S_1NT_101_1:
   CONDITION: hcp <= 17
   CONDITION: is_semi_balanced == True
 
+RULE B_1S_6C_123_0:
+  CALL: 6C
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1S_6D_124_0:
+  CALL: 6D
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1S_6H_125_0:
+  CALL: 6H
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1S_7C_126_0:
+  CALL: 7C
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_1S_7D_127_0:
+  CALL: 7D
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_1S_7H_128_0:
+  CALL: 7H
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1S_X_129_0:
   CALL: X
   PRIORITY: 76
@@ -673,6 +986,54 @@ RULE B_2D_PASS_145_1:
   CONDITION: partner_last_call == 'NONE'
   CONDITION: diamond_len >= 5
 
+RULE B_2D_2H_146_0:
+  CALL: 2H
+  PRIORITY: 90
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 6
+  CONDITION: hcp >= 11
+  CONDITION: hcp <= 17
+
+RULE B_2D_2H_146_1:
+  CALL: 2H
+  PRIORITY: 90
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 5
+  CONDITION: hcp >= 13
+  CONDITION: hcp <= 18
+
+RULE B_2D_2S_147_0:
+  CALL: 2S
+  PRIORITY: 90
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 6
+  CONDITION: hcp >= 11
+  CONDITION: hcp <= 17
+
+RULE B_2D_2S_147_1:
+  CALL: 2S
+  PRIORITY: 90
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 5
+  CONDITION: hcp >= 13
+  CONDITION: hcp <= 18
+
 RULE B_2D_2NT_148_0:
   CALL: 2NT
   PRIORITY: 80
@@ -684,6 +1045,44 @@ RULE B_2D_2NT_148_0:
   CONDITION: hcp <= 18
   CONDITION: is_semi_balanced == True
   CONDITION: d_stopper >= 2
+
+RULE B_2D_3C_149_0:
+  CALL: 3C
+  PRIORITY: 79
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: club_len >= 5
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+  CONDITION: c_is_longest == True
+
+RULE B_2D_3C_149_1:
+  CALL: 3C
+  PRIORITY: 79
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: club_len >= 5
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+  CONDITION: heart_len <= 2
+  CONDITION: c_is_longest == True
+
+RULE B_2D_3C_149_2:
+  CALL: 3C
+  PRIORITY: 79
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: club_len >= 5
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+  CONDITION: spade_len <= 2
+  CONDITION: c_is_longest == True
 
 RULE B_2D_3H_151_0:
   CALL: 3H
@@ -771,6 +1170,66 @@ RULE B_2D_4S_156_1:
   CONDITION: spade_len >= 7
   CONDITION: losing_trick_count <= 3
   CONDITION: hcp <= 15
+
+RULE B_2D_6C_157_0:
+  CALL: 6C
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_6H_158_0:
+  CALL: 6H
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_6S_159_0:
+  CALL: 6S
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_7C_160_0:
+  CALL: 7C
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_2D_7H_161_0:
+  CALL: 7H
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_2D_7S_162_0:
+  CALL: 7S
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2D_X_163_0:
   CALL: X
@@ -894,6 +1353,58 @@ RULE B_2H_2NT_167_1:
   CONDITION: is_semi_balanced == True
   CONDITION: h_stopper >= 2
 
+RULE B_2H_3C_168_0:
+  CALL: 3C
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 5
+  CONDITION: spade_len <= 2
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+  CONDITION: d_top3_honors >= 2
+
+RULE B_2H_3C_168_1:
+  CALL: 3C
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 6
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+
+RULE B_2H_3D_169_0:
+  CALL: 3D
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 5
+  CONDITION: spade_len <= 2
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+  CONDITION: d_top3_honors >= 2
+
+RULE B_2H_3D_169_1:
+  CALL: 3D
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 6
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+
 RULE B_2H_3S_171_0:
   CALL: 3S
   PRIORITY: 30
@@ -951,6 +1462,66 @@ RULE B_2H_4S_176_0:
   CONDITION: spade_len >= 7
   CONDITION: spade_hcp >= 18
   CONDITION: losing_trick_count <= 4
+
+RULE B_2H_6C_178_0:
+  CALL: 6C
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2H_6D_179_0:
+  CALL: 6D
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2H_6S_180_0:
+  CALL: 6S
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2H_7C_181_0:
+  CALL: 7C
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_2H_7D_182_0:
+  CALL: 7D
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_2H_7S_183_0:
+  CALL: 7S
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2H_X_184_0:
   CALL: X
@@ -1017,6 +1588,58 @@ RULE B_2S_2NT_186_1:
   CONDITION: hcp <= 18
   CONDITION: is_semi_balanced == True
   CONDITION: s_stopper >= 2
+
+RULE B_2S_3C_187_0:
+  CALL: 3C
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 5
+  CONDITION: heart_len <= 2
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+  CONDITION: d_top3_honors >= 2
+
+RULE B_2S_3C_187_1:
+  CALL: 3C
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 6
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+
+RULE B_2S_3D_188_0:
+  CALL: 3D
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 5
+  CONDITION: heart_len <= 2
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+  CONDITION: d_top3_honors >= 2
+
+RULE B_2S_3D_188_1:
+  CALL: 3D
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 6
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
 
 RULE B_2S_3H_189_0:
   CALL: 3H
@@ -1215,6 +1838,66 @@ RULE B_2S_4S_195_0:
   CONDITION: club_len >= 5
   CONDITION: losing_trick_count <= 4
   CONDITION: hcp >= 17
+
+RULE B_2S_6C_197_0:
+  CALL: 6C
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2S_6D_198_0:
+  CALL: 6D
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2S_6H_199_0:
+  CALL: 6H
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2S_7C_200_0:
+  CALL: 7C
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_2S_7D_201_0:
+  CALL: 7D
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_2S_7H_202_0:
+  CALL: 7H
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2S_X_203_0:
   CALL: X
@@ -1543,6 +2226,79 @@ RULE B_3C_4S_219_0:
   CONDITION: spade_len >= 6
   CONDITION: hcp >= 17
 
+RULE B_3C_6D_221_0:
+  CALL: 6D
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3C_6H_222_0:
+  CALL: 6H
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3C_6S_223_0:
+  CALL: 6S
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3C_7D_224_0:
+  CALL: 7D
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_3C_7H_225_0:
+  CALL: 7H
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_3C_7S_226_0:
+  CALL: 7S
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_3C_X_227_0:
+  CALL: X
+  PRIORITY: 32
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: hcp >= 13
+  CONDITION: heart_len >= 3
+  CONDITION: spade_len >= 3
+  CONDITION: club_len <= 3
+  CONDITION: c_is_longest == False
+
 RULE B_3C_X_227_1:
   CALL: X
   PRIORITY: 32
@@ -1857,6 +2613,79 @@ RULE B_3D_4S_243_0:
   CONDITION: spade_len >= 6
   CONDITION: hcp >= 17
 
+RULE B_3D_6C_245_0:
+  CALL: 6C
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3D_6H_246_0:
+  CALL: 6H
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3D_6S_247_0:
+  CALL: 6S
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3D_7C_248_0:
+  CALL: 7C
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_3D_7H_249_0:
+  CALL: 7H
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_3D_7S_250_0:
+  CALL: 7S
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_3D_X_251_0:
+  CALL: X
+  PRIORITY: 32
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: hcp >= 13
+  CONDITION: heart_len >= 3
+  CONDITION: spade_len >= 3
+  CONDITION: diamond_len <= 3
+  CONDITION: d_is_longest == False
+
 RULE B_3D_X_251_1:
   CALL: X
   PRIORITY: 32
@@ -2038,6 +2867,66 @@ RULE B_3H_4S_258_2:
   CONDITION: spade_len >= 7
   CONDITION: losing_trick_count <= 3
 
+RULE B_3H_6C_260_0:
+  CALL: 6C
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3H_6D_261_0:
+  CALL: 6D
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3H_6S_262_0:
+  CALL: 6S
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3H_7C_263_0:
+  CALL: 7C
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_3H_7D_264_0:
+  CALL: 7D
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_3H_7S_265_0:
+  CALL: 7S
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_3H_X_266_0:
   CALL: X
   PRIORITY: 18
@@ -2211,6 +3100,66 @@ RULE B_3S_4S_272_1:
   CONDITION: spade_len <= 3
   CONDITION: hcp >= 15
 
+RULE B_3S_6C_274_0:
+  CALL: 6C
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3S_6D_275_0:
+  CALL: 6D
+  PRIORITY: 140
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3S_6H_276_0:
+  CALL: 6H
+  PRIORITY: 142
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3S_7C_277_0:
+  CALL: 7C
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_3S_7D_278_0:
+  CALL: 7D
+  PRIORITY: 141
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_3S_7H_279_0:
+  CALL: 7H
+  PRIORITY: 143
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_3S_X_280_0:
   CALL: X
   PRIORITY: 18
@@ -2284,6 +3233,54 @@ RULE B_4C_4D_282_0:
   CONDITION: hcp >= 14
   CONDITION: hcp <= 19
 
+RULE B_4C_4H_283_0:
+  CALL: 4H
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '4C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 5
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+
+RULE B_4C_4H_283_1:
+  CALL: 4H
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '4C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 6
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+
+RULE B_4C_4S_284_0:
+  CALL: 4S
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '4C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 5
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+
+RULE B_4C_4S_284_1:
+  CALL: 4S
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '4C'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 6
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+
 RULE B_4C_5C_285_0:
   CALL: 5C
   PRIORITY: 70
@@ -2344,6 +3341,54 @@ RULE B_4D_PASS_287_2:
   CONDITION: opp_last_call == '4D'
   CONDITION: partner_last_call == 'NONE'
   CONDITION: hcp <= 18
+
+RULE B_4D_4H_288_0:
+  CALL: 4H
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 5
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+
+RULE B_4D_4H_288_1:
+  CALL: 4H
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 6
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+
+RULE B_4D_4S_289_0:
+  CALL: 4S
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 5
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
+
+RULE B_4D_4S_289_1:
+  CALL: 4S
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 6
+  CONDITION: hcp >= 14
+  CONDITION: hcp <= 19
 
 RULE B_4D_5C_290_0:
   CALL: 5C
@@ -2540,6 +3585,77 @@ RULE B_5S_PASS_318_0:
   CONDITION: opp_last_call == '5S'
   CONDITION: partner_last_call == 'NONE'
 
+RULE B___PASS_322_0:
+  CALL: PASS
+  PRIORITY: 0
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: hcp < 12
+  CONDITION: rule_of_21 == False
+
+RULE B___1C_323_0:
+  CALL: 1C
+  PRIORITY: 60
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: rule_of_21 == True
+  CONDITION: hcp <= 21
+  CONDITION: c_is_longest == True
+
+RULE B___1C_323_1:
+  CALL: 1C
+  PRIORITY: 60
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: rule_of_21 == True
+  CONDITION: hcp <= 21
+  CONDITION: shape_pattern == 4333
+  CONDITION: spade_len == 4
+  CONDITION: heart_len == 3
+  CONDITION: diamond_len == 3
+  CONDITION: club_len == 3
+
+RULE B___1C_323_2:
+  CALL: 1C
+  PRIORITY: 60
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: rule_of_21 == True
+  CONDITION: hcp <= 21
+  CONDITION: shape_pattern == 4333
+  CONDITION: spade_len == 3
+  CONDITION: heart_len == 4
+  CONDITION: diamond_len == 3
+  CONDITION: club_len == 3
+
+RULE B___1C_323_3:
+  CALL: 1C
+  PRIORITY: 60
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: rule_of_21 == True
+  CONDITION: hcp <= 21
+  CONDITION: shape_pattern == 4432
+  CONDITION: spade_len == 4
+  CONDITION: heart_len == 4
+  CONDITION: diamond_len == 2
+  CONDITION: club_len == 3
+
+RULE B___1C_323_4:
+  CALL: 1C
+  PRIORITY: 60
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: hcp >= 12
+  CONDITION: hcp <= 21
+  CONDITION: c_is_longest == True
+
 RULE B___1C_323_5:
   CALL: 1C
   PRIORITY: 60
@@ -2582,6 +3698,40 @@ RULE B___1C_323_7:
   CONDITION: diamond_len == 2
   CONDITION: club_len == 3
 
+RULE B___1D_324_0:
+  CALL: 1D
+  PRIORITY: 65
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: rule_of_21 == True
+  CONDITION: hcp <= 21
+  CONDITION: d_is_longest == True
+
+RULE B___1D_324_1:
+  CALL: 1D
+  PRIORITY: 65
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: rule_of_21 == True
+  CONDITION: hcp <= 21
+  CONDITION: shape_pattern == 4432
+  CONDITION: spade_len == 4
+  CONDITION: heart_len == 4
+  CONDITION: diamond_len == 3
+  CONDITION: club_len == 2
+
+RULE B___1D_324_2:
+  CALL: 1D
+  PRIORITY: 65
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: hcp >= 12
+  CONDITION: hcp <= 21
+  CONDITION: d_is_longest == True
+
 RULE B___1D_324_3:
   CALL: 1D
   PRIORITY: 65
@@ -2595,6 +3745,17 @@ RULE B___1D_324_3:
   CONDITION: heart_len == 4
   CONDITION: diamond_len == 3
   CONDITION: club_len == 2
+
+RULE B___1S_330_0:
+  CALL: 1S
+  PRIORITY: 75
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: rule_of_21 == True
+  CONDITION: hcp <= 21
+  CONDITION: spade_len >= 5
+  CONDITION: s_is_longest == True
 
 RULE B___1NT_331_3:
   CALL: 1NT
@@ -2627,6 +3788,58 @@ RULE B___2C_333_0:
   CONDITION: hcp >= 16
   CONDITION: longest_suit_len >= 5
 
+RULE B___2C_334_1:
+  CALL: 2C
+  PRIORITY: 118
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: hcp >= 18
+  CONDITION: hcp >= 20
+  CONDITION: c_is_longest == True
+  CONDITION: club_len >= 6
+  CONDITION: losing_trick_count <= 2
+  CONDITION: ace_count >= 2
+
+RULE B___2C_334_3:
+  CALL: 2C
+  PRIORITY: 118
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: hcp >= 18
+  CONDITION: hcp >= 20
+  CONDITION: d_is_longest == True
+  CONDITION: diamond_len >= 6
+  CONDITION: losing_trick_count <= 2
+  CONDITION: ace_count >= 2
+
+RULE B___2C_334_5:
+  CALL: 2C
+  PRIORITY: 118
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: hcp >= 18
+  CONDITION: hcp >= 20
+  CONDITION: h_is_longest == True
+  CONDITION: heart_len >= 6
+  CONDITION: losing_trick_count <= 3
+  CONDITION: ace_count >= 2
+
+RULE B___2C_334_7:
+  CALL: 2C
+  PRIORITY: 118
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: hcp >= 18
+  CONDITION: hcp >= 20
+  CONDITION: s_is_longest == True
+  CONDITION: spade_len >= 6
+  CONDITION: losing_trick_count <= 3
+  CONDITION: ace_count >= 2
+
 RULE B___2C_334_8:
   CALL: 2C
   PRIORITY: 118
@@ -2654,6 +3867,49 @@ RULE B___2C_334_10:
   CONDITION: hcp >= 22
   CONDITION: losing_trick_count <= 5
 
+RULE B___2D_335_0:
+  CALL: 2D
+  PRIORITY: 60
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: hcp <= 11
+  CONDITION: diamond_len == 6
+  CONDITION: hcp > 4
+  CONDITION: d_is_longest == True
+  CONDITION: d_top3_honors >= 2
+  CONDITION: spade_len <= 4
+  CONDITION: heart_len <= 4
+  CONDITION: rule_of_21 == False
+
+RULE B___2H_336_0:
+  CALL: 2H
+  PRIORITY: 60
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: hcp <= 11
+  CONDITION: heart_len == 6
+  CONDITION: hcp > 4
+  CONDITION: h_is_longest == True
+  CONDITION: h_top3_honors >= 2
+  CONDITION: spade_len <= 3
+  CONDITION: rule_of_21 == False
+
+RULE B___2S_337_0:
+  CALL: 2S
+  PRIORITY: 60
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: hcp <= 11
+  CONDITION: spade_len == 6
+  CONDITION: hcp > 4
+  CONDITION: s_is_longest == True
+  CONDITION: s_top3_honors >= 2
+  CONDITION: heart_len <= 3
+  CONDITION: rule_of_21 == False
+
 RULE B___2NT_338_0:
   CALL: 2NT
   PRIORITY: 122
@@ -2663,6 +3919,60 @@ RULE B___2NT_338_0:
   CONDITION: is_semi_balanced == True
   CONDITION: hcp >= 20
   CONDITION: hcp <= 21
+
+RULE B___3C_340_0:
+  CALL: 3C
+  PRIORITY: 85
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: club_len >= 7
+  CONDITION: hcp >= 5
+  CONDITION: hcp <= 11
+  CONDITION: total_points >= 6
+  CONDITION: rule_of_21 == False
+  CONDITION: heart_len <= 4
+  CONDITION: spade_len <= 4
+
+RULE B___3D_342_0:
+  CALL: 3D
+  PRIORITY: 86
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: diamond_len >= 7
+  CONDITION: hcp >= 5
+  CONDITION: hcp <= 11
+  CONDITION: total_points >= 6
+  CONDITION: rule_of_21 == False
+  CONDITION: heart_len <= 4
+  CONDITION: spade_len <= 4
+
+RULE B___3H_344_0:
+  CALL: 3H
+  PRIORITY: 87
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: heart_len >= 7
+  CONDITION: hcp >= 5
+  CONDITION: hcp <= 11
+  CONDITION: total_points >= 6
+  CONDITION: rule_of_21 == False
+  CONDITION: spade_len <= 4
+
+RULE B___3S_346_0:
+  CALL: 3S
+  PRIORITY: 88
+  CONDITION: is_opening == True
+  CONDITION: partner_last_call == 'NONE'
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: spade_len >= 7
+  CONDITION: hcp >= 5
+  CONDITION: hcp <= 11
+  CONDITION: total_points >= 6
+  CONDITION: rule_of_21 == False
+  CONDITION: heart_len <= 4
 
 RULE B___3NT_347_0:
   CALL: 3NT
@@ -2848,6 +4158,31 @@ RULE B_1C_P_PASS_399_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp < 6
 
+RULE B_1C_P_1D_400_0:
+  CALL: 1D
+  PRIORITY: 30
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: hcp > 5
+  CONDITION: d_is_longest == True
+  CONDITION: diamond_len < 5
+
+RULE B_1C_P_1D_400_1:
+  CALL: 1D
+  PRIORITY: 30
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: hcp > 5
+  CONDITION: d_is_longest == True
+  CONDITION: s_is_longest == False
+  CONDITION: h_is_longest == False
+
 RULE B_1C_P_1NT_403_0:
   CALL: 1NT
   PRIORITY: 10
@@ -2861,6 +4196,20 @@ RULE B_1C_P_1NT_403_0:
   CONDITION: spade_len < 4
   CONDITION: heart_len < 4
   CONDITION: is_balanced == True
+
+RULE B_1C_P_2C_404_0:
+  CALL: 2C
+  PRIORITY: 80
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: club_len >= 4
+  CONDITION: hcp >= 10
+  CONDITION: heart_len < 4
+  CONDITION: spade_len < 4
+  CONDITION: c_is_longest == True
 
 RULE B_1C_P_2D_405_4:
   CALL: 2D
@@ -2970,6 +4319,21 @@ RULE B_1C_P_2NT_408_1:
   CONDITION: spade_len < 4
   CONDITION: heart_len < 4
 
+RULE B_1C_P_3C_409_0:
+  CALL: 3C
+  PRIORITY: 32
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: club_len >= 5
+  CONDITION: hcp < 10
+  CONDITION: heart_len < 4
+  CONDITION: spade_len < 4
+  CONDITION: hcp >= 4
+  CONDITION: c_is_longest == True
+
 RULE B_1C_P_3D_410_0:
   CALL: 3D
   PRIORITY: 24
@@ -3072,6 +4436,28 @@ RULE B_1C_P_5D_418_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 5
 
+RULE B_1C_P_6C_421_0:
+  CALL: 6C
+  PRIORITY: 5
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1C_P_7C_423_0:
+  CALL: 7C
+  PRIORITY: 6
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1C_X_PASS_426_0:
   CALL: PASS
   PRIORITY: 0
@@ -3081,6 +4467,30 @@ RULE B_1C_X_PASS_426_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 5
+
+RULE B_1C_X_1H_428_1:
+  CALL: 1H
+  PRIORITY: 54
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 5
+  CONDITION: hcp >= 10
+
+RULE B_1C_X_1S_429_1:
+  CALL: 1S
+  PRIORITY: 54
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 5
+  CONDITION: hcp >= 10
 
 RULE B_1C_X_1NT_430_0:
   CALL: 1NT
@@ -3282,6 +4692,18 @@ RULE B_1C_1D_1H_443_0:
   CONDITION: heart_len == 4
   CONDITION: hcp >= 6
 
+RULE B_1C_1D_1H_443_1:
+  CALL: 1H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '1D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 5
+  CONDITION: hcp >= 5
+
 RULE B_1C_1D_1S_444_0:
   CALL: 1S
   PRIORITY: 65
@@ -3292,6 +4714,18 @@ RULE B_1C_1D_1S_444_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: spade_len == 4
   CONDITION: hcp >= 6
+
+RULE B_1C_1D_1S_444_1:
+  CALL: 1S
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '1D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 5
+  CONDITION: hcp >= 5
 
 RULE B_1C_1D_1NT_445_0:
   CALL: 1NT
@@ -3448,6 +4882,30 @@ RULE B_1C_1D_4S_457_0:
   CONDITION: hcp >= 6
   CONDITION: spade_len >= 7
 
+RULE B_1C_1D_6C_461_0:
+  CALL: 6C
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '1D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 5
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1C_1D_7C_463_0:
+  CALL: 7C
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '1D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 5
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1C_1D_X_466_0:
   CALL: X
   PRIORITY: 54
@@ -3479,6 +4937,18 @@ RULE B_1C_1H_PASS_467_1:
   CONDITION: opp_last_call == '1H'
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 6
+
+RULE B_1C_1H_PASS_467_2:
+  CALL: PASS
+  PRIORITY: 32
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '1H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_longest == True
+  CONDITION: heart_len >= 5
+  CONDITION: hcp >= 10
 
 RULE B_1C_1H_1S_468_0:
   CALL: 1S
@@ -3851,6 +5321,30 @@ RULE B_1C_1H_4S_479_0:
   CONDITION: hcp <= 10
   CONDITION: spade_len >= 7
 
+RULE B_1C_1H_6C_483_0:
+  CALL: 6C
+  PRIORITY: 95
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '1H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 5
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1C_1H_7C_485_0:
+  CALL: 7C
+  PRIORITY: 96
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '1H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 5
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1C_1S_PASS_489_0:
   CALL: PASS
   PRIORITY: 32
@@ -3870,6 +5364,18 @@ RULE B_1C_1S_PASS_489_1:
   CONDITION: opp_last_call == '1S'
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 6
+
+RULE B_1C_1S_PASS_489_2:
+  CALL: PASS
+  PRIORITY: 32
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_longest == True
+  CONDITION: spade_len >= 5
+  CONDITION: hcp >= 10
 
 RULE B_1C_1S_1NT_490_0:
   CALL: 1NT
@@ -4253,6 +5759,30 @@ RULE B_1C_1S_4H_501_0:
   CONDITION: hcp <= 10
   CONDITION: heart_len >= 7
 
+RULE B_1C_1S_6C_505_0:
+  CALL: 6C
+  PRIORITY: 95
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 5
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1C_1S_7C_507_0:
+  CALL: 7C
+  PRIORITY: 96
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 5
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1C_2C_PASS_511_0:
   CALL: PASS
   PRIORITY: 0
@@ -4406,6 +5936,30 @@ RULE B_1C_2C_4S_522_0:
   CONDITION: club_hcp >= 17
   CONDITION: spade_len <= 1
 
+RULE B_1C_2C_6C_527_0:
+  CALL: 6C
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 5
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1C_2C_7C_529_0:
+  CALL: 7C
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 5
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1C_2C_X_532_0:
   CALL: X
   PRIORITY: 10
@@ -4445,6 +5999,30 @@ RULE B_1C_2D_PASS_533_2:
   CONDITION: opp_last_call == '2D'
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 8
+
+RULE B_1C_2D_2H_534_0:
+  CALL: 2H
+  PRIORITY: 60
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_best_major == True
+  CONDITION: hcp >= 9
+  CONDITION: heart_len >= 5
+
+RULE B_1C_2D_2S_535_0:
+  CALL: 2S
+  PRIORITY: 60
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_best_major == True
+  CONDITION: hcp >= 9
+  CONDITION: spade_len >= 5
 
 RULE B_1C_2D_2NT_536_0:
   CALL: 2NT
@@ -4674,6 +6252,30 @@ RULE B_1C_2H_3H_547_1:
   CONDITION: hcp >= 11
   CONDITION: club_len >= 4
 
+RULE B_1C_2H_6C_554_0:
+  CALL: 6C
+  PRIORITY: 75
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 5
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1C_2H_7C_556_0:
+  CALL: 7C
+  PRIORITY: 76
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 5
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1C_2H_X_559_0:
   CALL: X
   PRIORITY: 60
@@ -4774,6 +6376,18 @@ RULE B_1C_2S_3D_563_1:
   CONDITION: hcp >= 11
   CONDITION: diamond_len >= 5
 
+RULE B_1C_2S_3H_564_0:
+  CALL: 3H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp >= 9
+  CONDITION: heart_len >= 5
+  CONDITION: h_is_longest == True
+
 RULE B_1C_2S_3S_566_0:
   CALL: 3S
   PRIORITY: 55
@@ -4795,6 +6409,30 @@ RULE B_1C_2S_3S_566_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 11
   CONDITION: club_len >= 4
+
+RULE B_1C_2S_6C_572_0:
+  CALL: 6C
+  PRIORITY: 75
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 5
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1C_2S_7C_574_0:
+  CALL: 7C
+  PRIORITY: 76
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 5
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1C_2S_X_577_0:
   CALL: X
@@ -4847,6 +6485,54 @@ RULE B_1C_3D_PASS_581_0:
   CONDITION: opp_last_call == '3D'
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 9
+
+RULE B_1C_3D_3H_582_0:
+  CALL: 3H
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 6
+  CONDITION: hcp >= 10
+
+RULE B_1C_3D_3H_582_1:
+  CALL: 3H
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 5
+  CONDITION: hcp >= 12
+
+RULE B_1C_3D_3S_583_0:
+  CALL: 3S
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 6
+  CONDITION: hcp >= 10
+
+RULE B_1C_3D_3S_583_1:
+  CALL: 3S
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 5
+  CONDITION: hcp >= 12
 
 RULE B_1C_3D_3NT_584_0:
   CALL: 3NT
@@ -4981,6 +6667,18 @@ RULE B_1C_3H_5C_596_0:
   CONDITION: club_len >= 4
   CONDITION: hcp <= 18
 
+RULE B_1C_3H_6C_599_0:
+  CALL: 6C
+  PRIORITY: 35
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 4
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
 RULE B_1C_3H_6S_601_0:
   CALL: 6S
   PRIORITY: 66
@@ -4991,6 +6689,18 @@ RULE B_1C_3H_6S_601_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: spade_len >= 8
   CONDITION: losing_trick_count <= 3
+
+RULE B_1C_3H_7C_602_0:
+  CALL: 7C
+  PRIORITY: 36
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 4
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1C_3H_X_605_0:
   CALL: X
@@ -5102,6 +6812,18 @@ RULE B_1C_3S_5C_613_0:
   CONDITION: club_len >= 4
   CONDITION: hcp <= 18
 
+RULE B_1C_3S_6C_616_0:
+  CALL: 6C
+  PRIORITY: 35
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 4
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
 RULE B_1C_3S_6H_618_0:
   CALL: 6H
   PRIORITY: 66
@@ -5112,6 +6834,18 @@ RULE B_1C_3S_6H_618_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: heart_len >= 8
   CONDITION: losing_trick_count <= 3
+
+RULE B_1C_3S_7C_619_0:
+  CALL: 7C
+  PRIORITY: 36
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 4
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1C_3S_X_622_0:
   CALL: X
@@ -5173,6 +6907,28 @@ RULE B_1C_4H_5C_636_0:
   CONDITION: club_len >= 5
   CONDITION: hcp >= 12
 
+RULE B_1C_4H_6C_641_0:
+  CALL: 6C
+  PRIORITY: 35
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '4H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1C_4H_7C_644_0:
+  CALL: 7C
+  PRIORITY: 36
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '4H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1C_4S_PASS_648_0:
   CALL: PASS
   PRIORITY: 0
@@ -5192,6 +6948,28 @@ RULE B_1C_4S_5C_651_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: club_len >= 5
   CONDITION: hcp >= 12
+
+RULE B_1C_4S_6C_656_0:
+  CALL: 6C
+  PRIORITY: 35
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '4S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1C_4S_7C_659_0:
+  CALL: 7C
+  PRIORITY: 36
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '4S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1C_6D_PASS_668_0:
   CALL: PASS
@@ -5334,6 +7112,28 @@ RULE B_1C_2N_3NT_685_0:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 20
 
+RULE B_1C_2N_6C_690_0:
+  CALL: 6C
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '2NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1C_2N_7C_692_0:
+  CALL: 7C
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1C'
+  CONDITION: opp_last_call == '2NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1C_2N_X_695_0:
   CALL: X
   PRIORITY: 5
@@ -5353,6 +7153,30 @@ RULE B_1D_P_PASS_696_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp < 6
+
+RULE B_1D_P_1H_697_6:
+  CALL: 1H
+  PRIORITY: 90
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: hcp > 4
+  CONDITION: heart_len >= 4
+  CONDITION: d_is_longest == True
+
+RULE B_1D_P_1S_698_2:
+  CALL: 1S
+  PRIORITY: 90
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: hcp > 4
+  CONDITION: spade_len >= 4
+  CONDITION: d_is_longest == True
 
 RULE B_1D_P_1NT_699_0:
   CALL: 1NT
@@ -5381,6 +7205,34 @@ RULE B_1D_P_1NT_700_0:
   CONDITION: hcp >= 6
   CONDITION: heart_len < 4
   CONDITION: spade_len < 4
+
+RULE B_1D_P_2C_701_0:
+  CALL: 2C
+  PRIORITY: 80
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: hcp > 11
+  CONDITION: club_len >= 4
+  CONDITION: c_is_longest == True
+  CONDITION: h_is_longest == False
+  CONDITION: s_is_longest == False
+
+RULE B_1D_P_2D_702_0:
+  CALL: 2D
+  PRIORITY: 100
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: diamond_len >= 4
+  CONDITION: hcp >= 10
+  CONDITION: heart_len < 4
+  CONDITION: spade_len < 4
+  CONDITION: d_is_longest == True
 
 RULE B_1D_P_2D_702_1:
   CALL: 2D
@@ -5490,6 +7342,21 @@ RULE B_1D_P_3C_706_0:
   CONDITION: heart_len < 4
   CONDITION: spade_len < 4
 
+RULE B_1D_P_3D_707_0:
+  CALL: 3D
+  PRIORITY: 18
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: diamond_len >= 5
+  CONDITION: hcp >= 4
+  CONDITION: hcp < 10
+  CONDITION: heart_len < 4
+  CONDITION: spade_len < 4
+  CONDITION: d_is_longest == True
+
 RULE B_1D_P_3H_708_0:
   CALL: 3H
   PRIORITY: 150
@@ -5578,6 +7445,28 @@ RULE B_1D_P_5D_715_0:
   CONDITION: hcp <= 10
   CONDITION: hcp >= 5
 
+RULE B_1D_P_6D_718_0:
+  CALL: 6D
+  PRIORITY: 5
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1D_P_7D_720_0:
+  CALL: 7D
+  PRIORITY: 6
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1D_X_PASS_723_0:
   CALL: PASS
   PRIORITY: 0
@@ -5587,6 +7476,30 @@ RULE B_1D_X_PASS_723_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 5
+
+RULE B_1D_X_1H_724_1:
+  CALL: 1H
+  PRIORITY: 54
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 5
+  CONDITION: hcp >= 10
+
+RULE B_1D_X_1S_725_1:
+  CALL: 1S
+  PRIORITY: 54
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 5
+  CONDITION: hcp >= 10
 
 RULE B_1D_X_1NT_726_0:
   CALL: 1NT
@@ -5598,6 +7511,19 @@ RULE B_1D_X_1NT_726_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 10
   CONDITION: hcp >= 6
+
+RULE B_1D_X_2C_727_0:
+  CALL: 2C
+  PRIORITY: 10
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp >= 9
+  CONDITION: c_is_longest == True
+  CONDITION: club_len >= 5
+  CONDITION: hcp <= 11
 
 RULE B_1D_X_2D_728_0:
   CALL: 2D
@@ -5786,6 +7712,18 @@ RULE B_1D_1H_PASS_739_1:
   CONDITION: opp_last_call == '1H'
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 6
+
+RULE B_1D_1H_PASS_739_2:
+  CALL: PASS
+  PRIORITY: 32
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '1H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_longest == True
+  CONDITION: heart_len >= 5
+  CONDITION: hcp >= 10
 
 RULE B_1D_1H_1S_740_0:
   CALL: 1S
@@ -6158,6 +8096,30 @@ RULE B_1D_1H_4S_751_0:
   CONDITION: hcp <= 10
   CONDITION: spade_len >= 7
 
+RULE B_1D_1H_6D_755_0:
+  CALL: 6D
+  PRIORITY: 95
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '1H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 5
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1D_1H_7D_757_0:
+  CALL: 7D
+  PRIORITY: 96
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '1H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 5
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1D_1S_PASS_761_0:
   CALL: PASS
   PRIORITY: 32
@@ -6177,6 +8139,18 @@ RULE B_1D_1S_PASS_761_1:
   CONDITION: opp_last_call == '1S'
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 6
+
+RULE B_1D_1S_PASS_761_2:
+  CALL: PASS
+  PRIORITY: 32
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_longest == True
+  CONDITION: spade_len >= 5
+  CONDITION: hcp >= 10
 
 RULE B_1D_1S_1NT_762_0:
   CALL: 1NT
@@ -6560,6 +8534,30 @@ RULE B_1D_1S_4H_773_0:
   CONDITION: hcp <= 10
   CONDITION: heart_len >= 7
 
+RULE B_1D_1S_6D_777_0:
+  CALL: 6D
+  PRIORITY: 95
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 5
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1D_1S_7D_779_0:
+  CALL: 7D
+  PRIORITY: 96
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 5
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1D_2C_PASS_783_0:
   CALL: PASS
   PRIORITY: 0
@@ -6622,6 +8620,80 @@ RULE B_1D_2C_2D_784_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 6
   CONDITION: diamond_len >= 4
+
+RULE B_1D_2C_2H_785_0:
+  CALL: 2H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 5
+  CONDITION: hcp >= 9
+  CONDITION: spade_len <= 3
+
+RULE B_1D_2C_2H_785_1:
+  CALL: 2H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 6
+  CONDITION: hcp >= 10
+
+RULE B_1D_2C_2H_785_2:
+  CALL: 2H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 5
+  CONDITION: hcp >= 12
+
+RULE B_1D_2C_2S_786_0:
+  CALL: 2S
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 5
+  CONDITION: hcp >= 9
+  CONDITION: heart_len <= 3
+
+RULE B_1D_2C_2S_786_1:
+  CALL: 2S
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 6
+  CONDITION: hcp >= 10
+
+RULE B_1D_2C_2S_786_2:
+  CALL: 2S
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 5
+  CONDITION: hcp >= 12
 
 RULE B_1D_2C_2NT_787_0:
   CALL: 2NT
@@ -6692,6 +8764,28 @@ RULE B_1D_2C_4S_794_0:
   CONDITION: spade_len >= 7
   CONDITION: hcp <= 10
   CONDITION: hcp >= 6
+
+RULE B_1D_2C_6D_798_0:
+  CALL: 6D
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1D_2C_7D_800_0:
+  CALL: 7D
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1D_2C_X_803_0:
   CALL: X
@@ -6870,6 +8964,30 @@ RULE B_1D_2D_4S_815_0:
   CONDITION: diamond_hcp >= 17
   CONDITION: spade_len <= 1
 
+RULE B_1D_2D_6D_820_0:
+  CALL: 6D
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 5
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1D_2D_7D_822_0:
+  CALL: 7D
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 5
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1D_2D_X_825_0:
   CALL: X
   PRIORITY: 10
@@ -7002,6 +9120,30 @@ RULE B_1D_2H_3H_832_1:
   CONDITION: hcp >= 11
   CONDITION: diamond_len >= 4
 
+RULE B_1D_2H_6D_839_0:
+  CALL: 6D
+  PRIORITY: 75
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 5
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1D_2H_7D_841_0:
+  CALL: 7D
+  PRIORITY: 76
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 5
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1D_2H_X_844_0:
   CALL: X
   PRIORITY: 60
@@ -7113,6 +9255,18 @@ RULE B_1D_2S_3D_848_1:
   CONDITION: hcp <= 11
   CONDITION: diamond_len >= 4
 
+RULE B_1D_2S_3H_849_0:
+  CALL: 3H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp >= 9
+  CONDITION: heart_len >= 5
+  CONDITION: h_is_longest == True
+
 RULE B_1D_2S_3S_851_0:
   CALL: 3S
   PRIORITY: 55
@@ -7134,6 +9288,30 @@ RULE B_1D_2S_3S_851_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 11
   CONDITION: diamond_len >= 4
+
+RULE B_1D_2S_6D_857_0:
+  CALL: 6D
+  PRIORITY: 75
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 5
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1D_2S_7D_859_0:
+  CALL: 7D
+  PRIORITY: 76
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 5
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1D_2S_X_862_0:
   CALL: X
@@ -7187,6 +9365,54 @@ RULE B_1D_3C_3D_864_0:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp >= 9
   CONDITION: hcp <= 10
+
+RULE B_1D_3C_3H_865_0:
+  CALL: 3H
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 6
+  CONDITION: hcp >= 10
+
+RULE B_1D_3C_3H_865_1:
+  CALL: 3H
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 5
+  CONDITION: hcp >= 12
+
+RULE B_1D_3C_3S_866_0:
+  CALL: 3S
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 6
+  CONDITION: hcp >= 10
+
+RULE B_1D_3C_3S_866_1:
+  CALL: 3S
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 5
+  CONDITION: hcp >= 12
 
 RULE B_1D_3C_3NT_867_0:
   CALL: 3NT
@@ -7341,6 +9567,18 @@ RULE B_1D_3H_5D_882_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 18
 
+RULE B_1D_3H_6D_885_0:
+  CALL: 6D
+  PRIORITY: 35
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 4
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
 RULE B_1D_3H_6S_887_0:
   CALL: 6S
   PRIORITY: 66
@@ -7351,6 +9589,18 @@ RULE B_1D_3H_6S_887_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: spade_len >= 8
   CONDITION: losing_trick_count <= 3
+
+RULE B_1D_3H_7D_888_0:
+  CALL: 7D
+  PRIORITY: 36
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 4
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1D_3H_X_891_0:
   CALL: X
@@ -7462,6 +9712,18 @@ RULE B_1D_3S_5D_899_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 18
 
+RULE B_1D_3S_6D_902_0:
+  CALL: 6D
+  PRIORITY: 35
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 4
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
 RULE B_1D_3S_6H_904_0:
   CALL: 6H
   PRIORITY: 66
@@ -7472,6 +9734,18 @@ RULE B_1D_3S_6H_904_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: heart_len >= 8
   CONDITION: losing_trick_count <= 3
+
+RULE B_1D_3S_7D_905_0:
+  CALL: 7D
+  PRIORITY: 36
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 4
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1D_3S_X_908_0:
   CALL: X
@@ -7533,6 +9807,28 @@ RULE B_1D_4H_5D_924_0:
   CONDITION: diamond_len >= 5
   CONDITION: hcp >= 12
 
+RULE B_1D_4H_6D_929_0:
+  CALL: 6D
+  PRIORITY: 35
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '4H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1D_4H_7D_931_0:
+  CALL: 7D
+  PRIORITY: 36
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '4H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1D_4S_PASS_935_0:
   CALL: PASS
   PRIORITY: 0
@@ -7552,6 +9848,28 @@ RULE B_1D_4S_5D_939_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: diamond_len >= 5
   CONDITION: hcp >= 12
+
+RULE B_1D_4S_6D_944_0:
+  CALL: 6D
+  PRIORITY: 35
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '4S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1D_4S_7D_946_0:
+  CALL: 7D
+  PRIORITY: 36
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '4S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1D_5C_PASS_950_0:
   CALL: PASS
@@ -7676,6 +9994,28 @@ RULE B_1D_2N_3NT_970_0:
   CONDITION: h_stopper >= 2
   CONDITION: hcp <= 20
 
+RULE B_1D_2N_6D_975_0:
+  CALL: 6D
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1D_2N_7D_977_0:
+  CALL: 7D
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1D'
+  CONDITION: opp_last_call == '2NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1D_2N_X_980_0:
   CALL: X
   PRIORITY: 5
@@ -7695,6 +10035,18 @@ RULE B_1H_P_PASS_981_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp <= 5
+
+RULE B_1H_P_1S_982_0:
+  CALL: 1S
+  PRIORITY: 60
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: total_points >= 6
+  CONDITION: spade_len >= 4
+  CONDITION: s_is_longest == True
 
 RULE B_1H_P_1S_982_1:
   CALL: 1S
@@ -7885,6 +10237,30 @@ RULE B_1H_P_4S_997_0:
   CONDITION: spade_len >= 7
   CONDITION: hcp >= 6
 
+RULE B_1H_P_6H_1001_0:
+  CALL: 6H
+  PRIORITY: 5
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: heart_len >= 3
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1H_P_7H_1003_0:
+  CALL: 7H
+  PRIORITY: 6
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: heart_len >= 3
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1H_X_PASS_1006_0:
   CALL: PASS
   PRIORITY: 0
@@ -7927,6 +10303,34 @@ RULE B_1H_X_1NT_1008_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp < 10
+  CONDITION: hcp >= 7
+
+RULE B_1H_X_2C_1009_0:
+  CALL: 2C
+  PRIORITY: 28
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 5
+  CONDITION: total_points >= 9
+  CONDITION: hcp <= 11
+  CONDITION: hcp >= 7
+
+RULE B_1H_X_2D_1010_0:
+  CALL: 2D
+  PRIORITY: 28
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 5
+  CONDITION: total_points >= 9
+  CONDITION: hcp <= 11
   CONDITION: hcp >= 7
 
 RULE B_1H_X_2H_1011_0:
@@ -8129,6 +10533,18 @@ RULE B_1H_1S_2C_1026_0:
   CONDITION: total_points >= 9
   CONDITION: club_len >= 6
 
+RULE B_1H_1S_2C_1028_0:
+  CALL: 2C
+  PRIORITY: 39
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 5
+  CONDITION: hcp >= 12
+
 RULE B_1H_1S_2D_1029_0:
   CALL: 2D
   PRIORITY: -1
@@ -8139,6 +10555,18 @@ RULE B_1H_1S_2D_1029_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: total_points >= 9
   CONDITION: diamond_len >= 6
+
+RULE B_1H_1S_2D_1031_0:
+  CALL: 2D
+  PRIORITY: 39
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '1S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 5
+  CONDITION: hcp >= 12
 
 RULE B_1H_1S_2H_1032_0:
   CALL: 2H
@@ -8430,6 +10858,30 @@ RULE B_1H_2C_4H_1050_0:
   CONDITION: hcp <= 9
   CONDITION: heart_hcp >= 4
 
+RULE B_1H_2C_6H_1054_0:
+  CALL: 6H
+  PRIORITY: 95
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 3
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1H_2C_7H_1056_0:
+  CALL: 7H
+  PRIORITY: 96
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 3
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1H_2C_X_1059_0:
   CALL: X
   PRIORITY: 46
@@ -8597,6 +11049,30 @@ RULE B_1H_2D_4H_1069_0:
   CONDITION: heart_len >= 5
   CONDITION: hcp <= 9
   CONDITION: heart_hcp >= 4
+
+RULE B_1H_2D_6H_1073_0:
+  CALL: 6H
+  PRIORITY: 95
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 3
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1H_2D_7H_1075_0:
+  CALL: 7H
+  PRIORITY: 96
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 3
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1H_2D_X_1078_0:
   CALL: X
@@ -8854,6 +11330,54 @@ RULE B_1H_2S_2NT_1092_0:
   CONDITION: hcp <= 12
   CONDITION: s_stopper >= 2
 
+RULE B_1H_2S_3C_1093_0:
+  CALL: 3C
+  PRIORITY: 39
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 5
+  CONDITION: hcp >= 11
+
+RULE B_1H_2S_3C_1093_1:
+  CALL: 3C
+  PRIORITY: 39
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 6
+  CONDITION: hcp >= 12
+
+RULE B_1H_2S_3D_1094_0:
+  CALL: 3D
+  PRIORITY: 40
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 5
+  CONDITION: hcp >= 11
+
+RULE B_1H_2S_3D_1094_1:
+  CALL: 3D
+  PRIORITY: 40
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 6
+  CONDITION: hcp >= 12
+
 RULE B_1H_2S_3H_1096_0:
   CALL: 3H
   PRIORITY: 24
@@ -9038,6 +11562,28 @@ RULE B_1H_3C_4S_1108_0:
   CONDITION: hcp >= 10
   CONDITION: spade_len >= 7
 
+RULE B_1H_3C_6H_1112_0:
+  CALL: 6H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1H_3C_7H_1114_0:
+  CALL: 7H
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1H_3C_X_1117_0:
   CALL: X
   PRIORITY: 10
@@ -9186,6 +11732,28 @@ RULE B_1H_3D_4S_1125_0:
   CONDITION: hcp >= 10
   CONDITION: spade_len >= 7
 
+RULE B_1H_3D_6H_1129_0:
+  CALL: 6H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1H_3D_7H_1131_0:
+  CALL: 7H
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1H_3D_X_1134_0:
   CALL: X
   PRIORITY: 10
@@ -9206,6 +11774,18 @@ RULE B_1H_3S_PASS_1135_0:
   CONDITION: opp_last_call == '3S'
   CONDITION: passes_since_last_bid == 0
 
+RULE B_1H_3S_4C_1137_0:
+  CALL: 4C
+  PRIORITY: 40
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp >= 10
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 6
+
 RULE B_1H_3S_4C_1137_1:
   CALL: 4C
   PRIORITY: 40
@@ -9216,6 +11796,18 @@ RULE B_1H_3S_4C_1137_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: club_len >= 6
   CONDITION: hcp >= 12
+
+RULE B_1H_3S_4D_1138_0:
+  CALL: 4D
+  PRIORITY: 40
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp >= 10
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 6
 
 RULE B_1H_3S_4D_1138_1:
   CALL: 4D
@@ -9264,6 +11856,30 @@ RULE B_1H_3S_5D_1143_0:
   CONDITION: hcp <= 12
   CONDITION: hcp >= 6
   CONDITION: heart_len <= 2
+
+RULE B_1H_3S_6H_1146_0:
+  CALL: 6H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 3
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1H_3S_7H_1148_0:
+  CALL: 7H
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 3
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1H_3S_X_1151_0:
   CALL: X
@@ -9345,6 +11961,28 @@ RULE B_1H_4C_4S_1155_0:
   CONDITION: hcp >= 12
   CONDITION: spade_len >= 6
 
+RULE B_1H_4C_6H_1160_0:
+  CALL: 6H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '4C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1H_4C_7H_1162_0:
+  CALL: 7H
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '4C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1H_4C_X_1165_0:
   CALL: X
   PRIORITY: 10
@@ -9400,6 +12038,28 @@ RULE B_1H_4D_4S_1168_0:
   CONDITION: hcp >= 12
   CONDITION: spade_len >= 6
 
+RULE B_1H_4D_6H_1173_0:
+  CALL: 6H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1H_4D_7H_1175_0:
+  CALL: 7H
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1H_4D_X_1178_0:
   CALL: X
   PRIORITY: 10
@@ -9409,6 +12069,28 @@ RULE B_1H_4D_X_1178_0:
   CONDITION: opp_last_call == '4D'
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 10
+
+RULE B_1H_4S_6H_1186_0:
+  CALL: 6H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '4S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1H_4S_7H_1188_0:
+  CALL: 7H
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '4S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1H_5C_PASS_1192_0:
   CALL: PASS
@@ -9664,6 +12346,28 @@ RULE B_1H_2N_4S_1220_0:
   CONDITION: hcp <= 9
   CONDITION: hcp >= 7
 
+RULE B_1H_2N_6H_1224_0:
+  CALL: 6H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '2NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1H_2N_7H_1226_0:
+  CALL: 7H
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1H'
+  CONDITION: opp_last_call == '2NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1H_2N_X_1229_0:
   CALL: X
   PRIORITY: 10
@@ -9696,6 +12400,18 @@ RULE B_1S_P_1NT_1231_0:
   CONDITION: spade_len < 4
   CONDITION: hcp >= 6
 
+RULE B_1S_P_2C_1232_1:
+  CALL: 2C
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: hcp >= 12
+  CONDITION: c_is_longest == True
+  CONDITION: club_len == 4
+
 RULE B_1S_P_2C_1232_2:
   CALL: 2C
   PRIORITY: 20
@@ -9710,6 +12426,19 @@ RULE B_1S_P_2C_1232_2:
   CONDITION: heart_len == 4
   CONDITION: diamond_len == 3
   CONDITION: club_len == 3
+
+RULE B_1S_P_2H_1234_0:
+  CALL: 2H
+  PRIORITY: 90
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: heart_hcp >= 14
+  CONDITION: hcp >= 10
+  CONDITION: h_is_longest == True
+  CONDITION: heart_len >= 5
 
 RULE B_1S_P_2S_1235_0:
   CALL: 2S
@@ -9849,6 +12578,30 @@ RULE B_1S_P_4S_1245_0:
   CONDITION: hcp <= 8
   CONDITION: spade_len >= 5
 
+RULE B_1S_P_6S_1249_0:
+  CALL: 6S
+  PRIORITY: 5
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: spade_len >= 3
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1S_P_7S_1251_0:
+  CALL: 7S
+  PRIORITY: 6
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: spade_len >= 3
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1S_X_PASS_1254_0:
   CALL: PASS
   PRIORITY: 0
@@ -9867,6 +12620,34 @@ RULE B_1S_X_1NT_1255_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp < 10
+  CONDITION: hcp >= 7
+
+RULE B_1S_X_2C_1256_0:
+  CALL: 2C
+  PRIORITY: 28
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 5
+  CONDITION: total_points >= 9
+  CONDITION: hcp <= 11
+  CONDITION: hcp >= 7
+
+RULE B_1S_X_2D_1257_0:
+  CALL: 2D
+  PRIORITY: 28
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 5
+  CONDITION: total_points >= 9
+  CONDITION: hcp <= 11
   CONDITION: hcp >= 7
 
 RULE B_1S_X_2H_1258_0:
@@ -10196,6 +12977,30 @@ RULE B_1S_2C_4S_1280_0:
   CONDITION: hcp <= 9
   CONDITION: spade_hcp >= 4
 
+RULE B_1S_2C_6S_1284_0:
+  CALL: 6S
+  PRIORITY: 95
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: spade_len >= 3
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1S_2C_7S_1286_0:
+  CALL: 7S
+  PRIORITY: 96
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '2C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: spade_len >= 3
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1S_2C_X_1289_0:
   CALL: X
   PRIORITY: 46
@@ -10363,6 +13168,30 @@ RULE B_1S_2D_4S_1299_0:
   CONDITION: spade_len >= 5
   CONDITION: hcp <= 9
   CONDITION: spade_hcp >= 4
+
+RULE B_1S_2D_6S_1303_0:
+  CALL: 6S
+  PRIORITY: 95
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: spade_len >= 3
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1S_2D_7S_1305_0:
+  CALL: 7S
+  PRIORITY: 96
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '2D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: spade_len >= 3
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1S_2D_X_1308_0:
   CALL: X
@@ -10849,6 +13678,28 @@ RULE B_1S_3C_4S_1338_3:
   CONDITION: hcp <= 12
   CONDITION: spade_len >= 4
 
+RULE B_1S_3C_6S_1342_0:
+  CALL: 6S
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1S_3C_7S_1344_0:
+  CALL: 7S
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1S_3C_X_1347_0:
   CALL: X
   PRIORITY: 10
@@ -10997,6 +13848,28 @@ RULE B_1S_3D_4S_1355_3:
   CONDITION: hcp <= 12
   CONDITION: spade_len >= 4
 
+RULE B_1S_3D_6S_1359_0:
+  CALL: 6S
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1S_3D_7S_1361_0:
+  CALL: 7S
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1S_3D_X_1364_0:
   CALL: X
   PRIORITY: 10
@@ -11132,6 +14005,28 @@ RULE B_1S_4C_4S_1382_1:
   CONDITION: hcp <= 16
   CONDITION: spade_len >= 3
 
+RULE B_1S_4C_6S_1387_0:
+  CALL: 6S
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '4C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1S_4C_7S_1389_0:
+  CALL: 7S
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '4C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1S_4C_X_1392_0:
   CALL: X
   PRIORITY: 10
@@ -11186,6 +14081,28 @@ RULE B_1S_4D_4S_1395_1:
   CONDITION: hcp >= 9
   CONDITION: hcp <= 16
   CONDITION: spade_len >= 3
+
+RULE B_1S_4D_6S_1400_0:
+  CALL: 6S
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1S_4D_7S_1402_0:
+  CALL: 7S
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '4D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_1S_4D_X_1405_0:
   CALL: X
@@ -11453,6 +14370,28 @@ RULE B_1S_2N_4S_1440_0:
   CONDITION: hcp <= 9
   CONDITION: spade_hcp >= 6
 
+RULE B_1S_2N_6S_1444_0:
+  CALL: 6S
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '2NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_1S_2N_7S_1446_0:
+  CALL: 7S
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1S'
+  CONDITION: opp_last_call == '2NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_1S_2N_X_1449_0:
   CALL: X
   PRIORITY: 10
@@ -11568,6 +14507,54 @@ RULE B_2C_2H_2NT_1467_0:
   CONDITION: h_stopper >= 2
   CONDITION: hcp >= 8
 
+RULE B_2C_2H_3C_1468_0:
+  CALL: 3C
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2C'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 6
+  CONDITION: hcp >= 7
+
+RULE B_2C_2H_3C_1468_1:
+  CALL: 3C
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2C'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 5
+  CONDITION: hcp >= 8
+
+RULE B_2C_2H_3D_1469_0:
+  CALL: 3D
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2C'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 6
+  CONDITION: hcp >= 7
+
+RULE B_2C_2H_3D_1469_1:
+  CALL: 3D
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2C'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 5
+  CONDITION: hcp >= 8
+
 RULE B_2C_2H_X_1471_0:
   CALL: X
   PRIORITY: 30
@@ -11597,6 +14584,54 @@ RULE B_2C_2S_2NT_1473_0:
   CONDITION: opp_last_call == '2S'
   CONDITION: passes_since_last_bid == 0
   CONDITION: s_stopper >= 2
+  CONDITION: hcp >= 8
+
+RULE B_2C_2S_3C_1474_0:
+  CALL: 3C
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2C'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 6
+  CONDITION: hcp >= 7
+
+RULE B_2C_2S_3C_1474_1:
+  CALL: 3C
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2C'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 5
+  CONDITION: hcp >= 8
+
+RULE B_2C_2S_3D_1475_0:
+  CALL: 3D
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2C'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 6
+  CONDITION: hcp >= 7
+
+RULE B_2C_2S_3D_1475_1:
+  CALL: 3D
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2C'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 5
   CONDITION: hcp >= 8
 
 RULE B_2C_2S_3H_1476_0:
@@ -11818,6 +14853,30 @@ RULE B_2D_P_5D_1516_3:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
+RULE B_2D_P_6D_1519_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_P_7D_1522_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_2D_X_PASS_1525_0:
   CALL: PASS
   PRIORITY: 0
@@ -11940,6 +14999,30 @@ RULE B_2D_X_5D_1545_5:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
+RULE B_2D_X_6D_1548_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_X_7D_1551_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_2D_2H_PASS_1554_0:
   CALL: PASS
   PRIORITY: 0
@@ -12028,6 +15111,28 @@ RULE B_2D_2H_5D_1569_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: diamond_len >= 4
   CONDITION: hcp >= 12
+
+RULE B_2D_2H_6D_1572_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_2H_7D_1574_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '2H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2D_2S_PASS_1578_0:
   CALL: PASS
@@ -12118,6 +15223,28 @@ RULE B_2D_2S_5D_1591_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp >= 12
 
+RULE B_2D_2S_6D_1594_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_2S_7D_1596_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_2D_3C_PASS_1600_0:
   CALL: PASS
   PRIORITY: 0
@@ -12174,6 +15301,30 @@ RULE B_2D_3C_5D_1617_2:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
+RULE B_2D_3C_6D_1620_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_3C_7D_1623_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_2D_3D_3NT_1628_0:
   CALL: 3NT
   PRIORITY: 20
@@ -12220,6 +15371,50 @@ RULE B_2D_3D_5D_1632_1:
   CONDITION: diamond_len >= 4
   CONDITION: hcp >= 10
 
+RULE B_2D_3D_6C_1636_0:
+  CALL: 6C
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_3D_6D_1639_0:
+  CALL: 6D
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_3D_7C_1641_0:
+  CALL: 7C
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_2D_3D_7D_1643_0:
+  CALL: 7D
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_2D_3H_PASS_1647_0:
   CALL: PASS
   PRIORITY: 0
@@ -12263,6 +15458,30 @@ RULE B_2D_3H_5D_1652_2:
   CONDITION: diamond_hcp >= 7
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
+
+RULE B_2D_3H_6D_1655_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_3H_7D_1658_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2D_3S_PASS_1661_0:
   CALL: PASS
@@ -12308,6 +15527,30 @@ RULE B_2D_3S_5D_1666_2:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
+RULE B_2D_3S_6D_1669_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_3S_7D_1672_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_2D_4C_PASS_1675_0:
   CALL: PASS
   PRIORITY: 0
@@ -12341,6 +15584,30 @@ RULE B_2D_4C_5D_1681_2:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
+RULE B_2D_4C_6D_1684_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '4C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_4C_7D_1687_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '4C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_2D_4H_PASS_1690_0:
   CALL: PASS
   PRIORITY: 0
@@ -12362,6 +15629,30 @@ RULE B_2D_4H_5D_1698_2:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
+RULE B_2D_4H_6D_1702_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '4H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_4H_7D_1705_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '4H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_2D_4S_PASS_1709_0:
   CALL: PASS
   PRIORITY: 0
@@ -12382,6 +15673,30 @@ RULE B_2D_4S_5D_1712_2:
   CONDITION: diamond_hcp >= 7
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
+
+RULE B_2D_4S_6D_1716_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '4S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_4S_7D_1719_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '4S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2D_6C_PASS_1723_0:
   CALL: PASS
@@ -12468,6 +15783,30 @@ RULE B_2D_2N_5D_1742_3:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
+RULE B_2D_2N_6D_1745_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '2NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_2N_7D_1748_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '2NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_2D_3N_PASS_1752_0:
   CALL: PASS
   PRIORITY: 0
@@ -12501,6 +15840,43 @@ RULE B_2D_3N_5D_1758_2:
   CONDITION: diamond_len >= 5
   CONDITION: diamond_hcp <= 13
 
+RULE B_2D_3N_6D_1761_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '3NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2D_3N_7D_1764_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2D'
+  CONDITION: opp_last_call == '3NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: diamond_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_2H_P_2S_1769_0:
+  CALL: 2S
+  PRIORITY: 68
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: hcp >= 13
+  CONDITION: spade_len >= 5
+  CONDITION: s_is_longest == True
+  CONDITION: heart_len <= 1
+
 RULE B_2H_P_2NT_1770_0:
   CALL: 2NT
   PRIORITY: 60
@@ -12522,6 +15898,30 @@ RULE B_2H_P_2NT_1770_1:
   CONDITION: hcp >= 13
   CONDITION: controls >= 5
 
+RULE B_2H_P_3C_1771_0:
+  CALL: 3C
+  PRIORITY: 22
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 5
+  CONDITION: hcp >= 17
+
+RULE B_2H_P_3D_1772_0:
+  CALL: 3D
+  PRIORITY: 22
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 5
+  CONDITION: hcp >= 17
+
 RULE B_2H_P_3H_1773_0:
   CALL: 3H
   PRIORITY: 40
@@ -12533,6 +15933,30 @@ RULE B_2H_P_3H_1773_0:
   CONDITION: heart_hcp >= 6
   CONDITION: hcp <= 9
   CONDITION: heart_len >= 3
+
+RULE B_2H_P_6H_1782_0:
+  CALL: 6H
+  PRIORITY: 105
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: heart_len >= 2
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2H_P_7H_1784_0:
+  CALL: 7H
+  PRIORITY: 106
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: heart_len >= 2
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2H_2S_PASS_1787_0:
   CALL: PASS
@@ -12590,6 +16014,30 @@ RULE B_2H_2S_4H_1795_0:
   CONDITION: hcp >= 12
   CONDITION: heart_len >= 3
 
+RULE B_2H_2S_6H_1802_0:
+  CALL: 6H
+  PRIORITY: 55
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 2
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2H_2S_7H_1804_0:
+  CALL: 7H
+  PRIORITY: 56
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '2S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 2
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_2H_3C_PASS_1808_0:
   CALL: PASS
   PRIORITY: 0
@@ -12644,6 +16092,28 @@ RULE B_2H_3C_4H_1815_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 12
   CONDITION: heart_len >= 3
+
+RULE B_2H_3C_6H_1823_0:
+  CALL: 6H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2H_3C_7H_1825_0:
+  CALL: 7H
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2H_3D_PASS_1829_0:
   CALL: PASS
@@ -12700,6 +16170,28 @@ RULE B_2H_3D_4H_1835_1:
   CONDITION: hcp >= 12
   CONDITION: heart_len >= 3
 
+RULE B_2H_3D_6H_1841_0:
+  CALL: 6H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2H_3D_7H_1843_0:
+  CALL: 7H
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_2H_3H_4H_1849_0:
   CALL: 4H
   PRIORITY: 70
@@ -12710,6 +16202,30 @@ RULE B_2H_3H_4H_1849_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: heart_len >= 3
   CONDITION: hcp >= 14
+
+RULE B_2H_3H_6D_1853_0:
+  CALL: 6D
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2H_3H_7D_1855_0:
+  CALL: 7D
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2H_3S_PASS_1858_0:
   CALL: PASS
@@ -12759,6 +16275,30 @@ RULE B_2H_4H_PASS_1865_0:
   CONDITION: partner_last_call == '2H'
   CONDITION: opp_last_call == '4H'
   CONDITION: passes_since_last_bid == 0
+
+RULE B_2H_4S_6H_1873_0:
+  CALL: 6H
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '4S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 2
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2H_4S_7H_1875_0:
+  CALL: 7H
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == '4S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 2
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2H_6C_PASS_1879_0:
   CALL: PASS
@@ -12835,6 +16375,30 @@ RULE B_2S_P_2NT_1903_1:
   CONDITION: hcp >= 13
   CONDITION: controls >= 5
 
+RULE B_2S_P_3C_1904_0:
+  CALL: 3C
+  PRIORITY: 22
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 5
+  CONDITION: hcp >= 17
+
+RULE B_2S_P_3D_1905_0:
+  CALL: 3D
+  PRIORITY: 22
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 5
+  CONDITION: hcp >= 17
+
 RULE B_2S_P_3H_1906_0:
   CALL: 3H
   PRIORITY: 69
@@ -12857,6 +16421,30 @@ RULE B_2S_P_3S_1907_0:
   CONDITION: spade_hcp >= 6
   CONDITION: hcp <= 9
   CONDITION: spade_len >= 3
+
+RULE B_2S_P_6S_1915_0:
+  CALL: 6S
+  PRIORITY: 105
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: spade_len >= 2
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2S_P_7S_1917_0:
+  CALL: 7S
+  PRIORITY: 106
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: spade_len >= 2
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2S_3C_PASS_1920_0:
   CALL: PASS
@@ -12913,6 +16501,28 @@ RULE B_2S_3C_4S_1928_1:
   CONDITION: hcp >= 12
   CONDITION: spade_len >= 3
 
+RULE B_2S_3C_6S_1935_0:
+  CALL: 6S
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2S_3C_7S_1937_0:
+  CALL: 7S
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '3C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_2S_3D_PASS_1941_0:
   CALL: PASS
   PRIORITY: 0
@@ -12967,6 +16577,28 @@ RULE B_2S_3D_4S_1948_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 12
   CONDITION: spade_len >= 3
+
+RULE B_2S_3D_6S_1953_0:
+  CALL: 6S
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2S_3D_7S_1955_0:
+  CALL: 7S
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2S_3H_PASS_1959_0:
   CALL: PASS
@@ -13025,6 +16657,28 @@ RULE B_2S_3H_4S_1969_1:
   CONDITION: spade_len >= 2
   CONDITION: hcp >= 13
 
+RULE B_2S_3H_6S_1974_0:
+  CALL: 6S
+  PRIORITY: 55
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2S_3H_7S_1976_0:
+  CALL: 7S
+  PRIORITY: 56
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_2S_3S_4S_1982_0:
   CALL: 4S
   PRIORITY: 70
@@ -13035,6 +16689,30 @@ RULE B_2S_3S_4S_1982_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: spade_len >= 3
   CONDITION: hcp >= 14
+
+RULE B_2S_3S_6D_1986_0:
+  CALL: 6D
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: spade_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2S_3S_7D_1988_0:
+  CALL: 7D
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: spade_len >= 2
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2S_4C_PASS_1991_0:
   CALL: PASS
@@ -13075,6 +16753,28 @@ RULE B_2S_4H_4S_1995_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: spade_len >= 2
   CONDITION: hcp >= 13
+
+RULE B_2S_4H_6S_2002_0:
+  CALL: 6S
+  PRIORITY: 55
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '4H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2S_4H_7S_2004_0:
+  CALL: 7S
+  PRIORITY: 56
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == '4H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2S_2N_PASS_2008_0:
   CALL: PASS
@@ -13135,6 +16835,28 @@ RULE B_3C_P_5C_2045_0:
   CONDITION: hcp >= 18
   CONDITION: club_len >= 1
 
+RULE B_3C_P_6C_2049_0:
+  CALL: 6C
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3C_P_7C_2051_0:
+  CALL: 7C
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_3C_X_PASS_2054_0:
   CALL: PASS
   PRIORITY: 0
@@ -13167,6 +16889,28 @@ RULE B_3C_X_5C_2071_0:
   CONDITION: hcp >= 18
   CONDITION: club_len >= 1
 
+RULE B_3C_X_6C_2076_0:
+  CALL: 6C
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3C_X_7C_2078_0:
+  CALL: 7C
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_3C_3D_PASS_2081_0:
   CALL: PASS
   PRIORITY: 0
@@ -13186,6 +16930,30 @@ RULE B_3C_3D_PASS_2081_1:
   CONDITION: opp_last_call == '3D'
   CONDITION: passes_since_last_bid == 0
   CONDITION: club_hcp <= 5
+
+RULE B_3C_3D_6C_2087_0:
+  CALL: 6C
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3C'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 3
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3C_3D_7C_2089_0:
+  CALL: 7C
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3C'
+  CONDITION: opp_last_call == '3D'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: club_len >= 3
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_3C_3H_PASS_2092_0:
   CALL: PASS
@@ -13218,6 +16986,28 @@ RULE B_3C_3H_5C_2098_0:
   CONDITION: club_len >= 4
   CONDITION: hcp <= 10
 
+RULE B_3C_3H_6C_2102_0:
+  CALL: 6C
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3C'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3C_3H_7C_2104_0:
+  CALL: 7C
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3C'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_3C_3S_3NT_2109_0:
   CALL: 3NT
   PRIORITY: 30
@@ -13239,6 +17029,28 @@ RULE B_3C_3S_5C_2113_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: club_len >= 4
   CONDITION: hcp <= 10
+
+RULE B_3C_3S_6C_2117_0:
+  CALL: 6C
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3C'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3C_3S_7C_2119_0:
+  CALL: 7C
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3C'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_3C_4C_PASS_2123_0:
   CALL: PASS
@@ -13339,6 +17151,28 @@ RULE B_3D_P_5D_2166_0:
   CONDITION: hcp >= 18
   CONDITION: diamond_len >= 1
 
+RULE B_3D_P_6D_2169_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3D_P_7D_2171_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_3D_X_PASS_2174_0:
   CALL: PASS
   PRIORITY: 0
@@ -13370,6 +17204,28 @@ RULE B_3D_X_5D_2192_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp >= 18
   CONDITION: diamond_len >= 1
+
+RULE B_3D_X_6D_2195_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3D_X_7D_2197_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_3D_3H_PASS_2200_0:
   CALL: PASS
@@ -13424,6 +17280,50 @@ RULE B_3D_3H_5D_2209_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 10
 
+RULE B_3D_3H_6C_2212_0:
+  CALL: 6C
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3D_3H_6D_2215_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3D_3H_7C_2217_0:
+  CALL: 7C
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_3D_3H_7D_2219_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == '3H'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_3D_3S_PASS_2223_0:
   CALL: PASS
   PRIORITY: 0
@@ -13477,6 +17377,50 @@ RULE B_3D_3S_5D_2231_0:
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 10
 
+RULE B_3D_3S_6C_2234_0:
+  CALL: 6C
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3D_3S_6D_2237_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3D_3S_7C_2239_0:
+  CALL: 7C
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
+RULE B_3D_3S_7D_2241_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_3D_4C_PASS_2245_0:
   CALL: PASS
   PRIORITY: 0
@@ -13507,6 +17451,28 @@ RULE B_3D_4C_5D_2254_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: diamond_len >= 4
   CONDITION: hcp <= 10
+
+RULE B_3D_4C_6D_2257_0:
+  CALL: 6D
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == '4C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3D_4C_7D_2259_0:
+  CALL: 7D
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3D'
+  CONDITION: opp_last_call == '4C'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_3D_4D_PASS_2263_0:
   CALL: PASS
@@ -13627,6 +17593,28 @@ RULE B_3H_P_4S_2302_1:
   CONDITION: losing_trick_count <= 3
   CONDITION: spade_len >= 6
 
+RULE B_3H_P_6H_2313_0:
+  CALL: 6H
+  PRIORITY: 75
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3H_P_7H_2315_0:
+  CALL: 7H
+  PRIORITY: 76
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_3H_3S_PASS_2318_0:
   CALL: PASS
   PRIORITY: 0
@@ -13657,6 +17645,28 @@ RULE B_3H_3S_4H_2322_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: heart_len >= 2
   CONDITION: heart_hcp >= 9
+
+RULE B_3H_3S_6H_2326_0:
+  CALL: 6H
+  PRIORITY: 45
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3H'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3H_3S_7H_2328_0:
+  CALL: 7H
+  PRIORITY: 46
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3H'
+  CONDITION: opp_last_call == '3S'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_3H_4C_4H_2333_0:
   CALL: 4H
@@ -13748,6 +17758,28 @@ RULE B_3S_P_4S_2357_0:
   CONDITION: spade_len >= 2
   CONDITION: total_points >= 9
 
+RULE B_3S_P_6S_2365_0:
+  CALL: 6S
+  PRIORITY: 75
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3S_P_7S_2367_0:
+  CALL: 7S
+  PRIORITY: 76
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
+
 RULE B_3S_X_PASS_2370_0:
   CALL: PASS
   PRIORITY: 0
@@ -13799,6 +17831,28 @@ RULE B_3S_X_4S_2383_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: spade_len >= 2
   CONDITION: total_points >= 9
+
+RULE B_3S_X_6S_2391_0:
+  CALL: 6S
+  PRIORITY: 75
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3S_X_7S_2393_0:
+  CALL: 7S
+  PRIORITY: 76
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_3S_4C_4S_2397_0:
   CALL: 4S
@@ -13961,6 +18015,17 @@ RULE B_4C_P_6C_2414_3:
   CONDITION: ace_count == 3
   CONDITION: hcp >= 18
 
+RULE B_4C_P_6C_2416_0:
+  CALL: 6C
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
 RULE B_4C_P_7C_2418_0:
   CALL: 7C
   PRIORITY: 58
@@ -13971,6 +18036,17 @@ RULE B_4C_P_7C_2418_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: ace_count == 4
   CONDITION: hcp >= 20
+
+RULE B_4C_P_7C_2419_0:
+  CALL: 7C
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_4C_4H_PASS_2422_0:
   CALL: PASS
@@ -14107,6 +18183,17 @@ RULE B_4D_P_6D_2444_3:
   CONDITION: ace_count == 3
   CONDITION: hcp >= 18
 
+RULE B_4D_P_6D_2446_0:
+  CALL: 6D
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
 RULE B_4D_P_7D_2448_0:
   CALL: 7D
   PRIORITY: 58
@@ -14117,6 +18204,17 @@ RULE B_4D_P_7D_2448_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: ace_count == 4
   CONDITION: hcp >= 20
+
+RULE B_4D_P_7D_2449_0:
+  CALL: 7D
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_4D_4H_PASS_2452_0:
   CALL: PASS
@@ -14165,6 +18263,17 @@ RULE B_4H_P_PASS_2471_1:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp <= 16
 
+RULE B_4H_P_6H_2476_0:
+  CALL: 6H
+  PRIORITY: 15
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
 RULE B_4H_P_6H_2477_0:
   CALL: 6H
   PRIORITY: 30
@@ -14175,6 +18284,17 @@ RULE B_4H_P_6H_2477_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: ace_count >= 3
   CONDITION: hcp >= 17
+
+RULE B_4H_P_7H_2479_0:
+  CALL: 7H
+  PRIORITY: 16
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_4H_P_7H_2480_0:
   CALL: 7H
@@ -14243,6 +18363,17 @@ RULE B_4S_P_PASS_2494_1:
   CONDITION: passes_since_last_bid == 1
   CONDITION: hcp <= 16
 
+RULE B_4S_P_6S_2499_0:
+  CALL: 6S
+  PRIORITY: 15
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
 RULE B_4S_P_6S_2500_0:
   CALL: 6S
   PRIORITY: 30
@@ -14253,6 +18384,17 @@ RULE B_4S_P_6S_2500_0:
   CONDITION: passes_since_last_bid == 1
   CONDITION: ace_count >= 3
   CONDITION: hcp >= 17
+
+RULE B_4S_P_7S_2502_0:
+  CALL: 7S
+  PRIORITY: 16
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 1
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_4S_P_7S_2503_0:
   CALL: 7S
@@ -14274,6 +18416,17 @@ RULE B_4S_X_PASS_2506_0:
   CONDITION: opp_last_call == 'NONE'
   CONDITION: passes_since_last_bid == 0
 
+RULE B_4S_X_6S_2511_0:
+  CALL: 6S
+  PRIORITY: 15
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
 RULE B_4S_X_6S_2512_0:
   CALL: 6S
   PRIORITY: 30
@@ -14284,6 +18437,17 @@ RULE B_4S_X_6S_2512_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: ace_count >= 3
   CONDITION: hcp >= 17
+
+RULE B_4S_X_7S_2514_0:
+  CALL: 7S
+  PRIORITY: 16
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_4S_X_7S_2515_0:
   CALL: 7S
@@ -16142,6 +20306,32 @@ RULE B_2N_4S_PASS_2822_0:
   CONDITION: opp_last_call == '4S'
   CONDITION: passes_since_last_bid == 0
 
+RULE B_1N_2N_3H_2830_0:
+  CALL: 3H
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1NT'
+  CONDITION: opp_last_call == '2NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_is_best_major == True
+  CONDITION: heart_len >= 5
+  CONDITION: heart_hcp >= 7
+  CONDITION: heart_hcp <= 9
+
+RULE B_1N_2N_3S_2831_0:
+  CALL: 3S
+  PRIORITY: 20
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '1NT'
+  CONDITION: opp_last_call == '2NT'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: s_is_best_major == True
+  CONDITION: spade_len >= 5
+  CONDITION: spade_hcp >= 7
+  CONDITION: spade_hcp <= 9
+
 RULE B_5D_PASS_2835_0:
   CALL: PASS
   PRIORITY: 0
@@ -16278,6 +20468,19 @@ RULE B_2D_6S_PASS_2868_0:
   CONDITION: opp_last_call == '6S'
   CONDITION: passes_since_last_bid == 0
 
+RULE B_2H_X_2S_2870_0:
+  CALL: 2S
+  PRIORITY: 68
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: hcp >= 13
+  CONDITION: spade_len >= 5
+  CONDITION: s_is_longest == True
+  CONDITION: heart_len <= 1
+
 RULE B_2H_X_2NT_2871_0:
   CALL: 2NT
   PRIORITY: 60
@@ -16299,6 +20502,30 @@ RULE B_2H_X_2NT_2871_1:
   CONDITION: hcp >= 13
   CONDITION: controls >= 5
 
+RULE B_2H_X_3C_2872_0:
+  CALL: 3C
+  PRIORITY: 22
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 5
+  CONDITION: hcp >= 17
+
+RULE B_2H_X_3D_2873_0:
+  CALL: 3D
+  PRIORITY: 22
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 5
+  CONDITION: hcp >= 17
+
 RULE B_2H_X_3H_2874_0:
   CALL: 3H
   PRIORITY: 40
@@ -16310,6 +20537,30 @@ RULE B_2H_X_3H_2874_0:
   CONDITION: heart_hcp >= 6
   CONDITION: hcp <= 9
   CONDITION: heart_len >= 3
+
+RULE B_2H_X_6H_2883_0:
+  CALL: 6H
+  PRIORITY: 105
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 2
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2H_X_7H_2885_0:
+  CALL: 7H
+  PRIORITY: 106
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: heart_len >= 2
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2H_4D_PASS_2888_0:
   CALL: PASS
@@ -16370,6 +20621,30 @@ RULE B_2S_X_2NT_2893_1:
   CONDITION: hcp >= 13
   CONDITION: controls >= 5
 
+RULE B_2S_X_3C_2894_0:
+  CALL: 3C
+  PRIORITY: 22
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_is_best_minor == True
+  CONDITION: club_len >= 5
+  CONDITION: hcp >= 17
+
+RULE B_2S_X_3D_2895_0:
+  CALL: 3D
+  PRIORITY: 22
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_is_best_minor == True
+  CONDITION: diamond_len >= 5
+  CONDITION: hcp >= 17
+
 RULE B_2S_X_3H_2896_0:
   CALL: 3H
   PRIORITY: 69
@@ -16392,6 +20667,30 @@ RULE B_2S_X_3S_2897_0:
   CONDITION: spade_hcp >= 6
   CONDITION: hcp <= 9
   CONDITION: spade_len >= 3
+
+RULE B_2S_X_6S_2905_0:
+  CALL: 6S
+  PRIORITY: 105
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: spade_len >= 2
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_2S_X_7S_2907_0:
+  CALL: 7S
+  PRIORITY: 106
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '2S'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: spade_len >= 2
+  CONDITION: s_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_2S_4D_PASS_2910_0:
   CALL: PASS
@@ -16545,6 +20844,28 @@ RULE B_3H_X_4S_2930_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: losing_trick_count <= 3
   CONDITION: spade_len >= 6
+
+RULE B_3H_X_6H_2941_0:
+  CALL: 6H
+  PRIORITY: 75
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
+RULE B_3H_X_7H_2943_0:
+  CALL: 7H
+  PRIORITY: 76
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '3H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_3H_4D_4H_2947_0:
   CALL: 4H
@@ -16712,6 +21033,17 @@ RULE B_4C_X_6C_2963_3:
   CONDITION: ace_count == 3
   CONDITION: hcp >= 18
 
+RULE B_4C_X_6C_2965_0:
+  CALL: 6C
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count == 1
+
 RULE B_4C_X_7C_2967_0:
   CALL: 7C
   PRIORITY: 58
@@ -16722,6 +21054,17 @@ RULE B_4C_X_7C_2967_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: ace_count == 4
   CONDITION: hcp >= 20
+
+RULE B_4C_X_7C_2968_0:
+  CALL: 7C
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4C'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: c_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_4D_X_PASS_2971_0:
   CALL: PASS
@@ -16831,6 +21174,17 @@ RULE B_4D_X_6D_2978_3:
   CONDITION: ace_count == 3
   CONDITION: hcp >= 18
 
+RULE B_4D_X_6D_2980_0:
+  CALL: 6D
+  PRIORITY: 65
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count == 1
+
 RULE B_4D_X_7D_2982_0:
   CALL: 7D
   PRIORITY: 58
@@ -16841,6 +21195,17 @@ RULE B_4D_X_7D_2982_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: ace_count == 4
   CONDITION: hcp >= 20
+
+RULE B_4D_X_7D_2983_0:
+  CALL: 7D
+  PRIORITY: 66
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4D'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: d_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_4D_5D_PASS_2986_0:
   CALL: PASS
@@ -16871,6 +21236,17 @@ RULE B_4H_X_PASS_2987_1:
   CONDITION: passes_since_last_bid == 0
   CONDITION: hcp <= 16
 
+RULE B_4H_X_6H_2992_0:
+  CALL: 6H
+  PRIORITY: 15
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count == 1
+
 RULE B_4H_X_6H_2993_0:
   CALL: 6H
   PRIORITY: 30
@@ -16881,6 +21257,17 @@ RULE B_4H_X_6H_2993_0:
   CONDITION: passes_since_last_bid == 0
   CONDITION: ace_count >= 3
   CONDITION: hcp >= 17
+
+RULE B_4H_X_7H_2995_0:
+  CALL: 7H
+  PRIORITY: 16
+  CONDITION: is_opening == False
+  CONDITION: my_last_call == 'NONE'
+  CONDITION: partner_last_call == '4H'
+  CONDITION: opp_last_call == 'NONE'
+  CONDITION: passes_since_last_bid == 0
+  CONDITION: h_realsolid == True
+  CONDITION: losing_trick_count <= 0
 
 RULE B_4H_X_7H_2996_0:
   CALL: 7H

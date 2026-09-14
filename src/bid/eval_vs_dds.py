@@ -145,6 +145,7 @@ def load_decision_net_dsl(path: str) -> DecisionNet:
             rid = block_rule.group(1).strip()
             call, prio, conditions = None, 10, []
             is_neg = False
+            intent = None
             i += 1
             while i < len(lines):
                 sub = lines[i].rstrip("\n").strip()
@@ -154,6 +155,8 @@ def load_decision_net_dsl(path: str) -> DecisionNet:
                     call = parse_call(sub.split("CALL:", 1)[1])
                 elif sub.startswith("PRIORITY:"):
                     prio = int(sub.split("PRIORITY:", 1)[1].strip())
+                elif sub.startswith("INTENT:"):
+                    intent = sub.split("INTENT:", 1)[1].strip() or None
                 elif sub.startswith("NEGATIVE:"):
                     is_neg = sub.split("NEGATIVE:", 1)[1].strip() == "True"
                 elif sub.startswith("CONDITION:"):
@@ -161,7 +164,8 @@ def load_decision_net_dsl(path: str) -> DecisionNet:
                 i += 1
             if call is not None:
                 net.add_rule(DecisionNetRule(rid, call, conditions,
-                                             is_negative=is_neg, priority=prio))
+                                             is_negative=is_neg, priority=prio,
+                                             intent=intent))
             continue
 
         inter = re.match(r"^INTERSECTION\s+(.+?):$", stripped)

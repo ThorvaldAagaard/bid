@@ -55,6 +55,28 @@ class BridgeFeatures:
         features["shortest_suit_len"] = lengths_sorted[3]
         features["shape_pattern"] = f"{lengths_sorted[0]}{lengths_sorted[1]}{lengths_sorted[2]}{lengths_sorted[3]}"
 
+        # --- longest / best-suit predicates ---------------------------------
+        # Brill writes `clublongest`, `bestsuit('D')`, `bestmajor('H')`,
+        # `bestminor('C')` — 171 occurrences between them. All mean "suit X is
+        # the longest", i.e. a FEATURE-TO-FEATURE comparison
+        # (X_len >= longest_suit_len), which the DSL cannot express: the RHS
+        # would be parsed as the string 'longest_suit_len'. Precomputed here
+        # instead.
+        #
+        # Ties are INCLUDED. Brill's own row
+        #   diamondlongest and not (diamonds >= 5 and (spadelongest or heartlongest))
+        # only has a meaning if a 5-5 tie marks BOTH suits as longest —
+        # that is exactly the case the `not` clause exists to exclude.
+        longest = lengths_sorted[0]
+        for suit, n in ((Suit.CLUBS, c_len), (Suit.DIAMONDS, d_len),
+                        (Suit.HEARTS, h_len), (Suit.SPADES, s_len)):
+            features[f"{str(suit).lower()}_is_longest"] = (n == longest)
+        # "best major"/"best minor" = the longer of the two, ties included.
+        features["h_is_best_major"] = h_len >= s_len
+        features["s_is_best_major"] = s_len >= h_len
+        features["c_is_best_minor"] = c_len >= d_len
+        features["d_is_best_minor"] = d_len >= c_len
+
         # 3. Distributional properties
         features["is_balanced"] = hand.is_balanced
         # Semi-balanced: 5422, 6322 or balanced
@@ -82,6 +104,9 @@ class BridgeFeatures:
         features["king_count"] = king_count
         features["queen_count"] = queen_count
         features["jack_count"] = jack_count
+        # Aces only — this is NOT the RKCB 1430 keycard count, which also
+        # includes the king of trump. That needs `agreed_trump` and lives in
+        # `keycard_count_agreed` (see extract_auction_features).
         features["keycard_count_1430"] = hand.ace_count # Base aces
 
         # 5. Suit specific honors
@@ -118,6 +143,31 @@ class BridgeFeatures:
             elif has_jack and has_ten and s_len >= 3:
                 stopper = 1
             features[f"{s_name}_stopper"] = stopper
+
+            # Brill's `realsolid('X')` gates 256 slam rows
+            # (`6X <- realsolid('X') and losers == 1`). Fitted against Brill's
+            # own engine by holding `losers` fixed and varying only this suit:
+            # 350/350 on held-out hands. See status §6.53.
+            #
+            # It is NOT "AKQ and 6+", which is the obvious guess and is wrong.
+            # Ace and king are both mandatory; the queen, jack and ten then
+            # move the length threshold:
+            #     AKQJ -> 6+    AKQT -> 7+    AKQ -> 8+    AKJ(+-T) -> 9+
+            # `AK` and `AKT` are never realsolid at any length, and the ten
+            # only counts when the queen is there and the jack is not.
+            if s_len < 6 or not (has_ace and has_king):
+                realsolid = False
+            elif has_queen and has_jack:
+                realsolid = True           # AKQJ, 6+
+            elif has_queen and has_ten:
+                realsolid = s_len >= 7     # AKQT, 7+
+            elif has_queen:
+                realsolid = s_len >= 8     # AKQ, 8+
+            elif has_jack:
+                realsolid = s_len >= 9     # AKJ (with or without the ten)
+            else:
+                realsolid = False
+            features[f"{s_name}_realsolid"] = realsolid
 
         # 6. Evaluation metrics: Total Points, Loser Count (LTC), Quick Tricks
         features["total_points"] = hand.total_points
@@ -323,6 +373,42 @@ class BridgeFeatures:
             features["partner_last_bid_strain"] = "NONE"
             features["support_in_partner_suit"] = -1
 
+        # ---- agreed trump: the auction's semantic state --------------------
+        # The auction-agreed strain is the most recently bid suit that BOTH
+        # members of the partnership have shown. NT is never a trump
+        # agreement. `our_fit_shown` is only a bool; slam conventions need to
+        # know *which* suit. Without this, Brill's `havekeycards` (4 aces +
+        # the TRUMP king) and `trumpqueen` cannot be written as conditions at
+        # all — see research/status.md §6.41.
+        shared_suits = my_own_suits & partner_suits
+        agreed_trump = None
+        if shared_suits:
+            for i in range(len(history) - 1, -1, -1):
+                c = history[i]
+                if (c.type == CallType.BID and c.strain is not None
+                        and c.strain in shared_suits):
+                    agreed_trump = c.strain
+                    break
+        features["agreed_trump"] = (str(agreed_trump)
+                                    if agreed_trump is not None else "NONE")
+
+        if agreed_trump is not None and hand is not None:
+            trump_suit = Suit(agreed_trump.value)   # Strain/Suit share 0..3
+            trump_cards = hand.by_suit.get(trump_suit, [])
+            trump_ranks = {c.rank for c in trump_cards}
+            has_tk = Rank.KING in trump_ranks
+            features["agreed_trump_len"] = len(trump_cards)
+            features["has_trump_king"] = has_tk
+            features["has_trump_queen"] = Rank.QUEEN in trump_ranks
+            # RKCB 1430/0314: four aces plus the king of trump.
+            features["keycard_count_agreed"] = hand.ace_count + (1 if has_tk else 0)
+        else:
+            features["agreed_trump_len"] = -1
+            features["has_trump_king"] = False
+            features["has_trump_queen"] = False
+            # No agreed suit (NT auctions, Gerber): keycards are plain aces.
+            features["keycard_count_agreed"] = hand.ace_count if hand is not None else -1
+
         # ---- NT stopper quality in opponents' bid suits ---------------------
         # Deterministic holding check: A=2, guarded K (K + 1 other)=1,
         # guarded Q (Q + 2 others)=0.5; the best stopper across every suit
@@ -359,4 +445,33 @@ class BridgeFeatures:
                     vuln: int = Vulnerability.NONE) -> Dict[str, Any]:
         h_feats = BridgeFeatures.extract_hand_features(hand)
         a_feats = BridgeFeatures.extract_auction_features(history, my_seat, dealer, vuln, hand=hand)
-        return {**h_feats, **a_feats}
+        feats = {**h_feats, **a_feats}
+
+        # Rule of 21 — Brill's `ruleof21`. Brill's prose says "if the number
+        # of high card points and the number of cards in your two longest
+        # suits add to twenty and you have two quick tricks, open the hand.
+        # In the third or fourth seats, one only needs 1 1/2 quick tricks
+        # (the rule of 21 1/2)" — but the engine does not implement 20.
+        #
+        # MEASURED, not assumed. 400 probed opening hands (hcp<=11 so the
+        # HCP>=12 route cannot apply, no 6+ suit so no preempt, quick tricks
+        # >= 2 held constant) — total <= 19 passed 100% of the time, total
+        # >= 21 opened 100% of the time, total == 20 was mixed. Brill's own
+        # `explanation` prints it as "RuleOf >= 21". So the threshold is 21
+        # even though the quantity is the classic rule-of-20 total.
+        #
+        # Exposed as ONE boolean rather than as `rule20_total >= 21` plus
+        # `quick_tricks >= 2` because Brill also writes `not ruleof21` (its
+        # "No opening bid" pass rule and the weak-two denies), and a
+        # conjunction cannot be negated in this DSL — only a bare boolean
+        # can be flipped to `== False`.
+        total = (h_feats.get("hcp", 0) + h_feats.get("longest_suit_len", 0)
+                 + h_feats.get("second_longest_len", 0))
+        feats["rule20_total"] = total
+        # With no bid yet, every call in the history is a pass, so the count
+        # of them says which seat we are: 0/1 = 1st/2nd, 2/3 = 3rd/4th.
+        third_or_fourth = bool(a_feats.get("is_opening")) and len(history) >= 2
+        need_qt = 1.5 if third_or_fourth else 2.0
+        feats["rule_of_21"] = (total >= 21
+                               and h_feats.get("quick_tricks", 0.0) >= need_qt)
+        return feats

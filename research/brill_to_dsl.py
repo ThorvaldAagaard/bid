@@ -123,6 +123,11 @@ SCALARS: Dict[str, Tuple[str, bool]] = {
     "heartpoints": ("heart_hcp", True), "spadepoints": ("spade_hcp", True),
     "suitpoints": ("hcp", True),       # suitpoints('X') is suit-specific; only
                                        # ever used with a suit arg, handled below
+    # Roman Keycard Blackwood. `havekeycards` = 4 aces + the king of TRUMP, so
+    # it needs the auction-agreed suit; `keycard_count_agreed` (features.py)
+    # falls back to plain aces when no suit is agreed, which is the right
+    # answer for Gerber and quantitative 4NT.
+    "havekeycards": ("keycard_count_agreed", False),
 }
 
 # bare boolean identifiers -> condition tuple (or TRUE/FALSE/SKIP)
@@ -132,12 +137,20 @@ BOOLS: Dict[str, Any] = {
     "semibalanced": ("is_semi_balanced", "==", True),
     "balish": ("is_semi_balanced", "==", True),          # approx
     "unbalanced": ("is_unbalanced", "==", True),
-    # NOTE: Brill's `clublongest` / `diamondlongest` / ... and `bestsuit('X')`
-    # all mean "suit X is the longest", i.e. X_len >= longest_suit_len.  The
-    # DSL compares a feature against a CONSTANT, so a feature-to-feature
-    # comparison cannot be written — the RHS would parse as the string
-    # 'longest_suit_len' and raise TypeError at match time.  These atoms are
-    # therefore dropped, never faked.
+    # Rule of 21: HCP + the two longest suits >= 20 with two quick tricks
+    # (1.5 in 3rd/4th seat). features.py computes it as a single boolean so
+    # that `not ruleof21` — Brill's "No opening bid" pass and the weak-two
+    # denies — can be negated; a conjunction could not be.
+    "ruleof21": ("rule_of_21", "==", True),
+    # Brill's `Xlongest` = "suit X is the longest". It used to be dropped: the
+    # DSL compares a feature against a CONSTANT, so the natural
+    # X_len >= longest_suit_len cannot be written (the RHS would be read as
+    # the string 'longest_suit_len'). features.py now precomputes it as a
+    # boolean. Ties count as longest — see the note in features.py.
+    "clublongest": ("c_is_longest", "==", True),
+    "diamondlongest": ("d_is_longest", "==", True),
+    "heartlongest": ("h_is_longest", "==", True),
+    "spadelongest": ("s_is_longest", "==", True),
 }
 
 
@@ -233,8 +246,23 @@ def translate_call(node: Call_):
     if fn == "doublestopper" and suit:
         return (f"{SHORT[suit]}_stopper", ">=", 3)          # approx
 
-    # bestsuit / bestmajor / bestminor all need a feature-to-feature
-    # comparison; see the note in BOOLS.  Dropped.
+    # bestsuit / bestmajor / bestminor used to need a feature-to-feature
+    # comparison and were dropped. features.py now precomputes them:
+    #   bestsuit('X')   -> X is the longest suit        (ties count)
+    #   bestmajor('H')  -> hearts is the longer major   (ties count)
+    #   bestminor('C')  -> clubs is the longer minor    (ties count)
+    if fn == "bestsuit" and suit:
+        return (f"{SHORT[suit]}_is_longest", "==", True)
+    if fn == "bestmajor" and suit in ("H", "S"):
+        return (f"{SHORT[suit]}_is_best_major", "==", True)
+    if fn == "bestminor" and suit in ("C", "D"):
+        return (f"{SHORT[suit]}_is_best_minor", "==", True)
+
+    # realsolid('X') -> precomputed boolean. Measured from Brill's own engine
+    # rather than guessed (status §6.53): 6+ suit, A and K mandatory, then
+    # AKQJ -> 6+, AKQT -> 7+, AKQ -> 8+, AKJ -> 9+.
+    if fn == "realsolid" and suit:
+        return (f"{SHORT[suit]}_realsolid", "==", True)
 
     if fn == "suitpoints" and suit:
         return (f"{LONG[suit]}_hcp", ">=", None)            # filled by caller
@@ -612,19 +640,23 @@ def render(rules: List[OutRule], stats: Counter, total_rows: int,
     out.append("#   * Clauses containing atoms with no DSL equivalent are")
     out.append("#     DROPPED, never relaxed.  Brill's own computed verdicts")
     out.append("#     (game / slammish / CanBid6_* / CanAsk_*_RKC / loserlevel)")
-    out.append("#     and its suit-quality tests (realsolid / trump /")
-    out.append("#     rebiddable / monsterslam) are NOT reproduced.  The system")
-    out.append("#     here is therefore thinner than Brill, especially for")
-    out.append("#     slams and sacrifices — it will underbid rather than")
-    out.append("#     overbid, which is the safe direction.")
+    out.append("#     and most of its suit-quality tests (trump / rebiddable /")
+    out.append("#     monsterslam) are NOT reproduced.  `realsolid('X')` IS,")
+    out.append("#     measured from Brill's engine rather than guessed (§6.53).")
+    out.append("#     The system here is therefore thinner than Brill,")
+    out.append("#     especially for slams and sacrifices — it will underbid")
+    out.append("#     rather than overbid, which is the safe direction.")
     out.append("#   * Approximations in use" + (":" if allow_approx else ": NONE"))
     if allow_approx:
         out.append("#       losers        -> losing_trick_count")
         out.append("#       X_points      -> X_hcp")
         out.append("#       balish        -> is_semi_balanced")
         out.append("#       stopper('X')  -> X_stopper >= 2")
-    out.append("#   * Dropped entirely (needs a feature-to-feature compare):")
-    out.append("#       Xlongest / bestsuit(X) / bestmajor(X) / bestminor(X)")
+    out.append("#   * Feature-to-feature compares, precomputed in features.py")
+    out.append("#     as booleans rather than dropped (§6.51, §6.53):")
+    out.append("#       Xlongest -> X_is_longest      bestsuit(X)  -> X_is_longest")
+    out.append("#       bestmajor(X) -> X_is_best_major   bestminor(X) -> X_is_best_minor")
+    out.append("#       realsolid('X') -> X_realsolid")
     out.append("#")
     out.append("# WHAT IS MISSING, AND WHY IT CANNOT BE FIXED HERE")
     out.append("#   * Tree rules for the 1M openings, the weak twos and the 3-level")

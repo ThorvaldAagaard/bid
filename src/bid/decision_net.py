@@ -34,13 +34,19 @@ class DecisionNetRule:
                  conditions: List[RuleCondition],
                  description: str = "",
                  is_negative: bool = False,
-                 priority: int = 10):
+                 priority: int = 10,
+                 intent: Optional[str] = None):
         self.rule_id = rule_id
         self.call = call
         self.conditions = conditions
         self.description = description
         self.is_negative = is_negative
         self.priority = priority
+        # Semantic intent (ASK / SHOW / TRANSFER / ENCODE / ...). Purely
+        # descriptive: matching and execution stay flat `feature op constant`
+        # conjunctions. It exists so convention and explain tooling can read
+        # a rule's purpose back out of the DSL.
+        self.intent = intent
 
     def matches(self, features: Dict[str, Any]) -> bool:
         return all(c.evaluate(features) for c in self.conditions)
@@ -87,10 +93,11 @@ class DecisionNet:
         # rules, and repeated save->load cycles squared them (24 identical
         # NO_D_WITH_MAJOR_HEA blocks in one historical system.dsl).
         body = (rule.rule_id, str(rule.call), rule.priority, rule.is_negative,
+                rule.intent,
                 tuple((c.key, c.op, str(c.value)) for c in rule.conditions))
         for existing in self.rules:
             if (existing.rule_id, str(existing.call), existing.priority,
-                    existing.is_negative,
+                    existing.is_negative, existing.intent,
                     tuple((c.key, c.op, str(c.value)) for c in existing.conditions)) == body:
                 return
         self.rules.append(rule)
@@ -293,6 +300,8 @@ class DecisionNet:
             lines.append(f"\nRULE {r.rule_id}:")
             lines.append(f"  CALL: {call_str}")
             lines.append(f"  PRIORITY: {r.priority}")
+            if r.intent:
+                lines.append(f"  INTENT: {r.intent}")
             if r.is_negative:
                 # one block per rule: the pre-fix fall-through double-wrote
                 # every negative rule (missing continue), and repeated

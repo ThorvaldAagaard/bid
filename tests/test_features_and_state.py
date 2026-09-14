@@ -23,6 +23,43 @@ class TestFeaturesAndState(unittest.TestCase):
         self.assertEqual(feats["king_count"], 2)
         self.assertEqual(feats["queen_count"], 1)
 
+    def test_realsolid_matches_brills_measured_table(self):
+        """`realsolid('X')` is Brill's suit-quality gate on 256 slam rows.
+
+        It is NOT "AKQ and 6+". Fitted by probing Brill's own engine with
+        `losers` pinned at 1 and only the target suit varying (status §6.53);
+        350/350 held-out hands. Lock the whole table so a later "obvious"
+        simplification cannot silently turn it into an over-bid.
+        """
+        # (spade holding, side suits, expected s_realsolid)
+        cases = [
+            ("SAKQJ32",     "HAKQ DAK CAQ",   True),   # AKQJ, 6  -> 6+  ok
+            ("SAKQT32",     "HAKQ DAK CAQ",   False),  # AKQT, 6  -> needs 7
+            ("SAKQ432",     "HAKQ DAK CAQ",   False),  # AKQ,  6  -> needs 8
+            ("SAKQT543",    "HAKQ DAK CA",    True),   # AKQT, 7
+            ("SAKQ5432",    "HAKQ DAK CA",    False),  # AKQ,  7
+            ("SAKJ5432",    "HAKQ DAK CA",    False),  # AKJ,  7  -> needs 9
+            ("SAKQ65432",   "HAK DAK CK",     True),   # AKQ,  8
+            ("SAKJ98765",   "HAKQ DA CA",     False),  # AKJ,  8
+            ("SAKJ987654",  "HAK DA CA",      True),   # AKJ,  9
+            ("SAKT98765",   "HAKQ DA CA",     False),  # AKT,  8  -> never
+            ("SAQJ987654",  "HAK DA CA",      False),  # no king -> never
+            ("SAKQJ",       "HAKQ DAKQ32 CA", False),  # 4 cards -> never
+            ("SAKT9876543", "HA DA CA",       False),  # AKT, 10 -> never
+        ]
+        for spades, rest, expected in cases:
+            hand = Hand.from_string(spades + " " + rest)
+            feats = BridgeFeatures.extract_hand_features(hand)
+            self.assertEqual(len(hand.cards), 13, spades)
+            self.assertEqual(feats["s_realsolid"], expected,
+                             "spades=%s expected realsolid=%s" % (spades, expected))
+
+        # ... and the same predicate is exposed per suit, not just spades.
+        hand = Hand.from_string("HAKQJ32 SAKQ DAK CAQ")
+        feats = BridgeFeatures.extract_hand_features(hand)
+        self.assertTrue(feats["h_realsolid"])
+        self.assertFalse(feats["s_realsolid"])   # 3-card spade suit
+
     def test_auction_feature_extraction(self):
         history = [
             Call(CallType.BID, 1, Strain.HEARTS),

@@ -196,6 +196,30 @@ def cmd_train(args):
     print(f"saved {args.out}")
 
 
+def _grow_vocab_tensors(sd, model):
+    """Pad a checkpoint's vocab-indexed weights up to the current vocab size.
+
+    The frozen vocabulary only ever grows: new feature atoms are APPENDED
+    with fresh ids and existing assignments are never remapped (see
+    `cot_tokenizer.build_frozen_vocab`). So a checkpoint trained before a
+    feature was added has a narrower `tok_emb` / `head` matrix than the
+    model we are building. Load those rows and leave the new ones at their
+    initialisation — the new tokens are simply untrained, which is the honest
+    state — instead of refusing to load the checkpoint at all.
+    """
+    for key, cur in (("tok_emb.weight", model.tok_emb.weight),
+                     ("head.weight", model.head.weight)):
+        old = sd.get(key)
+        if old is None or old.shape == cur.shape:
+            continue
+        if old.shape[0] > cur.shape[0] or old.shape[1] != cur.shape[1]:
+            continue          # genuinely incompatible: let load_state_dict raise
+        grown = cur.detach().clone()
+        grown[:old.shape[0]] = old
+        sd[key] = grown
+    return sd
+
+
 def _load_model(vocab_size, args, meta):
     """Build model on best device, inferring context length from the
     checkpoint's positional embedding when --block is not given."""
@@ -207,7 +231,7 @@ def _load_model(vocab_size, args, meta):
         else:  # pragma: no cover - malformed ckpt fallback
             args.block = int(meta.get("block_size_max", 128))
     model = COTModel(vocab_size, block_size=args.block).to(dev)
-    model.load_state_dict(sd)
+    model.load_state_dict(_grow_vocab_tensors(sd, model))
     model.to(dev)
     model.eval()
     return model

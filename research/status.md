@@ -2286,6 +2286,347 @@ PYTHONPATH=.. python3 show_bids.py 1 16 21 22
 
 ---
 
+### 6.47 `research/dsl-design.md` reviewed — mostly already built; adopt 2 of 12 sections
+
+The design doc proposes a semantic/intent DSL: bidding operators,
+`ACTION(intent, target, constraints)`, an `encode()` slot layer, a semantic
+state carried through the auction, and bid equivalence classes for search.
+Verdict: **do not rewrite the DSL.** Roughly two-thirds already exists.
+
+- **§2/§6/§7/§10 already exist.** `bid/protocol.py`'s
+  `ProtocolStep(op_type, trigger_sequence, target_feature, call_mapping)` *is*
+  `ACTION(...)` plus `encode(...)`. `ProtocolOpType` carries
+  SHOW/ASK/COMMAND/TRANSFER/ENCODE/CONCEAL/AMBIGUATE/POOL; 11 convention
+  factories (Stayman, Jacoby, Texas, Blackwood, Drury, Michaels, Unusual 2NT,
+  Cappelletti, Smolen, Gambling).
+- **The "invent conventions" payoff already exists.** `convention_search.py`
+  hill-climbs protocol space: retarget-the-feature mutates the semantic layer,
+  swap `call_mapping` / shift ranges mutates the encoding layer.
+- **§4's premise is false here.** The doc assumes search branches over ~30
+  legal calls. `DecisionNet.actions()` returns only calls from *matched*
+  rules, so φ(s) already banks that compression.
+- **§8 was genuinely missing** and is the one real win — see below.
+
+**Latent bug found and fixed.** `ProtocolStep.generate_rules()` built
+conditions only from `target_feature`/`val`; `op_type` was cosmetic and
+`trigger_sequence` was **never compiled into any condition**. Stayman lowered
+to a bare `heart_len >= 4 -> 2H` and Blackwood to `ace_count == 2 -> 5H`, both
+firing on every auction including the opening seat. Fixed: the trailing calls
+now compile to `partner_last_call` / `my_last_call` / `opp_last_call`
+conditions, with an explicit `trigger_seats` where the default inference is
+wrong (Michaels, Unusual 2NT and Cappelletti have an opponent's call in the
+sequence). Two tests passed only because of the bug and were made seat-correct.
+Harmless in practice only because **none of the 11 conventions reach a shipped
+system** — grepping `stayman|blackwood|jacoby|texas|smolen|cappelletti` in
+`improved_system.dsl` (75 rules) and `championship` (90) returns zero hits.
+
+Also added: `DecisionNetRule.intent`, emitted and parsed as an `INTENT:` line.
+Execution stays flat; intent is metadata for convention/explain tooling.
+
+**Adopted (§8):** `agreed_trump`, `agreed_trump_len`, `has_trump_king`,
+`has_trump_queen`, `keycard_count_agreed` in `bid/features.py`. `agreed_trump`
+is the most recent suit bid by EITHER member of our partnership — not "both
+bid it", which is `our_fit_shown` and too strict: after `1C-1H-4N` trump is
+hearts even though opener never raised. This is the §6.41 prerequisite, and it
+fixes a real off-by-one: `keycard_count_1430` was stubbed to `ace_count`, so
+it was wrong whenever the hand held the trump king.
+
+**Not adopted:** the `WHEN/IF/DO` + `ENCODE` surface grammar as the on-disk
+format, and §11/§12 (hierarchical intent search, equivalence classes) until
+branching is actually a cost. A second language means a second parser for
+`lint_dsl.py`, `translator.py`, `eval_vs_dds`, `brill_to_dsl` and `web/`'s
+20 JS files — and 72–79% of the fidelity gap is Brill's deal-level verdicts,
+which are hand-*evaluation* primitives that no encoding layer touches.
+
+### 6.48 Where the Brill gap actually is: 69% dropped, 30% mistranslated, 1% missing
+
+`research/brill_miss_classify.py` (new) splits every disagreement three ways
+using the cached live bids. On 2,564 comparisons (70.2% agreement):
+
+| class | n | % of misses | meaning |
+|---|---|---|---|
+| `CONTEXT_MISMATCH` | 530 | 69.3 | no rule bids that call at that auction — the row was dropped in translation (verdicts) |
+| `ENF_TRUE_BUG` | 230 | 30.1 | a rule for that call and auction exists and its auction conditions hold, but a hand condition failed — *our* rule is stricter than Brill's |
+| `NO_RULE` | 5 | 0.7 | nothing at all |
+
+`ENF_DROPPED_CLAUSE` was measured as a separate class (rule exists, but Brill
+fired a disjunct we dropped) and came out at **0** — Brill's `/bid` returns the
+winning rule's own expression, so when it wins via a verdict the `requires`
+says so and the case lands in `CONTEXT_MISMATCH` instead.
+
+Before acting on the 230, two things were checked and both came back clean:
+every one of the 1,552 rules fires at exactly **one** captured position (no
+dead rules, no cross-position leakage), and 1,080 of 2,459 `(position, call)`
+pairs are reachable at all — the other 1,379 are rows dropped for blocker
+atoms. So the auction gating is sound; the gap is atoms, not plumbing.
+
+`ruleof21` is now a feature (see §6.49). It bought 9 rules and **zero**
+measured agreement: opening passes were already covered by DecisionNet's
+default-PASS fallback, and the new 1C/1D rules require an exact 4333/4432
+shape. Correct, but not where the loss is.
+
+### 6.49 `ruleof21` is now translatable — and why it is one boolean, not two conditions
+
+Brill emits a single `ruleof21` boolean (23 occurrences), including
+`not ruleof21`. It was dropped as an unpublished macro. Per Brill's own
+prose: HCP + the two longest suits >= 20 **and** two quick tricks; in 3rd/4th
+seat 1½ quick tricks suffice ("the rule of 21 ½").
+
+Implemented in `bid/features.py::extract_all` as `rule_of_21` (bool) plus
+`rule20_total` (int), and mapped in `brill_to_dsl.BOOLS`.
+
+It is deliberately **one boolean rather than two conditions**. Brill also
+writes `not ruleof21` — its "No opening bid" pass rule and the weak-two
+denies. `translate_literal` can only negate a bare boolean
+(`x == True` -> `x == False`); a conjunction is returned as `ALT` and
+negating an `ALT` is `SKIP`, which would silently drop those clauses. The
+seat rule sits inside the feature for the same reason: with no bid yet, the
+number of calls in the history is the number of passes, so
+`is_opening and len(history) >= 2` identifies 3rd/4th seat.
+
+**The threshold is 21, not the 20 in the prose — measured.** 400 probed
+opening hands (`hcp <= 11` so the HCP>=12 route cannot apply, no 6+ suit so
+no weak two or preempt can fire, quick tricks held at >= 2):
+
+| total (hcp + two longest) | n | passed | opened |
+|---|---|---|---|
+| 14–19 | 313 | 313 | 0 |
+| 20 | 75 | 64 | 11 |
+| 21 | 12 | 0 | 12 |
+
+Every pass came back with `requires` = `hcp < 12 and not ruleof21`. Brill's
+own `explanation` prints the condition as `RuleOf >= 21`. So the classic
+rule-of-20 *quantity* is compared against **21**. The 11 openings at total 20
+are 1H/1S and go through `Opening1H`/`Opening1S`, which we drop anyway.
+
+Caveat: with this quick-trick table (AK=2, AQ=1.5, A=1, KQ=1, guarded K=0.5)
+a hand that reaches 21 almost always holds 2 quick tricks anyway, so the
+3rd/4th-seat 1½ relaxation rarely binds.
+
+### 6.50 `X_points` could not be fitted — and the tooling traps behind that
+
+`X_points -> X_hcp` is the single largest family in the ENF_TRUE_BUG class
+(diamond_hcp>=7 x29, spade_hcp>=10 x23, heart_hcp>=10 x21, spade_hcp>=6 x15,
+club_hcp>=6 x10, diamond_hcp>=6 x10). Three attempts to fit the length
+adjustment all failed, for reasons worth recording so nobody repeats them:
+
+1. **Probing by returned bid is confounded.** At `1H-1N` (row
+   `4H: H_points >= 11 and H >= 4`) the minimum heart HCP that produced a 4H
+   bid was **0** at every length from 4 to 6 — weak hands also bid 4H, via a
+   different rule entirely. The bid alone never tells you which rule fired.
+2. **`requires` is a hint, not ground truth** (§6.46).
+3. **`details=true` is not the fix** — its `analysis` array lists candidate
+   rules considered, not only the winner, so substring-matching it reports
+   `H_points` for ~50% of all hands including ones with 0 heart HCP.
+
+Until Brill exposes the winning rule id unambiguously, `X_points` stays an
+approximation. It is documented in the DSL header and errs in the safe
+direction (underbids), so it is left in place rather than guessed at.
+
+### 6.51 `*_is_longest` recovered: 1,561 -> 1,676 rules, fidelity 70.2% -> 71.1%
+
+Brill expresses "suit X is the longest" four ways, 171 occurrences in total:
+`Xlongest` (42), `bestsuit('X')` (29), `bestmajor('X')` (60),
+`bestminor('X')` (40). All were dropped, because the natural translation
+`X_len >= longest_suit_len` is a FEATURE-TO-FEATURE comparison and the DSL
+only compares a feature against a constant — the RHS would be parsed as the
+literal string `'longest_suit_len'`.
+
+`bid/features.py` now precomputes them as booleans:
+`{c,d,h,s}_is_longest`, `{h,s}_is_best_major`, `{c,d}_is_best_minor`.
+
+**Ties count as longest**, which is not a guess. Brill's own row
+
+    diamondlongest and not (diamonds >= 5 and (spadelongest or heartlongest))
+
+only has a meaning if a 5-5 tie marks *both* suits longest — that is
+precisely the case the `not` clause exists to exclude. `bestmajor`/`bestminor`
+are given the same tie convention for consistency.
+
+Measured on the same 2,564 cached comparisons (a fixed, matched sample, so
+this is a deterministic delta rather than sampling noise):
+
+| | rules | agree | CONTEXT_MISMATCH | ENF_TRUE_BUG |
+|---|---|---|---|---|
+| before | 1,561 | 1,799 (70.2%) | 530 | 230 |
+| after | 1,676 | **1,823 (71.1%)** | 498 | 238 |
+
++115 rules, +24 agreements. The header's earlier estimate of "~55 rules" was
+low. This does **not** recover the 1H/1S openings, which remain blocked by
+`Opening1H`/`Opening1S`.
+
+### 6.52 What is left, ranked by clauses freed (`research/brill_atom_cost.py`)
+
+`brill_atom_cost.py` (new) answers "which feature next?" with a number. For
+each DNF clause it finds the literals that fail to translate, and credits an
+atom when it is the *only* blocker — so the count is "clauses freed by
+implementing exactly this atom". 4,315 clauses in 3,052 rows:
+
+| atom | solo | notes |
+|---|---|---|
+| `realsolid()` | 256 | suit quality — hand-computable, **probeable** |
+| `trump()` | 190 | suit quality — hand-computable, no clean probe row |
+| `cansacrifice()` | 151 | deal-level verdict |
+| `monsterslam()` | 123 | deal-level verdict |
+| `CanBid7NT` | 119 | deal-level verdict |
+| `loserlevel` | 115 | LTC-ish; already known low impact (1 hit in 2,528) |
+| `slammish` | 99 | strength verdict |
+| `monstergrand()` | 95 | deal-level verdict |
+| `penalty` | 93 | rejected in §6.45 (AUC 0.93 but precision 0.61) |
+| `preemptgame()` | 92 | deal-level verdict |
+
+The list confirms the split in §6.48 from the other direction: the top of the
+board is Brill's deal-level verdicts, which depend on partner's hand and the
+play and are not reproducible from one hand. That is structural, not a
+shortfall in the converter.
+
+**Two of the top three are hand properties and worth attempting**, and both
+have rows where the co-conditions are already translatable, which makes them
+probeable without the §6.50 traps:
+
+    realsolid     :  1C -> 6D   (realsolid('D') and losers == 1)
+    twicerebiddable: 1C-1N -> 2D (twicerebiddable('D') and hcp >= 3 and hcp <= 8)
+
+Hold `losers == 1` (LTC) / the HCP window fixed, vary the suit, and the
+returned call says whether the predicate held. `realsolid` alone is 256
+clauses — the largest single win still on the table.
+
+These are deliberately **not** guessed at. A wrong `realsolid` would make the
+system bid slams on hands that do not have them, which is overbidding — the
+one direction this conversion has so far avoided ("it will underbid rather
+than overbid, which is the safe direction"). Probe first, or leave dropped.
+
+**First probe attempt failed — record it.** Seven `realsolid` holdings were
+constructed at LTC exactly 1 (`AKQx`, `AKQxx`, `AKQxxx`, `AKxx`, `AKxxx`,
+`AKxxxx`, `AQxx`) and tried against all four suits at `1C`. Brill answered
+**double in every one of the 28 cases.** At that position a penalty double
+outranks the 6X rule, so the row is unreachable in practice and the returned
+call cannot reveal whether `realsolid` held. A usable probe needs a position
+where no double is available — or, better, Brill exposing the winning rule
+id directly. Note this also means recovering `realsolid` may buy less than
+ 256 clauses suggest, since some of those rows are likewise outranked.
+
+### 6.53 `realsolid` recovered — and it buys 0 measured fidelity
+
+**The probe route.** §6.52's first attempt failed because Brill doubled all 28
+probes: at `ctx=1C seat=E` a takeout double outranks the 6X rule, so the
+returned call cannot say whether `realsolid` held. The fix is to stop reading
+the *bid* and read the **`requires`** instead — `/bid` echoes the winning
+rule's expression, and the realsolid rule has *higher* priority than the
+double. So the position becomes a clean 1-bit readout:
+
+    requires mentions realsolid  -> predicate held
+    requires is the double OR    -> predicate was false
+
+**The fitted predicate.** Hold `losers` at exactly 1, pin the three side suits
+to a fixed filler, vary only the target suit. 36 structured probes plus 350
+randomised held-out hands, 350/350 agreement:
+
+| honours beyond A-K | minimum length |
+| --- | --- |
+| AKQJ | 6 |
+| AKQT | 7 |
+| AKQ | 8 |
+| AKJ (ten irrelevant) | 9 |
+| AK / AKT | never (tested to length 10) |
+
+Ace **and** king are both mandatory — `AQJ987654` (9 cards, no king) and
+`KQJ98765` (8 cards, no ace) are both false. The ten only counts when the
+queen is present and the jack is not: `AKQT987` is true, `AKJT987` is false.
+Spot-card height is irrelevant — `AKQ5432` and `AKQ9876` are both false,
+`AKQT543` and `AKQT987` both true.
+
+The obvious guess, "AKQ and 6+", **over-bids**: it accepts `AKQ432`,
+`AKQT32` and `AKQ5432`, all of which Brill rejects. It was rejected for that
+reason. So was every additive scoring rule tried (any `L + Σhonour-weight`
+form contradicts `AKQT` > `AKJT` at length 7 while `AKQJ` > `AKQ` at length
+7 demands the opposite ordering). The table above is therefore stored as a
+literal decision table, not a formula, and
+`tests/test_features_and_state.py::test_realsolid_matches_brills_measured_table`
+locks all thirteen cases.
+
+**What it bought.** `research/brill_to_dsl.py` maps `realsolid('X')` to the
+precomputed `x_realsolid` boolean. Rules 1,676 -> **1,932** (+256, every
+realsolid row now emits). For the 128 rows written `realsolid(X) or trump(X)`,
+only the realsolid disjunct translates, so those emit a *subset* of Brill's
+condition — the safe direction, it can only underbid. `realsolid()` has
+dropped off the §6.52 blocker ranking entirely; `trump()` is now #1 at 190.
+
+**It bought no measured fidelity.** Same 6,320 comparisons, run before and
+after from a complete cache:
+
+| | rules | exact top-1 |
+| --- | --- | --- |
+| before | 1,676 | 4,488 / 6,320 (71.0%) |
+| after | 1,932 | 4,488 / 6,320 (71.0%) |
+
+That is not a bug. `realsolid and losers == 1` needs a hand with LTC 1 *and*
+a 6+ suit headed by AKQJ: measured at **1 in 33,333 random hands**, so 0.19
+expected firings in a 6,320-comparison sample. The 256 clauses were the
+largest single item on the §6.52 board and they are worth ~0 on a random-hand
+fidelity metric. Coverage and fidelity are different currencies, and §6.52's
+own closing caveat ("recovering `realsolid` may buy less than 256 clauses
+suggest") is now quantified rather than suspected.
+
+**Side finding, not chased.** Brill's `losers` is not our
+`losing_trick_count` for very long suits. Spades `AKJ987654` (9 cards, queen
+missing) with `AK / A / A` alongside is LTC 1 by our count, but Brill fired
+`realsolid('S') and losers <= 0`, i.e. it scored the hand 0 — it appears to
+discount losers in suits longer than about 7. Every `losers`-gated rule
+inherits that skew on freak hands. Out of scope here; flagged as follow-up.
+
+### 6.54 Pricing the remaining atoms: `trump()` (#1 by clause count) is worth ~0
+
+§6.53's lesson was that clause count and fidelity are different currencies —
+the biggest atom on the board bought 0. `research/brill_atom_value.py`
+(`--hands 200 --top N`) turns that into a tool: for every DNF clause blocked
+by **exactly one** atom it translates the *rest* of the clause and Monte-Carlos
+how often those co-conditions hold at that row's auction position. The result
+is an upper bound on the clause's fidelity contribution — it assumes the
+unknown atom is true whenever its co-conditions hold, ignores
+higher-priority rules, and treats `ALT` as satisfied. A clause priced at 0
+cannot be worth implementing whatever the atom means.
+
+**Calibration.** `--calibrate` re-runs the pricer pretending `realsolid` is
+still untranslated. It prices at **0.20 agreements out of 6,320**; §6.53
+measured the true gain as **0**. (Independent check: 200k random hands put
+`realsolid and losers == 1` at 1 in 33,333, i.e. 0.19 expected firings.) The
+pricer would have flagged the board's largest item as worthless *before* the
+session was spent on it. `trump()` prices at **0.20** too.
+
+That is not a coincidence: **all 190 `trump()` rows contain a `losers` gate**,
+so they inherit the same throttle. `trump()` is now #1 on the §6.52 clause
+board and is worth ~0. Do not implement it.
+
+| atom | rows | gated bound /6,320 | verdict |
+| --- | --- | --- | --- |
+| `trump()` | 190 | 0.20 | **do not implement** — all rows gated by `losers` |
+| `solid()` | 1 | 0.00 | do not implement |
+| `twosuited` | 4 | 0.00 | do not implement |
+| `Fit()` | 4 | 0.60 | do not implement |
+| `IsGoodSuit()` | 4 | 0.80 | do not implement |
+| `Balanced` | 3 | 1.60 | marginal |
+| `singlesuited` | 23 | 2.40 | marginal |
+| `CombinedHcpMin` | 9 | 3.10 | marginal |
+| `TwiceRebiddable()` | 5 | 4.10 | marginal |
+
+**Everything with real headroom is a deal-level verdict.**
+`monsterslam()` 510, `monstergrand()` 510, `CanBid7NT` 510, `CanBid6_D` 248,
+`CanAsk_D_RKC` 248, `slammish` 231, `diamondslam` 215, `game` 183. These are
+§6.48's structural wall: they depend on partner's hand and the play, and are
+not computable from one hand. The gated bound cannot rescue them, and the free
+bound (clause count x 20) is not evidence either — it only says the clause
+carries no co-conditions.
+
+**Conclusion.** At the hand-feature level the Brill conversion is finished.
+71.1% is not a plateau that more atom recovery will lift; the remaining 29% is
+the deal-level wall plus Brill's own deal verdicts. The two moves that could
+still move the number are the ones §6.48 already identified — either accept
+71.1%, or route past the wall by scoring candidate systems on deals with
+`bin/libdds.dylib` instead of matching Brill call-for-call.
+
+---
+
 ## 9. References
 
 - Amit & Markovitch, *Learning to Bid in Bridge*, MLJ 63(3), 2006 — BIDI/RBMBMC/PIDM/ID3/co-training foundations.

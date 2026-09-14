@@ -1,0 +1,178 @@
+Bridge Rules
+By Neil H. Timm
+Rule of 2
+You should interfere over the bid of 1NT in the balancing seat if you have two shortness
+points. Otherwise, do not interfere.
+Rule of 7
+When playing NT contracts and having only one stopper in the suit led headed by the ace,
+one may use the Rule of 7 to decide how many times to hold up. Rule: subtract the total
+number of cards you and dummy hold in the suit from seven. This is the number of times
+you should hold up when the opponents lead the suit. The rule is also used with suit
+contracts.
+Rule of 8
+Provided you have at least six starting points, you should interfere over 1NT in the direct
+seat if the number of cards in your two longest suits minus the number of losers in your
+hand is two or more. Otherwise, do not interfere.
+Rule of 9
+A reopening double by opener is for takeout. Responder is expected to bid his best suit or
+pass for penalty with the correct hand. What is the correct hand? The Rule of 9 may help
+one decide whether to pass for penalty or bid. To use the rule, add the level of the
+contract, the number of the trump, and the number of trump honors held including the
+ten. If this sum is nine or more, pass the takeout double for penalty. If the number is eight
+or less, bid something, do not let the double stand.
+Rule of 10
+Used to double a 2-level contract of the opponents. Double if the # of winning tricks +
+the # of trump yields at least 2 tricks (8+2+10). For a 3-level contract, you need 9
+winning tricks and only one trump trick (9+1=10). Following this guideline, a penalty
+double of a 1-level contract requires 7 winning tricks and 3 trump tricks.
+Rule of 11
+The Rule of 11 is used for placing the outstanding higher cards when partner makes a
+fourth best lead. One subtracts the spot of the card led from eleven to determine the 
+number of higher cards in the remaining three hands. Since the high cards in the dummy
+and your hand can be seen, the remaining cards are with declarer. This information is
+quite useful in deciding which card to play on the trick and how to play the suit if you
+take the trick. If the answer does not make sense, the card led may not be fourth best.
+Rule of 10/12
+When playing third and fifth best leads the concepts remain the same. Using fifteen as the
+base, subtract from fifteen the card led (third or fifth best). If partner’s lead is third best,
+subtract spot card from twelve (15-3). If partner’s lead is fifth best, subtract spot card
+from ten (15-5). If you are not sure, try both; one of the answers is likely to make more
+sense than the other, giving you an idea of partner’s holdings.
+Rule of 15
+A rule used for opening the bidding in fourth seat. You should open the bidding if the
+number of high card points and the number of spades equals fifteen. This assumes that
+spades are likely to be evenly divided between the two partnerships and that a fit in
+spades may exist.
+Rule of 17
+When your partner preempts with a weak major suit two bid, you have to decide whether
+to compete at the three-level or bid game. To help, one may use the Rule of 17. Add your
+high card points to the number of trump held. If this total is seventeen or more, bid game;
+if the total is more than ten but less than seventeen compete to the three-level. If you are
+still unsure, use OGUST and bid 2NT; if the response is 3♥ (good hand, bad suit) or 3♠
+(good hand, good suit), bid game, compete to only the four-level, otherwise, raise the bid
+to the three-level.
+Rule of 20/22
+To determine whether or not to open a hand in the first or second seat, one often uses the
+rule of 20/22. If the number of high card points and the number of cards in your two
+longest suits add to twenty and you have two quick tricks, open the hand. In the third or
+fourth seats, one only needs 1 and one-half quick tricks (the rule of 21 ½).
+Rule of 24 (Losing Trick Count)
+Losing trick count is a method of evaluating the hand to determine the proper bidding
+level. The method is most effective with unbalanced hands with an eight-card or better
+trump fit when the two hands have different distributional patterns. The Rule of 24 goes
+as follows.
+STEP 1: Count your losers and assume seven losers in your partner’s hand. Rule: 24-7-
+(Your losers) = Number of Tricks. Reduce the number of tricks by six to determine the
+level of the bid.
+STEP 2: Partner will correct the bid with fewer than seven losers.
+Note: Only the first three cards in each suit are considered when counting losers in each
+suit. With three cards, only the A, K, and Q are not losers. With less than two cards, then
+AQ=½, Kx=½, KQ=1, K=1, Q=1, Qx=2 represent losers.
+Rule of 26
+When opening one of a major, some partnerships play direct splinters or
+concealed/ambiguous splinters. In either case, a splinter bid usually shows four-card
+support for the major suit bid and 13+ HCP.
+When should the opening bidder consider slam?
+One may apply the Rule of 26.
+Opener merely adds his HCP in his suits outside the known splinter suit and if the total is
+26+, you should consider slam in the major suit bid.
+This rule works because once the partnership can ignore an entire suit, you can expect to
+make a small slam with only 26+ game points; you do not need 33+ points which is
+required when you have to take into account all the suits.
+Rule of 44
+When you open 2♣, should you bid 2NT or two of a major?
+If you intend to bid 2NT, you should have 22-24 HCP and notrump distribution. This is
+not the case when you bid a major 2♥ or 2♠. What are critical are losers and quick tricks,
+not points! What is needed?
+To open 2♣ and then bid a major requires at least five cards in the major, NO MORE
+THAN FOUR LOSERS and a minimum of FOUR QUICK TRICKS (A=1, K=½, KQ
+=1); the rule of 44.
+Given these two requirements, open TWO CLUBS, independent of points.
+Let's look at an example: You hold the hand ♠ AKQJ2 ♥ AKQ10 ♦76 ♣ 7. You have only
+19 HCP + one length point or twenty starting points. But you have three losers in the
+minors (less than four losers) and four quick tricks (two aces and two KQ combinations);
+using the rule of 44, open the hand 2♣.
+Marty Bergen in the September 2009 issues of the “Bridge Bulletin” (page 50) also
+reviews this rule, but he did not name it the Rule of 44.
+Rule of 64
+When opening a hand that is 6-4 in the majors, show the four-card suit only if the number
+of HCP in the four-card suit is greater than or equal to the number of HCP in the six-card
+suit. If this is not the case, rebid the six-card suit and do not show the four-card suit.
+Rule of 2/3
+This is a guide to preemptive opening bids and overcalls is that one cannot afford to set
+more than five hundred unless one is saving against a slam contract. One often assumes
+that a vulnerable partner can make two tricks, and a non-vulnerable partner three tricks.
+Thus, a player who opens 4♠ should have an eight playing trick hand if vulnerable, and a
+seven playing trick hand if not vulnerable.
+Tricks = 13 – losers +3 if non-vulnerable, and Playing tricks = 13 – losers + 2 if
+vulnerable. If the number of tricks is 10, open the bidding at the 4 level, if the number is
+9; open the bidding at the three level. The quantity 13 – LTC is called the number of
+playing tricks.
+Or one can use the Rule of 2-3-4: assume partner has only one trick; then with un-equal
+vulnerability you can have 2 losers, with equal vulnerability 3 losers and with favorable
+vulnerability 4 losers! Applies with 3/4/5 level preempts.
+8 Ever 9 Never
+When finessing for the queen, with nine cards and no information, the odds for a drop are
+52:48 vs. 50:50 for finesse! This is a nominal difference. In general, if the finesse is into
+the safe hand, even with nine cards, one would finesse, with no information from the
+bidding; it is better to play for the drop of the queen.
+Let me explain in more detail. With AJxxx (dummy) and Kxxx (hand), plan (1) is to cash
+the king, and if the queen does not drop, take the finesse and plan (2) is to cash the ace
+and king to drop the queen. Plan (1) wins if trumps are 3-1 with three on our left
+(24.87%), when they are 2-2 with the queen on the left (20.35%), and when they are 1-3
+with the bare queen onside (6.22%), for a total of 51.22 percent. For plan (2), when the
+suit is 2-2 (40.70%) or 3-1 either way round with a bare queen (12.44%), for a total of
+53.14 percent. I averaged these two approaches to obtain 52.18 percent or about 52
+percent! It works! You say, if the queen does not drop with plan (1), each opponent
+follows low; do not finesse, but play for the drop. Now, the probability of queen to three
+on the left is 47.85 percent and queen doubleton on the right is 52.15 percent. Here the
+difference is 52.15-47.85=4.30%. This has a greater difference than playing for the drop,
+53.14-51.22=1.92%. Thus, if no queen falls on first card, still play for the drop. 
+10 Ever 11 Never
+A similar rule applies when finessing for the king; with eleven cards, it is again better to
+play for the drop; however, with ten cards, finesse. Again, the probability is small, about
+52 percent vs. 50 percent. I will not bore you with the details. However, let’s look at an
+example.
+If the king is missing and you have 11 cards, only two cards are outstanding in the suit. If
+they split evenly (1-1) which occurs 52% of the time, the king will drop. A 2-0 split
+occurs only about 48% of the time. Thus play for the drop!
+While simple rules may be used for the king and the queen, what happens missing the
+Jack? Suppose you have Q72 and AK106 in a suit. Do you finesse or play for the drop?
+You have seven hearts and the opponents have six. If they split 3-3, the jack will drop.
+This is referred to as the Finesse Drop Test “FDT”. Simply count the out standing cards!
+This is referred to as the Finesse Drop Test “FDT”. Simply count the out standing cards!
+Rule of 210
+How many times have your heard bridge players say that the 5-level belongs to the
+opponents?
+THIS IS NOT THE CASE IN COMPETITIVE AUCTIONS!
+If you are in a competitive auction and the opponents have bid to the 5-level, do you
+compete, double or pass. You may use the rule of 210.
+With two (2) cards in the opponents bid suit you should DOUBLE for penalty.
+With ONE (1) card in their suit pass, and with ZERO (0) cards in their suit, compete to
+the five level.
+For example you are bidding diamonds and they are bidding clubs. Use the rule to
+determine whether or not you should bid five diamonds over five clubs, double, or pass.
+This is also the case for hearts over diamonds or spades over hearts. Remember the rule
+of 210; simple!
+The rule comes from Negative Slam Doubles, which are used to decide whether to
+sacrifice, or not.
+Over a slam bid, the second hand doubles to show no defensive tricks but passes with one
+or more tricks.
+If the second hand doubles, then the fourth hand passes with two or more defensive tricks
+but sacrifices with zero or one.
+If the second hand passes, fourth hand also passes with one or more tricks but doubles
+with no tricks. Now the second hand sacrifices if he has only one trick but passes with
+two or more.
+SST Rule
+When opening one of a major, a splinter bid shows 3/4 card support for the major suit bid
+and usually 13+ Working HCP and a SST=0-3 for both partners. One applies the SST
+Rule
+Opener adds his HCP to 13.
+With 19-21 HCP then 13-SST = # of tricks possible.
+If the SST in both hands = 2, then we have 11 tricks with a singleton in both hands, with
+a void and singleton 13-(SST=1) =12. A SLAM
+If the total HCP= 22-24 in both hands, you gain a trick. So, with singletons in both hands
+13-(SST=2)+1=12! And with 25-27 you gain 2 tricks.
+NOTE: For that unusual hand with 2 voids, 13-0=13, a grand Slam!
+The SST Rule was developed by Mike Lawrence and Anders Wirgen in their book: “I
+FOUGHT THE LAW of Total Tricks” (2004)- Published by Mikeworks.
