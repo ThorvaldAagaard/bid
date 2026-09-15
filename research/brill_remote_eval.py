@@ -108,12 +108,32 @@ def main():
                     help="persist cache+traces every N boards (0 = only at "
                          "the end). A 1,200-board harvest is ~2.5 h; without "
                          "this a kill loses everything.")
+    ap.add_argument("--shard", default="0/1",
+                    help="'K/N' — handle only deals K, K+N, K+2N, ... of the "
+                         "board list. N processes with K = 0..N-1 harvest "
+                         "disjoint slices; the Brill API is latency-bound "
+                         "(measured ~7x at 8 workers), so this is a ~N-fold "
+                         "wall-clock speedup. --boards must be IDENTICAL "
+                         "across shards: build_deals is not prefix-stable, so "
+                         "you cannot shard by asking for more boards.")
     args = ap.parse_args()
     traces: list = []
 
-    deals = build_deals(args.boards, seed=args.seed, include_stratified=False)
-    print("boards: %d | resolution ~%.2f IMP/board"
-          % (len(deals), resolution_of(len(deals))))
+    k_s, _, n_s = args.shard.partition("/")
+    k_shard, n_shard = int(k_s), int(n_s or "1")
+    if not (0 <= k_shard < n_shard):
+        ap.error("--shard must be 'K/N' with 0 <= K < N, got %r" % args.shard)
+
+    all_deals = build_deals(args.boards, seed=args.seed,
+                            include_stratified=False)
+    # Keep the GLOBAL board index alongside each deal: seed_board() is called
+    # with it, and a shard must reproduce what the unsharded run would have
+    # done or the deals it sees would not match its own seed.
+    indexed = list(enumerate(all_deals))[k_shard::n_shard]
+    deals = [d for _i, d in indexed]
+    print("boards: %d (shard %d/%d -> %d) | resolution ~%.2f IMP/board"
+          % (len(all_deals), k_shard, n_shard, len(deals),
+             resolution_of(len(all_deals))))
 
     client = BrillClient(timeout=60, cache_path=args.cache, retries=4)
     engine = PIDMEngine()
@@ -135,8 +155,8 @@ def main():
     stats = {"calls": 0, "unparsed": 0}
     t0 = time.time()
     diffs, losses, auctions, passed = [], [], [], []
-    for i, deal in enumerate(deals):
-        par_score, _pc, _dd = dd_data[i]
+    for j, (i, deal) in enumerate(indexed):
+        par_score, _pc, _dd = dd_data[j]
         seed_board(args.seed, i)
         hist = brill_auction(client, deal, stats,
                              traces if args.traces else None)
@@ -172,9 +192,9 @@ def main():
     champ.name = "champion_system"
     c_diffs, c_losses = [], []
     t0 = time.time()
-    for i, deal in enumerate(deals):
-        par_score, _pc, _dd = dd_data[i]
-        seed_board(args.seed, i)
+    for j, deal in enumerate(deals):
+        par_score, _pc, _dd = dd_data[j]
+        seed_board(args.seed, indexed[j][0])
         _hist, score = arena.play_board(deal, champ, champ)
         c_diffs.append(imp_diff(score, par_score))
         c_losses.append(imp_loss(score, par_score))
