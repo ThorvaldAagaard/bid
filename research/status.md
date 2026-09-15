@@ -3208,6 +3208,74 @@ gives PIDM a ranked candidate list to search, while Brill's service exposes
 only its chosen call, so Brill gets no PIDM lookahead. That handicap is on
 the side that *won*, which makes the +2.63 conservative.
 
+### The one live lever: more traces (+1.49 IMP/board for 6×)
+
+Same configuration (`--group opening --max-depth 10`), same 600 boards
+(seed 7), differing only in how much Brill data the model saw:
+
+| model | traces | CV fidelity | head-to-head vs champion |
+| --- | --- | --- | --- |
+| `bd_2k` (355 rules) | 2,442 | 70.7% | **−2.47** (se 0.30, t −8.27) |
+| `brill_distilled` (765 rules) | 14,290 | 78.1% | **−0.98** (se 0.29, t −3.36) |
+
+**6× the traces bought +1.49 IMP/board** (difference se ≈ 0.42, so this is
+real, not noise). This is the only intervention in the whole session that
+moved the head-to-head number, and it moved it a lot. It also puts the
+earlier "data is exhausted" conclusion firmly to rest — that was the
+extrapolation error, and it was wrong in the direction of giving up too
+early.
+
+Rough projection, and it is only that: the two points give ~0.20 IMP per
+fidelity point. Parity with champion needs ≈ 83% (another ~5pp); matching
+remote Brill's +2.63 needs ≈ 91%. Fidelity gains are diminishing (+7.4pp for
+the first 6×), and ~10 traces come per board, so parity is maybe another 4–5×
+the current set — on the order of 50k traces, i.e. ~12h of harvesting in the
+background. Beating champion outright looks to need more than that.
+
+Two caveats before anyone acts on this. It is a two-point extrapolation, and
+the previous two-point extrapolation in this document was wrong. And even at
+parity with champion the result is 0, against remote Brill's +2.63.
+
+### Where the loss is NOT: four hypotheses killed
+
+`where_lost.py` (new) attributes the deficit. Each system plays *itself* on
+the same deal, so every board can be labelled by how the two contracts
+differed.
+
+**The headline is a contradiction worth sitting with:**
+
+| measurement | distilled vs champion |
+| --- | --- |
+| self-play (each system plays itself) | **+0.20** (t +0.59), **+0.02** (t +0.06) — dead heat |
+| team match (head-to-head) | **−0.98** (t −3.36), **−1.37** (t −4.96) |
+
+Same models, same deals, opposite verdicts, ~1.2 IMP/board apart. The
+distilled system is fine in its own auctions and loses when the two systems
+are in the same auction. Any future evaluation here should use the team
+match — self-play cannot see this.
+
+Four candidate causes, all rejected by measurement:
+
+1. **A few catastrophic boards.** No. The worst 10% of boards carry only
+   22% of all IMP movement (a uniform spread would be 10%). The loss is
+   diffuse, so there is no small set of disasters to fix.
+2. **Pass-outs.** No — distilled passes out *less* than champion (3 vs 6
+   per 600).
+3. **Too passive.** Tested directly with `--pass-cap 1.0` (cap PASS traces
+   1:1 so the tree cannot default to passing): fidelity 78.1% → 77.3% and
+   head-to-head **−0.98 → −1.91 (t −6.32)**. Forcing bids makes it much
+   worse, so it is not simply failing to compete.
+4. **Weak in contested auctions.** No — splitting the match:
+   contested n=177 **−0.71** (t −1.22, n.s.), uncontested n=423 **−1.09**
+   (t −3.27). The loss is in auctions it *bought*, not auctions it fought.
+
+What is left is constructive bidding in its own auctions: it reaches
+**136 games per 400 boards vs champion's 173**. Buying the contract and
+then stopping too low is consistent with everything above — but note that
+in self-play champion's extra games are mildly *losing*, so "bid more
+games" is not obviously the fix either. `--pass-cap` is evidence that
+crude aggression backfires.
+
 ### Attacking the routing gap: auction-identity features (+0.4pp, n.s.)
 
 The measured gap is ~4 IMP/board and the hypothesis is that the model cannot

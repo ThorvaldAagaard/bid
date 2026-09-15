@@ -68,6 +68,27 @@ def passed_out(hist: List[Any]) -> bool:
     return not any(str(c) != "PASS" for c in hist)
 
 
+def contested(hist: List[Any], dealer: Any) -> bool:
+    """True if BOTH partnerships bid — i.e. the auction was competitive.
+
+    Seat of call i is (dealer + i) % 4; N/S are one side, E/W the other.
+    This splits the match into auctions the two systems actually fought over
+    versus ones where one side bought it uncontested, which matters because a
+    system can be fine in its own auctions and still lose every fight.
+    """
+    from bid.models import CallType, Seat
+    ns = (Seat.NORTH, Seat.SOUTH)
+    ns_bid = ew_bid = False
+    for i, c in enumerate(hist):
+        if c.type == CallType.BID:
+            seat = Seat((dealer.value + i) % 4)
+            if seat in ns:
+                ns_bid = True
+            else:
+                ew_bid = True
+    return ns_bid and ew_bid
+
+
 class RemoteBrill:
     """Adapt the Brill service to the model interface `play_board` expects.
 
@@ -112,6 +133,8 @@ def play_match(a: Any, b: Any, deals: List[Any], arena: BiddingArena,
     wins = losses = ties = 0
     a_passed = b_passed = 0
     both_passed = 0
+    cont: List[int] = []
+    uncont: List[int] = []
 
     for i, deal in enumerate(deals):
         # Same seed at both tables: see COMMON RANDOM NUMBERS above.
@@ -124,6 +147,7 @@ def play_match(a: Any, b: Any, deals: List[Any], arena: BiddingArena,
         imp = to_imps(net)
         imps.append(imp)
         nets.append(int(round(net)))
+        (cont if contested(h1, deal.dealer) else uncont).append(imp)
         if imp > 0:
             wins += 1
         elif imp < 0:
@@ -144,7 +168,18 @@ def play_match(a: Any, b: Any, deals: List[Any], arena: BiddingArena,
     mean = sum(imps) / n
     sd = (sum((x - mean) ** 2 for x in imps) / (n - 1)) ** 0.5 if n > 1 else 0.0
     se = sd / (n ** 0.5) if n else 0.0
+    def _stats(xs):
+        if not xs:
+            return None
+        m = sum(xs) / len(xs)
+        sd = (sum((v - m) ** 2 for v in xs) / (len(xs) - 1)) ** 0.5 \
+            if len(xs) > 1 else 0.0
+        se = sd / (len(xs) ** 0.5)
+        return {"n": len(xs), "mean": m, "se": se,
+                "t": (m / se) if se else 0.0, "total": sum(xs)}
+
     return {
+        "contested": _stats(cont), "uncontested": _stats(uncont),
         "label_a": label_a, "label_b": label_b, "n": n,
         "mean": mean, "sd": sd, "se": se,
         "t": (mean / se) if se else 0.0,
@@ -166,6 +201,13 @@ def report(r: Dict[str, Any]) -> None:
     print("  passed out            %s %d | %s %d | both %d"
           % (r["label_a"], r["a_passed"], r["label_b"], r["b_passed"],
              r["both_passed"]))
+    for key, lbl in (("contested", "CONTESTED"),
+                     ("uncontested", "UNCONTESTED")):
+        s = r.get(key)
+        if not s:
+            continue
+        print("  %-12s n=%-4d %+6.2f IMP/board (se %.2f, t %+.2f) total %+d"
+              % (lbl, s["n"], s["mean"], s["se"], s["t"], s["total"]))
     verdict = ("%s wins" % r["label_a"] if t > 1.96 else
                "%s wins" % r["label_b"] if t < -1.96 else
                "no significant difference")
