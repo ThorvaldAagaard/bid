@@ -3118,6 +3118,44 @@ size needed, one of them would have cleared t ≈ 2. Distillation is capped at
 parity with this representation, and further fidelity gains are not
 self-evidently worth paying for.
 
+### The flywheel cannot tune it either (measured, not assumed)
+
+The repo's own improvement engine should be the natural next step: the
+distilled system's ID3 thresholds are exactly what the tighten/loosen
+operators act on. Pointed at a copy of `brill_distilled.dsl` with a private
+`--state` so nothing real was touched, `--metric mean_imp_loss`:
+
+* Smoke run (8 deals, 1 round, 66s): every patch `t +0.00`. The most
+  promising one, `SUPPORT`, carries **`n~15924`** — the deal count needed to
+  resolve that single delta.
+* Real run (96 deals, 3 rounds, 4 jobs, **12m42s**): applied
+  `FORCE_RAISE_2NT` (+0.176) and `SUPPORT` (+0.108) during passes, then
+  validation rejected them — mean validation gain −0.074 against a
+  resolution of ±0.582 — and the round was **NOT SAVED**. **0 lifetime
+  patches applied.**
+
+Worth noting the direction of the numbers: train mean_imp_loss went
++68.8 → **+79.1 (worse)** while val7 13.2 → 10.6 and val13 18.0 → 4.9
+improved. That is a hill-climb chasing resampling noise, and the flywheel
+said so itself: *"treat this round as unproven, not as an improvement."*
+
+So local search is not a cheap way to squeeze this system. Each candidate
+patch moves the objective by less than the noise floor of any deal set we
+can afford to score, and `--val-seeds` resolution only improves as
+1/sqrt(seeds).
+
+### Summary: three levers, all measured, all closed
+
+| lever | result |
+| --- | --- |
+| more traces (2.4k → 14.3k) | +7.5pp fidelity (70.6% → 78.1%); board result unchanged, \|t\| < 1 |
+| model capacity / grouping | tuned (depth 10, `opening`); no config beats champion |
+| flywheel local search | 0 patches saved at 96 deals; needs ~16k deals per patch |
+
+The distilled system is a genuinely good model of Brill (78.1% vs a 61.1%
+majority baseline) and it plays at parity with the champion. It does not beat
+the champion, and no lever tested here gets it there.
+
 ### The "we're missing Brill's atoms" hypothesis is mostly WRONG
 
 Brill's `requires` field (1,510 of 2,442 traces) states its hand predicates
