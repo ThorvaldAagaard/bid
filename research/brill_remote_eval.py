@@ -169,12 +169,15 @@ def main():
         if args.show and i < args.show:
             print("  par %+6d | got %+6d | %s"
                   % (par_score, score, auctions[-1]))
-        if args.flush_every and (i + 1) % args.flush_every == 0:
+        if args.flush_every and (j + 1) % args.flush_every == 0:
             client.flush_cache()
             save_traces()
-            print("  [%d/%d] %d calls, %.0fs — checkpointed"
-                  % (i + 1, len(deals), stats["calls"], time.time() - t0),
-                  flush=True)
+            # j is shard-local, i is the global board index. Printing the
+            # global one here (as this did) makes a shard look like it is
+            # skipping checkpoints, because i advances by n_shard per board.
+            print("  [%d/%d] (global %d) %d calls, %.0fs — checkpointed"
+                  % (j + 1, len(deals), i + 1, stats["calls"],
+                     time.time() - t0), flush=True)
     n = len(deals)
     remote = {"name": "REMOTE Brill (/bid)", "mean_imp_diff": sum(diffs) / n,
               "mean_imp_loss": sum(losses) / n, "passed_out": sum(passed),
