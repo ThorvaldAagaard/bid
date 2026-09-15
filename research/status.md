@@ -3727,6 +3727,37 @@ more often just makes it overbid and get doubled. Note the pass-out rate
 does not move at all (3 in every config), so this is not the §6.59
 pass-outs story either.
 
+**Surgical follow-up, and a refutation.** Unrestricted boosting did its
+damage almost entirely in contested auctions (+1.23 → −2.49) while the
+diagnosed weakness — not bidding enough game — is an *un*contested problem
+(41% of traces have `opponents_bid` false). So `brill_distill.py` gained
+`--stakes-scope uncontested`, amplifying only auctions the opponents have
+not entered. If the two effects separate, this should keep the contested
+behaviour and fix the −0.69.
+
+It does roughly half of that, and the useful half is the wrong one:
+
+| variant | CV | IMP/board | contested | uncontested |
+| --- | --- | --- | --- | --- |
+| no boost | 80.3% | **−0.10** | +1.23 | **−0.69** |
+| boost 1, all | 76.7% | −1.41 | −2.49 | −0.82 |
+| boost 1, uncontested only | 79.9% | −0.79 (t −2.69) | +0.63 | −1.42 |
+| boost 2, uncontested only | 78.7% | −0.86 (t −2.89) | +0.39 | −1.44 |
+
+Paired against the unweighted model: −0.687 (t −2.70) and −0.767 (t −2.91).
+Broken out, **contested is preserved** (−0.45, t −1.04; −0.73, t −1.69) and
+**uncontested is significantly worse** (−0.79, t −2.53; −0.79, t −2.37).
+
+So the prediction fails in an informative direction: restricting the boost
+to uncontested auctions does not fix uncontested bidding, it breaks it. The
+system is not failing to bid game because it is too timid — push it to bid
+more in a clean auction and it bids game on hands that should not. Whatever
+is missing at game level is **signal, not willingness**.
+
+That is now six interventions (routing features, pass-capping, DAgger,
+depth, stakes weighting global, stakes weighting surgical) and **only ever
+adding traces has moved the number.**
+
 This is the same wall `--pass-cap` hit, but with a dose-response and a
 visible mechanism rather than a single bad number. Combined with §6.61–§6.64
 the scoreboard of "fix the objective or the representation" is now: routing

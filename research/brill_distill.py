@@ -191,6 +191,10 @@ def main():
                          "-- which the tree maximises by acing PASS -- for "
                          "accuracy on the game and slam decisions that "
                          "actually decide boards. See brill_miss_stakes.py.")
+    ap.add_argument("--stakes-scope", default="all",
+                    choices=["all", "uncontested"],
+                    help="with 'uncontested', amplify only auctions the "
+                         "opponents have not entered (opponents_bid false)")
     ap.add_argument("--pass-cap", type=float, default=0.0,
                     help="keep at most this many PASS traces per non-PASS "
                          "trace (0 = off). Trades fidelity for willingness "
@@ -277,14 +281,24 @@ def main():
         including openings where passing is simply correct, and it made
         things much worse (-1.91). This leaves PASS alone and only amplifies
         the calls whose errors are expensive.
+
+        `--stakes-scope uncontested` restricts the amplification to auctions
+        the opponents have not entered. Unrestricted boosting cost -1.31 to
+        -2.10 IMP/board and the damage was almost entirely in contested
+        auctions (+1.23 -> -2.49), while the diagnosed weakness -- under-
+        bidding game -- is an UNcontested problem. So the two effects may be
+        separable: bid more when nobody is competing, bid as before when
+        they are.
         """
         b = args.stakes_boost
         if not b or b <= 0:
             return idx
         out: List[int] = []
         for i in idx:
-            out.extend([i] * max(1, int(round(
-                1 + (stakes_weight(y[i]) - 1) * b))))
+            w = stakes_weight(y[i])
+            if args.stakes_scope == "uncontested" and X[i].get("opponents_bid"):
+                w = 1
+            out.extend([i] * max(1, int(round(1 + (w - 1) * b))))
         return out
 
     def fit_net(train_idx: List[int]) -> DecisionNet:
