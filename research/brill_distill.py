@@ -226,11 +226,29 @@ def main():
     # 70% accuracy — wide enough that the spread between groupings could be
     # noise, so do not tune on it without folds.
     folds = max(1, int(args.folds))
-    order = list(range(len(X)))
-    random.Random(0).shuffle(order)
-    fold_of = {}
-    for pos, i in enumerate(order):
-        fold_of[i] = pos % folds
+    # Split by DEAL, not by trace. One board contributes ~10 traces, so a
+    # trace-level split puts several decisions from the same hand on both
+    # sides of the split: the tree is then tested on a different auction
+    # state but a hand it has already seen. That is leakage, and it makes
+    # the CV figure optimistic in absolute terms. (Measured: 80.3% by trace
+    # vs 80.6% by deal at 44k/depth 10 -- close, because the tree
+    # generalises over hands reasonably, but the deal split is the honest
+    # one and costs nothing.)
+    order = list(range(len(X)))          # also used by the CV loop below
+    if len(X) == len(rows):
+        deal_of = [r.get("deal", "") for r in rows]
+        deal_ids = sorted(set(deal_of))
+        random.Random(0).shuffle(deal_ids)
+        deal_fold = {d: pos % folds for pos, d in enumerate(deal_ids)}
+        fold_of = {i: deal_fold[deal_of[i]] for i in order}
+        print("split by deal (%d boards across %d folds)" % (len(deal_ids),
+                                                             folds))
+    else:
+        print("WARNING: %d rows skipped, so X is not index-aligned with the "
+              "traces; falling back to a TRACE-level split (leaky)"
+              % len(skipped))
+        random.Random(0).shuffle(order)
+        fold_of = {i: pos % folds for pos, i in enumerate(order)}
 
     def cap_passes(idx: List[int]) -> List[int]:
         """Thin out PASS traces so the tree cannot win by always passing.
