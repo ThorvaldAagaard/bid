@@ -3144,6 +3144,105 @@ patch moves the objective by less than the noise floor of any deal set we
 can afford to score, and `--val-seeds` resolution only improves as
 1/sqrt(seeds).
 
+### CORRECTION: head-to-head says the distilled system LOSES (§6.60)
+
+Par-based scoring said "dead heat" every time. `research/team_match.py`
+asks the question directly instead — each deal is played at two tables,
+A on NS at one and EW at the other, and the two NS results are differenced
+into IMPs. No par, no absolute-value artefact, no signed/unsigned
+ambiguity. It is a paired design on identical cards, which is why it is far
+more sensitive.
+
+| match-up | boards | seed | A net IMP/board | t | result |
+| --- | --- | --- | --- | --- | --- |
+| brill_distilled vs champion | 600 | 7 | **−0.98** (se 0.29) | **−3.36** | champion wins |
+| brill_distilled vs champion | 600 | 13 | **−1.37** (se 0.28) | **−4.96** | champion wins |
+| brill.dsl vs champion | 400 | 7 | **−1.24** (se 0.31) | **−4.03** | champion wins |
+
+**This reverses the "parity" verdict above.** Seven par-based comparisons
+across three trace sizes, four groupings and five depths all returned
+\|t\| < 1; the first head-to-head returns t = −3.36 and replicates at
+−4.96 on a second deal seed. The two Brill-derived systems are not equal to
+the champion — they lose to it by roughly **1.0–1.4 IMP/board**, and the
+par-based metrics could not see it.
+
+Why the metrics disagree: two systems can sit the same distance from par
+while playing very differently against each other, because *which* boards
+they gain on matters head-to-head and is invisible against a fixed
+reference. par is a common baseline; it is not a substitute for playing the
+boards.
+
+The harness was checked for bias before use: `--swap` runs the mirror
+match and returns the exact negation (+1.17 / −1.17, wins 10/12 ↔ 12/10),
+so the seating is symmetric. Note also that the distilled system passes out
+*less* often than champion here (3 vs 6), so the deficit is not the
+pass-out story from earlier.
+
+### The target is excellent: remote Brill beats champion +2.63 (§6.60)
+
+`team_match.py --remote-a`, 200 boards, seed 7, 43 min:
+
+| side | net IMP/board | t | won/lost/tied | passed out |
+| --- | --- | --- | --- | --- |
+| **remote Brill** vs champion | **+2.63** (se 0.50) | **+5.22** | 95 / 52 / 53 | 0 / 1 |
+
+So the whole programme rests on something true: **Brill really is much
+better than the champion — +2.63 IMP/board.** And against that:
+
+| rendering of Brill | vs champion |
+| --- | --- |
+| remote Brill | **+2.63** |
+| `brill_distilled.dsl` (765 rules, 78.1% fidelity) | **−0.98 … −1.37** |
+| `brill.dsl` (1,932 rules, rule capture) | **−1.24** |
+
+**The capture gap is ~3.6–4.0 IMP/board.** Both routes to owning Brill
+locally destroy the entire advantage and then some. Note how badly this
+sits with the fidelity number: 78.1% agreement with Brill and *still* 4 IMP
+worse than Brill. That is the signature of a *routing* failure — when you
+pick the wrong branch of the convention tree you do not land one call away
+from the right contract, you land in a completely different one. Cosmetic
+errors would cost far less; these are not cosmetic.
+
+Caveat on the comparison, stated because it matters: a local DecisionNet
+gives PIDM a ranked candidate list to search, while Brill's service exposes
+only its chosen call, so Brill gets no PIDM lookahead. That handicap is on
+the side that *won*, which makes the +2.63 conservative.
+
+### Attacking the routing gap: auction-identity features (+0.4pp, n.s.)
+
+The measured gap is ~4 IMP/board and the hypothesis is that the model cannot
+tell *which branch* of the convention tree it is in. `*_last_call` says what
+was said most recently; what selects the branch is how the auction **began**
+(Stayman and transfers exist only after 1NT, cue bids only after an
+overcall). So four string features were added to `extract_auction_features`:
+
+| feature | meaning |
+| --- | --- |
+| `opening_bid` | first bid of the auction, else `NONE` |
+| `my_first_call` | my first call |
+| `partner_first_call` | partner's first call |
+| `opp_first_call` | first call by either opponent, in auction order |
+
+They are strings deliberately: ID3 can split on them now that categorical
+support exists, and the result reads `opening_bid == '1NT'` alongside the
+hand-authored conventions. All four stay under `MAX_CATEGORICAL_VALUES`, so
+they are eligible splits rather than memorised identifiers.
+
+**Result: 78.1% → 78.5% (5-fold CV, 14,290 traces). +0.4pp against a fold
+se of ~0.4 — not significant.** They do not close the gap. If picking the
+wrong branch were the whole story these should have moved it much further,
+so either the branch is recoverable from features the model already had, or
+the failure is deeper than one missing predicate.
+
+Kept anyway: they are cheap, principled, and cost nothing at inference.
+
+**Gotcha:** `build_frozen_vocab` includes `BridgeFeatures` keys, so adding
+features trips `test_frozen_vocab_file_integrity`. That is a tripwire, not a
+prohibition — the vocab is designed to be append-only and `_grow_vocab_tensors`
+resizes checkpoints to match. Re-froze with a hard assertion that no existing
+id moved: 423 → 427, appended `my_first_call`, `opening_bid`,
+`opp_first_call`, `partner_first_call` at ids 423–426.
+
 ### Summary: three levers, all measured, all closed
 
 | lever | result |
