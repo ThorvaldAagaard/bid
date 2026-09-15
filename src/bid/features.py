@@ -270,6 +270,31 @@ class BridgeFeatures:
         opp_bids = bids_by_seat[opp1] + bids_by_seat[opp2]
         features["opponents_bid"] = any(c.type == CallType.BID for c in opp_bids)
 
+        # ---- auction routing identity -----------------------------------
+        # `*_last_call` says what was said most recently. These say how the
+        # auction *began*, which is what actually selects the branch of the
+        # convention tree: Stayman and transfers only exist after 1NT, cue
+        # bids only after an overcall, and so on. Without them a model has to
+        # infer the branch from `auction_len` and the current bid alone.
+        #
+        # That is the gap §6.60 measured: distillation reproduces 78.1% of
+        # Brill's calls yet loses ~4 IMP/board to Brill, because picking the
+        # wrong branch is not a one-call mistake, it is a different contract
+        # entirely. These are strings on purpose -- ID3 can split on them now
+        # that categorical support exists, and the DSL spells the result
+        # `opening_bid == '1NT'` next to the hand-authored conventions.
+        first_bid = next((c for c in history if c.type == CallType.BID), None)
+        features["opening_bid"] = str(first_bid) if first_bid else "NONE"
+        features["my_first_call"] = str(my_bids[0]) if my_bids else "NONE"
+        features["partner_first_call"] = (str(partner_bids[0])
+                                          if partner_bids else "NONE")
+        opp_first = None
+        for i, c in enumerate(history):
+            if Seat((dealer.value + i) % 4) in (opp1, opp2):
+                opp_first = c
+                break
+        features["opp_first_call"] = str(opp_first) if opp_first else "NONE"
+
         # Opponent last call and contract analysis
         last_opp_bid = None
         for i in range(len(history) - 1, -1, -1):
