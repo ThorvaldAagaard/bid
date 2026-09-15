@@ -3679,6 +3679,72 @@ the overlap and prints
 rather than reporting a clean-looking number. **The harvest seed and the
 evaluation seed look like unrelated knobs and are not.**
 
+### 6.65 The misses are concentrated on game and slam — and reweighting makes it worse
+
+§6.64 showed fidelity and IMP have separated, so the natural repair is to
+stop weighting every decision equally and ask *which* disagreements cost
+anything. `research/brill_miss_stakes.py` measures that, splitting held-out
+data **by deal** (see the note below) rather than by trace:
+
+| Brill's call | n | agreement | share of all misses |
+| --- | --- | --- | --- |
+| PASS | 5,384 | **96.5%** | 10.9% |
+| level 1 | 1,276 | 92.6% | 5.5% |
+| level 2 | 900 | **49.8%** | 26.4% |
+| level 3 (game) | 597 | **22.3%** | 27.1% |
+| level 4+ (slam) | 480 | **24.2%** | 21.3% |
+| X | 196 | 27.0% | 8.4% |
+
+Overall 80.6%. **84% of the disagreement mass sits on level-2-and-up calls,
+which are 25% of the data.** The model is near-perfect at the cheap
+decisions — passing and opening — and wrong about four times out of five on
+game and slam, the calls worth 6–13 IMP.
+
+That is exactly the diagnosed weakness (§6.60: champion bids ~37 more games
+per 400 boards), now located precisely. The obvious fix is to weight
+training by stakes instead of by count, which `--stakes-boost` implements
+(level 2/3/4+ and doubles duplicated 2×/3×/4× — deliberately *not*
+`--pass-cap`, which thins PASS everywhere including openings where passing
+is correct, and which cost −1.91).
+
+**It fails, and it fails monotonically.**
+
+| stakes boost | CV agreement | IMP/board vs champion | paired vs no boost | contested boards |
+| --- | --- | --- | --- | --- |
+| 0 (baseline) | 80.3% | **−0.10** | — | 184 |
+| 1 | 76.7% | −1.41 (t −4.67) | **−1.31 (t −3.90)** | 212 |
+| 2 | 74.6% | −2.20 (t −6.62) | **−2.10 (t −5.56)** | 217 |
+
+A clean dose-response, every step significant (boost 2 vs boost 1: −0.79,
+t −2.58). The mechanism is visible in the last column: **weighting by stakes
+makes the system bid more, which drags it into contested auctions it then
+loses badly** — contested goes +1.23 → −2.49 → −3.28.
+
+So the concentration is **not** a class-imbalance artefact that reweighting
+can undo. Those decisions are hard because the model has no signal for them
+— fine hand evaluation, partnership agreements — and making it guess them
+more often just makes it overbid and get doubled. Note the pass-out rate
+does not move at all (3 in every config), so this is not the §6.59
+pass-outs story either.
+
+This is the same wall `--pass-cap` hit, but with a dose-response and a
+visible mechanism rather than a single bad number. Combined with §6.61–§6.64
+the scoreboard of "fix the objective or the representation" is now: routing
+features +0.4pp/~0 IMP, pass-capping −1.91, DAgger +0.5pp/0 IMP, depth
+tuning 0 (already optimal), stakes weighting −1.31 to −2.10. **Only more
+data has ever moved the number.**
+
+#### Methodological note: `brill_distill.py`'s CV splits by trace, not by deal
+
+The held-out split shuffles traces, so several calls from the *same board*
+can appear on both sides. That is mild leakage — the tree is tested on a
+different auction state but a hand it has seen — and it makes the CV figure
+slightly optimistic as an estimate of performance on unseen boards. The
+80.3%/81.1% figures in §6.63 are therefore best read as *relative*
+comparisons between configurations, which is how they were used.
+`brill_miss_stakes.py` splits by deal and is the clean number (80.6% on the
+same data and depth, which is reassuringly close).
+
 ---
 
 ## 9. References

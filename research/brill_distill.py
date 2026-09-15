@@ -185,6 +185,12 @@ def main():
                          "headline number was quietly optimistic. Use a seed "
                          "no harvest has ever used; the run now warns anyway.")
     ap.add_argument("--no-eval", action="store_true")
+    ap.add_argument("--stakes-boost", type=float, default=0.0,
+                    help="duplicate high-stakes calls (level 2/3/4+, doubles) "
+                         "by their IMP-at-stake weight. Trades raw agreement "
+                         "-- which the tree maximises by acing PASS -- for "
+                         "accuracy on the game and slam decisions that "
+                         "actually decide boards. See brill_miss_stakes.py.")
     ap.add_argument("--pass-cap", type=float, default=0.0,
                     help="keep at most this many PASS traces per non-PASS "
                          "trace (0 = off). Trades fidelity for willingness "
@@ -246,9 +252,44 @@ def main():
         random.Random(1).shuffle(passes)
         return sorted(others + passes[:keep])
 
+    def stakes_weight(call: Any) -> int:
+        """Rough IMP at stake in getting this call right.
+
+        Measured, not guessed: `brill_miss_stakes.py` shows held-out
+        agreement is 96.5% on PASS and 92.6% on 1-level calls but **22-27%
+        on level 3 / 4+** -- game and slam decisions, worth 6-13 IMP. 84% of
+        all disagreement mass sits on level-2+ calls, which are only 25% of
+        the data. The tree is excellent at the cheap decisions and wrong
+        four times out of five on the expensive ones, because plain accuracy
+        weights a PASS exactly as much as a slam bid.
+        """
+        s = str(call).strip()
+        if s in ("X", "XX"):
+            return 2
+        if s and s[0].isdigit():
+            return {"1": 1, "2": 2, "3": 3}.get(s[0], 4)
+        return 1
+
+    def boost_stakes(idx: List[int]) -> List[int]:
+        """Duplicate high-stakes traces so they are not outvoted by PASS.
+
+        Deliberately NOT the same as --pass-cap: that thins PASS everywhere,
+        including openings where passing is simply correct, and it made
+        things much worse (-1.91). This leaves PASS alone and only amplifies
+        the calls whose errors are expensive.
+        """
+        b = args.stakes_boost
+        if not b or b <= 0:
+            return idx
+        out: List[int] = []
+        for i in idx:
+            out.extend([i] * max(1, int(round(
+                1 + (stakes_weight(y[i]) - 1) * b))))
+        return out
+
     def fit_net(train_idx: List[int]) -> DecisionNet:
         net = DecisionNet("brill_distilled")
-        train_idx = cap_passes(train_idx)
+        train_idx = boost_stakes(cap_passes(train_idx))
         groups: Dict[Any, Tuple[List[Dict[str, Any]], List[Any]]] = {}
         for i in train_idx:
             k = group_key(X[i], args.group)
