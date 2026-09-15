@@ -42,19 +42,41 @@ def hand(spec):
     return Hand(cards)
 
 
+# Auction prefixes the DSL is exercised on. Also used to build the feature
+# universe, so the vocabulary check covers every position the fuzz test hits.
+VOCAB_POSITIONS = [
+    ([], Seat.SOUTH),
+    ([bid(1, Strain.CLUBS)], Seat.WEST),
+    ([bid(1, Strain.HEARTS), P], Seat.NORTH),
+    ([bid(1, Strain.HEARTS), bid(1, Strain.SPADES)], Seat.NORTH),
+    ([bid(1, Strain.NT), P], Seat.NORTH),
+    ([bid(2, Strain.CLUBS), P], Seat.NORTH),
+    ([bid(1, Strain.SPADES), Call(CallType.DOUBLE)], Seat.NORTH),
+    ([P, bid(1, Strain.DIAMONDS)], Seat.WEST),
+    ([bid(2, Strain.HEARTS)], Seat.WEST),
+    ([bid(3, Strain.CLUBS), P], Seat.NORTH),
+]
+
+
 def run():
     net = load_decision_net_dsl(PATH)
     print(f"loaded {len(net.rules)} rules from system/brill.dsl")
 
     # ---- 1. feature vocabulary -------------------------------------------
+    # The universe must come from `extract_all`, which is the only function
+    # DecisionNet.actions() actually calls. Building it from
+    # extract_hand_features | extract_auction_features reports `rule_of_21`
+    # as unknown and condemns 15 live rules, because that feature is computed
+    # in extract_all from BOTH halves at once (hcp + two longest suits +
+    # quick tricks) and does not exist in either half separately.
     deck = [Card(s, r) for s in Suit for r in Rank]
     random.seed(11)
     random.shuffle(deck)
     h = Hand(deck[:13])
-    universe = (set(BridgeFeatures.extract_hand_features(h))
-                | set(BridgeFeatures.extract_auction_features(
-                    [bid(1, Strain.HEARTS), P], Seat.SOUTH, Seat.WEST,
-                    Vulnerability.NONE, h)))
+    universe: set = set()
+    for _hist, _dealer in VOCAB_POSITIONS:
+        universe |= set(BridgeFeatures.extract_all(
+            h, list(_hist), Seat.SOUTH, _dealer, Vulnerability.NONE))
     used = Counter(c.key for r in net.rules for c in r.conditions)
     missing = {k: v for k, v in used.items() if k not in universe}
     print(f"condition keys: {len(used)} | unknown: {missing or 'none'}")

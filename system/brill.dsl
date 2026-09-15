@@ -17,8 +17,44 @@
 #     monsterslam) are NOT reproduced.  `realsolid('X')` IS,
 #     measured from Brill's engine rather than guessed (§6.53).
 #     The system here is therefore thinner than Brill,
-#     especially for slams and sacrifices — it will underbid
-#     rather than overbid, which is the safe direction.
+#     especially for slams and sacrifices.
+#
+#   * MEASURED, NOT ASSUMED (§6.56). An earlier header
+#     claimed this system "will underbid rather than
+#     overbid, which is the safe direction". That was an
+#     assumption, never a measurement, and it has been
+#     retracted in both directions — the system is not
+#     reliably better OR worse, it is INCOMPLETE and
+#     higher-variance.
+#
+#     FIRST-CALL-ONLY. Every rule requires
+#     my_last_call == 'NONE'. Measured over 200 boards
+#     (1,727 real calls) it can make 60.6% of first calls
+#     (485/800) and 0% of the 927 later ones — 28.1%
+#     overall. Auctions cannot continue past one round,
+#     and 120/400 boards (30%) are passed out entirely.
+#
+#     RANKING DEPENDS ON THE METRIC (400 boards):
+#       abs deviation from par : champion better by 0.92
+#         IMP/board (t 4.31, 95% CI 0.50-1.34)
+#       signed 'beating par'   : DEAD HEAT, -0.32 vs
+#         champion's -0.35 (diff -0.03, CI -0.68..+0.62)
+#     It beats par on 179 boards vs champion's 173 and by
+#     more (+7.70 vs +6.87), but loses on 198 vs 172. A
+#     wider spread, not a worse system.
+#
+#     A hybrid (this file where a rule matches, champion
+#     elsewhere) is indistinguishable from champion alone
+#     on BOTH metrics: the part that DID convert adds
+#     ~0.01 IMP/board.
+#
+#     Treat this file as a position catalogue, not a system.
+#     But note (§6.57): REMOTE Brill, scored the same way,
+#     beats champion by +0.98 abs IMP/board (t 3.74) with
+#     1 pass-out in 250. The target is worth ~2.0 IMP/board
+#     more than this file renders — so the failure is the
+#     2-deep capture, not Brill. Distil from /bid traces
+#     rather than translating rules.
 #   * Approximations in use:
 #       losers        -> losing_trick_count
 #       X_points      -> X_hcp
