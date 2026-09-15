@@ -51,7 +51,8 @@ from typing import Any, Dict, List, Optional, Tuple
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "src"))
 
-from bid.brill.convert import hand_from_pbn, parse_call, seat_from_letter  # noqa: E402
+from bid.brill.convert import (deal_pbn as deal_pbn_of, hand_from_pbn,  # noqa: E402
+                               parse_call, seat_from_letter)
 from bid.decision_net import DecisionNet, DecisionNetRule, RuleCondition  # noqa: E402
 from bid.features import BridgeFeatures                        # noqa: E402
 from bid.learner import ID3DecisionTree, id3_tree_to_rules    # noqa: E402
@@ -178,7 +179,11 @@ def main():
                          "holdout). Use >1 before comparing configurations: "
                          "a 488-trace holdout carries ~2pp of noise.")
     ap.add_argument("--eval-boards", type=int, default=250)
-    ap.add_argument("--eval-seed", type=int, default=42)
+    ap.add_argument("--eval-seed", type=int, default=101,
+                    help="was 42, which is ALSO a harvest seed, so 250 of "
+                         "600 eval boards were in the training set and the "
+                         "headline number was quietly optimistic. Use a seed "
+                         "no harvest has ever used; the run now warns anyway.")
     ap.add_argument("--no-eval", action="store_true")
     ap.add_argument("--pass-cap", type=float, default=0.0,
                     help="keep at most this many PASS traces per non-PASS "
@@ -355,6 +360,24 @@ def main():
     dd = precompute(deals)
     print("\nevaluating on %d boards (seed %d, resolution ~%.2f)"
           % (len(deals), args.eval_seed, resolution_of(len(deals))))
+
+    # A board-level evaluation is only meaningful on boards the model has
+    # never seen. This is easy to get wrong: the harvest seed and the eval
+    # seed look like unrelated knobs, and --eval-seed used to default to 42,
+    # which is also a harvest seed -- so 250 of 600 eval boards were in the
+    # training set and the headline number was quietly optimistic. Fail loud.
+    train_boards = set()
+    for _r in rows:
+        _d = _r.get("deal", "")
+        if ":" in _d:
+            train_boards.add(_d.split(":", 1)[1])
+    eval_boards = {deal_pbn_of(dict(d.hands), d.dealer).split(":", 1)[1]
+                   for d in deals}
+    overlap = train_boards & eval_boards
+    if overlap:
+        print("  !! CONTAMINATED: %d/%d eval boards are in the training set "
+              "-- this number is optimistic, use a different --eval-seed"
+              % (len(overlap), len(deals)))
 
     res = {}
     for name, netx in (("brill_distilled", distilled),

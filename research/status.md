@@ -3621,6 +3621,64 @@ signed IMP. The absolute-deviation metric and the team match (+2.63) agree
 that Brill is stronger; the signed metric is the odd one out, exactly as
 §6.28 predicted.
 
+### 6.64 Depth is an inverted U on IMP, and it peaks at 10
+
+§6.63 found depth 12 beat depth 10 on fidelity and lost by 0.70 IMP/board.
+The obvious next guess — "shallower is better still" — is **wrong**, and the
+shape of the answer is more interesting than either guess.
+
+All on the same 44,059 traces, `--group opening`, 600 boards seed 7:
+
+| depth | CV agreement | rules | IMP/board vs champion | paired vs depth 10 |
+| --- | --- | --- | --- | --- |
+| 8 | 78.0% | 377 | −1.28 (se 0.26, t −4.96) | +1.18 (t +4.56) |
+| 9 | 79.4% | 640 | −0.57 (se 0.26, t −2.17) | +0.47 (t +2.09) |
+| **10** | **80.3%** | **1,020** | **−0.10** (se 0.27, t −0.37) | — |
+| 12 | 81.1% | 2,038 | −0.80 (se 0.28, t −2.83) | +0.70 (t +2.66) |
+
+**Fidelity rises monotonically with depth (78.0 → 79.4 → 80.3 → 81.1) while
+IMP is an inverted U peaking at 10.** Depth 10 beats every other depth
+tested, and all three comparisons are significant on the paired test. So this
+is *not* simple regularisation — too shallow is also bad (depth 8 is the
+worst of the four, despite having the fewest rules). There is a real optimum,
+and it is the one the pipeline already used.
+
+Two things follow. Depth is now a parameter to tune **on IMP, not on
+fidelity**, because at this scale the two rank the same four models
+differently (fidelity says 12 > 10 > 9 > 8; IMP says 10 > 9 > 12 > 8). And
+§6.62's "capacity is not binding" conclusion has to be read as *capacity is
+not binding in the direction of more depth* — it says nothing about a
+different model class, which remains untested here for lack of torch.
+
+`system/brill_distilled.dsl` is now the 44k depth-10 model (1,020 rules,
+was 765). That is the first distilled system that does not lose to champion.
+
+#### Latent bug found: the board-level evaluation was contaminated
+
+Checking that the new model was not being scored on its own training boards
+turned up something worse. `--eval-seed` defaulted to **42, which is also a
+harvest seed**:
+
+| eval seed | eval boards in the training set |
+| --- | --- |
+| 7 (team match) | **0 / 600** |
+| 42 (default board eval) | **250 / 600** |
+
+and against the older 14k trace set alone it is **40/40**. So every
+board-level "dead heat with champion" result in §6.59 was measured partly on
+boards the model had trained on, and was quietly optimistic. It is a good
+illustration of why the team match was worth building: it uses seed 7, has
+zero overlap, and is the number that reversed the verdict to −0.98 in the
+first place.
+
+Fixed two ways: the default moved to 101, and `brill_distill.py` now counts
+the overlap and prints
+
+    !! CONTAMINATED: 40/40 eval boards are in the training set
+
+rather than reporting a clean-looking number. **The harvest seed and the
+evaluation seed look like unrelated knobs and are not.**
+
 ---
 
 ## 9. References
