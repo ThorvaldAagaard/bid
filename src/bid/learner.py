@@ -6,6 +6,12 @@ from bid.decision_net import DecisionNet, DecisionNetRule, RuleCondition
 from bid.sampling import Deal, PartialState
 from bid.pidm import PIDMEngine
 
+# A string feature is only worth splitting on if it behaves like a category.
+# Above this many distinct values it is an identifier, and an `== value` split
+# on an identifier is just memorisation. The call vocabulary is 38 strings
+# (35 bids + PASS + X + XX), which is why the bar sits just above it.
+MAX_CATEGORICAL_VALUES = 40
+
 class ID3Node:
     def __init__(self,
                  feature_name: Optional[str] = None,
@@ -87,9 +93,20 @@ class ID3DecisionTree:
             return
 
         if candidate_features is None:
-            # Default to all numerical and boolean keys present
+            # Numeric and boolean keys are always usable. String keys are
+            # usable too, but only if their cardinality is bounded: a key
+            # with hundreds of distinct values (a deal string, a rule id)
+            # would let the tree memorise individual rows.
             sample_keys = list(features_list[0].keys())
-            candidate_features = [k for k in sample_keys if isinstance(features_list[0].get(k), (int, float, bool))]
+            candidate_features = []
+            for k in sample_keys:
+                v = features_list[0].get(k)
+                if isinstance(v, (int, float, bool)):
+                    candidate_features.append(k)
+                elif isinstance(v, str):
+                    nuniq = len({str(x.get(k)) for x in features_list})
+                    if 2 <= nuniq <= MAX_CATEGORICAL_VALUES:
+                        candidate_features.append(k)
 
         self.root = self._build_tree(features_list, labels, candidate_features, depth=0)
 
@@ -109,12 +126,47 @@ class ID3DecisionTree:
         best_feature = None
         best_threshold = None
         best_split: Optional[Tuple[List[int], List[int]]] = None
+        best_is_nominal = False
 
         n = len(y)
 
+        def _score(feat, threshold, left_idx, right_idx, nominal):
+            """Replace the running best split if this one gains more.
+            Kept as a closure so the numeric and categorical branches share
+            one information-gain formula."""
+            nonlocal best_gain, best_feature, best_threshold, best_split
+            nonlocal best_is_nominal
+            if not left_idx or not right_idx:
+                return
+            left_y = [y[i] for i in left_idx]
+            right_y = [y[i] for i in right_idx]
+            h_left = self.calculate_entropy(left_y)
+            h_right = self.calculate_entropy(right_y)
+            gain = entropy - ((len(left_y) / n) * h_left
+                              + (len(right_y) / n) * h_right)
+            if gain > best_gain:
+                best_gain = gain
+                best_feature = feat
+                best_threshold = threshold
+                best_split = (left_idx, right_idx)
+                best_is_nominal = nominal
+
         for feat in features:
             values = [x.get(feat, 0) for x in X]
-            unique_vals = sorted(list(set(values)))
+
+            # Categorical: one candidate split per value, `== v` vs `!= v`.
+            # This is what makes call identity (`partner_last_call == '1NT'`)
+            # reachable at all — without it the tree is blind to the single
+            # most predictive input in bridge.
+            if any(isinstance(v, str) for v in values):
+                for val in {v for v in values if isinstance(v, str)}:
+                    _score(feat, val,
+                           [i for i, v in enumerate(values) if v == val],
+                           [i for i, v in enumerate(values) if v != val],
+                           True)
+                continue
+
+            unique_vals = sorted(set(values))
             if len(unique_vals) <= 1:
                 continue
 
@@ -125,25 +177,10 @@ class ID3DecisionTree:
                 split_candidates.append(mid)
 
             for threshold in split_candidates:
-                left_idx = [i for i, val in enumerate(values) if val <= threshold]
-                right_idx = [i for i, val in enumerate(values) if val > threshold]
-
-                if not left_idx or not right_idx:
-                    continue
-
-                left_y = [y[i] for i in left_idx]
-                right_y = [y[i] for i in right_idx]
-
-                h_left = self.calculate_entropy(left_y)
-                h_right = self.calculate_entropy(right_y)
-
-                gain = entropy - ((len(left_y) / n) * h_left + (len(right_y) / n) * h_right)
-
-                if gain > best_gain:
-                    best_gain = gain
-                    best_feature = feat
-                    best_threshold = threshold
-                    best_split = (left_idx, right_idx)
+                _score(feat, threshold,
+                       [i for i, val in enumerate(values) if val <= threshold],
+                       [i for i, val in enumerate(values) if val > threshold],
+                       False)
 
         if best_gain <= 1e-6 or best_split is None:
             return ID3Node(is_leaf=True, prediction=maj_call)
@@ -156,7 +193,7 @@ class ID3DecisionTree:
 
         node = ID3Node(feature_name=best_feature,
                        threshold=best_threshold,
-                       is_continuous=True,
+                       is_continuous=not best_is_nominal,
                        is_leaf=False,
                        prediction=maj_call)
 
@@ -180,10 +217,24 @@ def id3_leaf_paths(tree: "ID3DecisionTree") -> List[Tuple[List[RuleCondition], O
         if node.is_leaf:
             paths.append((list(conds), node.prediction))
             return
-        walk(node.left_child,
-             conds + [RuleCondition(node.feature_name, "<=", node.threshold)])
-        walk(node.right_child,
-             conds + [RuleCondition(node.feature_name, ">", node.threshold)])
+        if node.is_continuous:
+            walk(node.left_child,
+                 conds + [RuleCondition(node.feature_name, "<=",
+                                        node.threshold)])
+            walk(node.right_child,
+                 conds + [RuleCondition(node.feature_name, ">",
+                                        node.threshold)])
+        else:
+            # A nominal node splits `== value` vs everything else. Emitting
+            # the explicit `!=` on the right branch is what keeps the two
+            # children mutually exclusive once they are DSL rules: dropping
+            # it would let the "rest" rule fire everywhere.
+            walk(node.left_child,
+                 conds + [RuleCondition(node.feature_name, "==",
+                                        node.threshold)])
+            walk(node.right_child,
+                 conds + [RuleCondition(node.feature_name, "!=",
+                                        node.threshold)])
 
     if tree is not None and tree.root is not None:
         walk(tree.root, [])

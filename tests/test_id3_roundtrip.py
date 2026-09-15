@@ -131,6 +131,122 @@ class TestLeafPaths(unittest.TestCase):
                 self.assertIn(c.op, ("<=", ">"))
 
 
+class TestCategoricalSplits(unittest.TestCase):
+    """ID3 must be able to split on string features.
+
+    The most predictive inputs in bridge are categorical -- `partner_last_call`,
+    `opp_last_call`, `last_bid_strain` -- and they are strings. Before this,
+    `fit()` kept only int/float/bool keys, so the tree was structurally blind
+    to "what did partner just say" and the distillation pipeline had to fake it
+    by partitioning traces into groups. Splitting on `== value` is what removes
+    that workaround, and the DSL already supports `==` / `!=` on strings.
+    """
+
+    @staticmethod
+    def _cat_tree() -> ID3DecisionTree:
+        # Perfectly separated by `strain`; `hcp` carries no signal at all.
+        X = [{"strain": "H", "hcp": 10}, {"strain": "S", "hcp": 10},
+             {"strain": "H", "hcp": 12}, {"strain": "S", "hcp": 12}]
+        y = [Call(CallType.BID, 1, HEARTS), Call(CallType.BID, 1, Strain.SPADES),
+             Call(CallType.BID, 1, HEARTS), Call(CallType.BID, 1, Strain.SPADES)]
+        t = ID3DecisionTree(max_depth=3)
+        t.fit(X, y)
+        return t
+
+    def test_string_feature_is_used_as_a_split(self):
+        root = self._cat_tree().root
+        self.assertFalse(root.is_leaf, "expected a split, not a collapsed leaf")
+        self.assertEqual(root.feature_name, "strain")
+        self.assertFalse(root.is_continuous,
+                         "a categorical split must set is_continuous=False")
+
+    def test_nominal_split_prediction_routing(self):
+        t = self._cat_tree()
+        self.assertEqual(str(t.predict({"strain": "H"})), "1H")
+        self.assertEqual(str(t.predict({"strain": "S"})), "1S")
+
+    def test_leaf_paths_emit_equality_and_inequality(self):
+        """Both branches must be written, or the `!=` rule fires everywhere."""
+        ops = set()
+        for conds, _ in id3_leaf_paths(self._cat_tree()):
+            for c in conds:
+                if c.key == "strain":
+                    ops.add(c.op)
+        self.assertEqual(ops, {"==", "!="})
+
+    def test_compiled_rules_are_mutually_exclusive(self):
+        rules = id3_tree_to_rules(self._cat_tree(), [], "BD_cat",
+                                  base_priority=10)
+        for feats in ({"strain": "H"}, {"strain": "S"}, {"strain": "D"}):
+            hits = [r for r in rules
+                    if all(c.evaluate(feats) for c in r.conditions)]
+            self.assertEqual(len(hits), 1,
+                             "exactly one rule must fire for %r, got %d"
+                             % (feats, len(hits)))
+
+    def test_high_cardinality_strings_are_not_split(self):
+        """An identifier column must be ignored, or the tree memorises rows."""
+        from bid.learner import MAX_CATEGORICAL_VALUES
+        n = MAX_CATEGORICAL_VALUES + 5
+        X = [{"id": "row%03d" % i, "hcp": 10} for i in range(n)]
+        y = [Call(CallType.BID, 1, HEARTS) if i % 2 == 0
+             else Call(CallType.BID, 1, NT) for i in range(n)]
+        t = ID3DecisionTree(max_depth=3)
+        t.fit(X, y)
+        # `id` would separate perfectly; `hcp` is constant. So if `id` were
+        # allowed the root would be a split; it must instead collapse.
+        self.assertTrue(t.root.is_leaf,
+                        "an over-cardinality string must not become a split")
+
+
+class TestDslValueQuoting(unittest.TestCase):
+    """String condition values must be quoted on export.
+
+    The parser coerces bare numeric-looking tokens to int, so an unquoted
+    `shape_pattern == 4432` loads back as the int 4432 and never equals the
+    feature's string '4432' -- the rule is silently dead, and the exported
+    line looks completely correct. Found via the Brill distillation, where 20
+    of 192 compiled rules died this way.
+    """
+
+    def _round_trip(self, net):
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "x.dsl")
+            net.save_dsl(path)
+            return load_decision_net_dsl(path)
+
+    def test_numeric_looking_string_survives_as_string(self):
+        net = DecisionNet("probe")
+        net.add_rule(DecisionNetRule("R_shape", Call(CallType.BID, 1, NT),
+                                     [RuleCondition("shape_pattern", "==", "4432")]))
+        loaded = self._round_trip(net)
+        cond = loaded.rules[0].conditions[0]
+        self.assertIsInstance(cond.value, str,
+                              "4432 must not be coerced to int on load")
+        self.assertEqual(cond.value, "4432")
+
+    def test_numeric_looking_string_still_matches(self):
+        """The observable symptom: the rule stopped firing after a reload."""
+        net = DecisionNet("probe")
+        net.add_rule(DecisionNetRule("R_shape", Call(CallType.BID, 1, NT),
+                                     [RuleCondition("shape_pattern", "==", "4432")]))
+        for candidate in (net, self._round_trip(net)):
+            self.assertTrue(
+                candidate.rules[0].conditions[0].evaluate({"shape_pattern": "4432"}),
+                "rule must match '4432' both before and after save/load")
+
+    def test_non_numeric_strings_and_numbers_unaffected(self):
+        net = DecisionNet("probe")
+        net.add_rule(DecisionNetRule("R_a", Call(CallType.BID, 1, NT), [
+            RuleCondition("partner_last_call", "==", "PASS"),
+            RuleCondition("my_seat", "!=", "E"),
+            RuleCondition("hcp", ">=", 15)]))
+        loaded = self._round_trip(net)
+        got = {c.key: c.value for c in loaded.rules[0].conditions}
+        self.assertEqual(got, {"partner_last_call": "PASS",
+                               "my_seat": "E", "hcp": 15})
+
+
 class TestTreeToRules(unittest.TestCase):
     def setUp(self):
         self.net = _two_rule_net()

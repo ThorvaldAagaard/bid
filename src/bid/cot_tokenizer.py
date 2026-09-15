@@ -148,9 +148,14 @@ class Tokenizer:
         return s
 
 
-# System DSLs that are captured references rather than pipeline systems; their
-# rule ids are deliberately kept out of the frozen CoT vocabulary.
-_VOCAB_EXCLUDED_DSL = frozenset({"brill.dsl"})
+# System DSLs that are captured references or machine-generated, rather than
+# pipeline systems; their rule ids are deliberately kept out of the frozen CoT
+# vocabulary. Both files below carry ids that are *positional* rather than
+# semantic (`R_...` numbering from a crawl, `BD_all_P0` from ID3 leaf indices),
+# so they are unstable across regenerations and no trace will ever contain
+# them. brill_distilled.dsl adds 192 of them, which is enough to break the
+# frozen-vocab integrity check.
+_VOCAB_EXCLUDED_DSL = frozenset({"brill.dsl", "brill_distilled.dsl"})
 
 
 def build_frozen_vocab(repo_root: Optional[str] = None) -> Dict[str, int]:

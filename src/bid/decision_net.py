@@ -285,6 +285,22 @@ class DecisionNet:
                 out.append(f"{' ' * (indent + 2)}LEAF {node.prediction}")
         return out
 
+    @staticmethod
+    def _fmt_cond_value(value: Any) -> str:
+        """Render a condition value so the DSL parser reads it back unchanged.
+
+        Strings are quoted because the parser coerces bare numeric-looking
+        tokens to int: `shape_pattern == 4432` would load back as the int
+        4432 and then never equal the feature's string '4432', silently
+        killing the rule. That is invisible in the exported file — the line
+        looks right — so it has to be fixed here at the writer.
+        Quoting matches how hand-written systems already spell string
+        literals (`partner_last_call == 'NONE'` in brill.dsl).
+        """
+        if isinstance(value, str):
+            return "'%s'" % value.replace("'", "\\'")
+        return str(value)
+
     def export_dsl(self) -> str:
         """Exports the current refined DecisionNet rules and attached ID3 exception trees to DSL code."""
         lines = [
@@ -308,12 +324,14 @@ class DecisionNet:
                 # save->load cycles squared the duplicates
                 lines.append("  NEGATIVE: True")
                 for c in r.conditions:
-                    lines.append(f"  CONDITION: {c.key} {c.op} {c.value}")
+                    lines.append("  CONDITION: %s %s %s"
+                             % (c.key, c.op, self._fmt_cond_value(c.value)))
                 if r.description:
                     lines.append(f"  # {r.description}")
                 continue
             for c in r.conditions:
-                lines.append(f"  CONDITION: {c.key} {c.op} {c.value}")
+                lines.append("  CONDITION: %s %s %s"
+                             % (c.key, c.op, self._fmt_cond_value(c.value)))
             if r.description:
                 lines.append(f"  # {r.description}")
 
