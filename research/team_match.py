@@ -42,6 +42,7 @@ Mean IMP/board for A (positive = A wins), with a t-statistic against 0, plus
 boards won/lost and per-side pass-out counts.
 """
 import argparse
+import json
 import os
 import sys
 from typing import Any, Dict, List, Tuple
@@ -135,6 +136,7 @@ def play_match(a: Any, b: Any, deals: List[Any], arena: BiddingArena,
     both_passed = 0
     cont: List[int] = []
     uncont: List[int] = []
+    per_board: List[Dict[str, Any]] = []
 
     for i, deal in enumerate(deals):
         # Same seed at both tables: see COMMON RANDOM NUMBERS above.
@@ -147,7 +149,13 @@ def play_match(a: Any, b: Any, deals: List[Any], arena: BiddingArena,
         imp = to_imps(net)
         imps.append(imp)
         nets.append(int(round(net)))
-        (cont if contested(h1, deal.dealer) else uncont).append(imp)
+        is_cont = contested(h1, deal.dealer)
+        (cont if is_cont else uncont).append(imp)
+        # Per-board records, so two runs on the same --seed can be DIFFERENCED
+        # board by board. That paired test is far tighter than comparing two
+        # independent t-statistics, which is what you are otherwise reduced to.
+        per_board.append({"board": i, "net": int(round(net)), "imp": imp,
+                          "contested": bool(is_cont)})
         if imp > 0:
             wins += 1
         elif imp < 0:
@@ -180,6 +188,7 @@ def play_match(a: Any, b: Any, deals: List[Any], arena: BiddingArena,
 
     return {
         "contested": _stats(cont), "uncontested": _stats(uncont),
+        "boards": per_board,
         "label_a": label_a, "label_b": label_b, "n": n,
         "mean": mean, "sd": sd, "se": se,
         "t": (mean / se) if se else 0.0,
@@ -233,6 +242,9 @@ def main():
                     help="run the mirror match too (B as 'A'), which should "
                          "mirror the result; a large asymmetry means the "
                          "harness or the seeding is biased")
+    ap.add_argument("--dump", help="write the full result record, including "
+                                   "per-board nets, as JSON (for paired "
+                                   "comparison of two runs on the same seed)")
     args = ap.parse_args()
 
     if args.remote_a:
@@ -252,7 +264,12 @@ def main():
     print("%s vs %s on %d boards (seed %d)"
           % (a.name, b.name, len(deals), args.seed))
 
-    report(play_match(a, b, deals, arena, args.seed, a.name, b.name))
+    res = play_match(a, b, deals, arena, args.seed, a.name, b.name)
+    report(res)
+    if args.dump:
+        with open(args.dump, "w") as fh:
+            json.dump(res, fh)
+        print("  dumped per-board results to %s" % args.dump)
     if args.swap:
         report(play_match(b, a, deals, arena, args.seed, b.name, a.name))
     return 0

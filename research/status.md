@@ -3531,6 +3531,96 @@ properly is not runnable here without a large install. The depth sweep is the
 actionable substitute — and unlike an MLP, a deeper tree would have been
 deployable.
 
+### 6.63 4,450 boards: parity with champion at last — and a depth paradox
+
+#### The harvest had to be made 7× faster first
+
+Data was the one live lever (§6.61) and a 3,000-board harvest was quoted at
+5–8 h. That turned out to be pure latency: 16 sequential `client.bid` calls
+took 10.4 s, and the same 16 across 2 / 4 / 8 threads took 6.2 / 2.8 / 1.5 s
+— **1.7× / 3.7× / 7.0×**, zero errors. `brill_remote_eval.py` gained
+`--shard K/N`, and 6 shards ran the 3,000 boards in **65 min at 0.97
+boards/s vs 0.154 sequential (6.2×)**.
+
+Two traps worth recording:
+
+- **`build_deals` is not prefix-stable.** `build_deals(50)[:50] !=
+  build_deals(100)[:50]`, so you cannot shard by asking for *more* boards —
+  every shard must pass the identical `--boards` **and** `--seed`. Get this
+  wrong and every shard still emits plausible traces; only the union is wrong.
+  `research/brill_merge_traces.py` now checks shards were actually disjoint.
+- **Pinning `seat="N"` while lengthening `ctx` is an illegal request** and
+  Brill errors on it (this produced 12/16 failures in the first concurrency
+  test and looked like rate-limiting). The seat to act is
+  `dealer + len(ctx) mod 4`.
+
+Result: **44,059 traces over 4,450 boards** (3,000 new + the 1,450 existing,
+verified zero board overlap), 9.90 calls/board, 0 duplicates.
+
+#### Fidelity and board result, both measured
+
+Same config, `--group opening`, 3-fold CV, only the data changed:
+
+| traces | depth | CV agreement | rules | team match vs champion |
+| --- | --- | --- | --- | --- |
+| 14,290 | 10 | 78.0% | 760 | **−0.98** (se 0.29, t −3.36) |
+| 44,059 | 10 | **80.3%** | 1,020 | **−0.10** (se 0.27, t −0.37) |
+| 44,059 | 12 | **81.1%** | 2,038 | **−0.80** (se 0.28, t −2.83) |
+
+600 boards, seed 7. **The 44k depth-10 model is the first distilled system
+that does not lose to champion** — −0.10 with t −0.37 is a dead heat, where
+the 14k version lost by a full IMP a board.
+
+Because every run used the same 600 boards, they can be differenced
+board-by-board instead of compared as independent t-statistics
+(`team_match.py --dump` now saves per-board nets for exactly this):
+
+| paired difference | n | mean | se | t |
+| --- | --- | --- | --- | --- |
+| 44k d10 − 14k base | 600 | **+0.883** | 0.295 | **+3.00** |
+| 44k d12 − 14k base | 600 | +0.182 | 0.337 | +0.54 (n.s.) |
+| 44k d12 − 44k d10 | 600 | **−0.702** | 0.264 | **−2.66** |
+
+So 3.1× data is worth **+0.88 IMP/board (t +3.00)** — the data lever
+reproduces, a second time, with a paired test this time. Diminishing
+(+1.49 for the previous 6×, +0.88 for this 3.1×) but real, and it arrives in
+both contested (+1.18, t +2.02) and uncontested (+0.76, t +2.24) auctions,
+so it is not one auction type carrying it.
+
+#### The depth paradox
+
+**Within a single dataset, +0.8pp of fidelity cost 0.70 IMP/board.**
+Depth 12 is unambiguously the better model of Brill (81.1% vs 80.3%) and
+unambiguously the worse player (−0.80 vs −0.10, paired t −2.66).
+
+This is §6.28's duality in its sharpest form yet, and it is not the metric
+artefact this time — the team match has no par and no absolute value. Two
+models of the same target, same data, same everything but capacity: the more
+faithful one plays worse. The natural reading is regularisation, not noise:
+2,038 rules fit the *training distribution* better and generalise to actual
+play worse. §6.62 measured the depth wall at 14.3k traces and found depth 10
+optimal; at 44k the wall has moved to 12 for fidelity and stayed at 10 for
+IMP — the two objectives have genuinely separated.
+
+The immediate implication is that **depth is now a parameter to tune on IMP,
+not on fidelity**, and that shallower may be better still.
+
+#### Free bonus: remote Brill measured on 3,000 boards
+
+Each harvest shard also scored Brill against par and champion, which pools
+into the tightest measurement of the target yet:
+
+| | value | se | t |
+| --- | --- | --- | --- |
+| abs dev from par | **+1.486** | 0.083 | **+17.9** |
+| signed vs par | −0.071 | 0.121 | −0.58 (n.s.) |
+
+Passed out 36/3,000 (1.2%). This sharpens §6.57 (1,200 boards, +1.36): Brill
+is *overwhelmingly* closer to par than champion and *not at all* better on
+signed IMP. The absolute-deviation metric and the team match (+2.63) agree
+that Brill is stronger; the signed metric is the odd one out, exactly as
+§6.28 predicted.
+
 ---
 
 ## 9. References
