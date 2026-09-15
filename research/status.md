@@ -3490,6 +3490,47 @@ and the routing features, the scoreboard is:
 
 **Data volume remains the only intervention that has moved the number.**
 
+### 6.62 Tree capacity is NOT the binding constraint (depth sweep)
+
+§6.61 asked whether the ~78% ceiling is a model-capacity limit or an
+information limit. Before reaching for a richer model class, the cheaper
+question is whether the tree is simply too shallow — a deeper tree is still
+just DSL rules, so a positive answer would be directly deployable.
+
+Same 14,290 traces, `--group opening`, 3-fold CV:
+
+| max depth | rules | CV agreement | folds |
+| --- | --- | --- | --- |
+| 10 | 760 | **78.0%** | 78 78 78 |
+| 12 | 1,324 | 78.0% | 79 78 77 |
+| 14 | 1,730 | 77.3% | 78 78 76 |
+| 16 | 1,942 | 77.1% | 78 77 76 |
+
+**Flat to depth 12, then it degrades.** Going from 760 rules to 1,942 — 2.6×
+the model — buys exactly nothing and then costs 0.9pp. Depth 10 is the whole
+story, which also confirms the §6.59 choice was not a premature stop.
+
+So within this model class the residual is **not** capacity. Combined with
+`brill_ceiling.py` (~100% Bayes-optimal on these features, because every
+position is its own bucket), the honest reading is that the remaining ~22pp
+is either genuine feature-side information Brill has and we do not, or
+variance the tree cannot average out — not a partition that is merely too
+coarse.
+
+Two things this does *not* establish. It does not rule out a fundamentally
+different model class (a tree is axis-aligned; this was not tested because
+torch is not installed in this environment — see below). And **it is measured
+at 14.3k traces, where depth past 10 overfits**: at 43.5k traces more splits
+may be supportable, so the sweep has to be repeated at the larger size before
+the depth choice is treated as settled.
+
+**Environment correction:** earlier notes recorded torch 2.2.2 as available.
+It is not installed in either the managed or the system Python (nor sklearn
+or scipy), so the MLP probe that would separate "capacity" from "information"
+properly is not runnable here without a large install. The depth sweep is the
+actionable substitute — and unlike an MLP, a deeper tree would have been
+deployable.
+
 ---
 
 ## 9. References
