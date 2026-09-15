@@ -2627,6 +2627,599 @@ still move the number are the ones §6.48 already identified — either accept
 
 ---
 
+### 6.55 Brill API connector (`src/bid/brill`)
+
+A typed, stdlib-only client for `https://brillservice.aalborgdata.dk`, so the
+local engine can query remote Brill instead of only comparing against a
+converted snapshot. Docs in [`docs/BRILL_CONNECTOR.md`](../docs/BRILL_CONNECTOR.md);
+65 offline tests in `tests/test_brill_client.py`.
+
+**The published OpenAPI document declares no response schemas** — `/dd` is
+typed as `Void`. Every dataclass in `models.py` was recovered by calling the
+live service, and undocumented keys are kept on `.raw`.
+
+**`/play` has three undocumented constraints**, read off its 400 bodies:
+
+* `played` is **separator-free** (`"S7SA"`); a comma is *"has odd length"*.
+* `hand` must be the **original 13 cards** — Brill subtracts `played` itself
+  (*"has 12 cards (expected exactly 13)"*).
+* Card 1 belongs to **declarer's LHO**, and the rest follow the *real* play
+  order: the winner of each trick leads the next, so it is **not** a repeating
+  N-E-S-W cycle. Brill validates each card against the seat it assigns to that
+  position and names the seat in its error, which is how the ordering was
+  recovered.
+* Zero cards played is rejected outright — *"use the /lead endpoint instead"*.
+
+`PlayState` maintains that ordering plus follow-suit legality and trick
+accounting.
+
+**End-to-end validation.** A full 52-card board driven against the live
+service completed with no 400s at NS 12 tricks, exactly the `/dd` number for
+the same deal (`1N` by N). Because Brill rejects any card whose seat disagrees
+with its own assignment, a clean 52-card run is proof that `PlayState`'s
+leader sequence matches the service's — this is a check on the connector, not
+just a smoke test.
+
+**Why this matters for fidelity work.** §6.53/§6.54 fitted Brill's atoms by
+scraping `requires` strings through `/bid`. The connector makes that
+repeatable and cacheable, and adds `/dd` for the deal-level ground truth that
+§6.48 says is the only remaining route past 71.1%.
+
+---
+
+### 6.56 brill.dsl scored against DDS par — the conversion is not a system
+
+`research/brill_dsl_value.py` (new). Everything measured about brill.dsl until
+now was *agreement* with Brill's engine (71.1%, §6.54). That is the wrong
+currency, and §6.54 already showed why in the small. This scores brill.dsl the
+way every other system in the repo is scored: play full auctions, score the
+final contract with native DDS, compare to par. 400 boards, resolution 0.39
+IMP/board.
+
+| system | rules | mean_imp_diff | mean abs IMP | passed out |
+| --- | --- | --- | --- | --- |
+| `brill.dsl` | 1,932 | −0.32 | 7.21 | **120/400 (30%)** |
+| `champion_system` | 90 | −0.35 | 6.29 | 2/400 |
+| hybrid brill→champion | 2,022 | −0.38 | 6.28 | 2/400 |
+
+**The ranking depends entirely on the metric, and that is the headline.**
+
+| paired vs brill.dsl (positive = other better) | abs dev from par | signed vs par |
+| --- | --- | --- |
+| champion_system | **+0.92** (t 4.31, CI 0.50–1.34) | −0.03 (t −0.09, CI −0.68–0.62) |
+| hybrid brill→champion | **+0.93** (t 4.39) | −0.06 (t −0.18) |
+
+On *absolute deviation from par* (the leaderboard metric, `mean_imp_loss`)
+brill.dsl is significantly worse. On the *signed* metric — "am I beating par",
+`mean_imp_diff`, which §6.28 recommends for exactly this question — it is a
+**dead heat**, and the CI excludes everything beyond ±0.7.
+
+The two disagree because brill.dsl is not worse, it is **wider**:
+
+| | signed | abs | boards beating par | boards losing | boards < −5 IMP |
+| --- | --- | --- | --- | --- | --- |
+| brill.dsl | −0.32 | 7.21 | **179** (avg +7.70) | 198 | 124 |
+| champion | −0.35 | 6.29 | 173 (avg +6.87) | **172** | 119 |
+
+It beats par *more often and by more*, and loses *more often*. An earlier
+draft of this section reported only the −0.92 and called brill.dsl worse;
+that was metric-dependent and has been corrected here and in the generated
+file header.
+
+**brill.dsl is a first-call-only system.** All 1,932 rules carry
+`my_last_call == 'NONE'`, so a hand's second turn matches nothing and falls
+through to the DecisionNet default (PASS). Measured by replaying 200 boards
+(1,727 real calls — `auction_coverage`, which counts calls actually made
+rather than PIDM's internal `actions()` probes): it can make **485/800 = 60.6%
+of first calls and 0 of the 927 later calls — 28.1% overall**. Auctions die
+after one round and 120/400 boards (30%) are passed out.
+
+**The part that did convert is worth ~nothing.** The hybrid uses brill.dsl
+wherever a rule matches and champion everywhere else — the fair test, since it
+holds continuations fixed. It is indistinguishable from champion alone on
+*both* metrics (+0.93 abs / −0.06 signed, i.e. ~0.01–0.06 IMP/board). So the
+gap is not "we need to recover more atoms": even the converted portion does
+not beat a 90-rule system.
+
+**A retracted claim.** The generated header in `system/brill.dsl` used to say
+the system "will underbid rather than overbid, which is the safe direction".
+That was an assumption, never a measurement. It is not simply false either —
+underbidding here means passing out 30% of boards, but it also means avoiding
+overbidding, and the two nearly cancel. The header now carries the measured
+numbers with the metric stated explicitly.
+
+**A caveat on the 71.1%.** `brill_live_check.py` samples only positions that
+appear in `brill.md` — i.e. only the positions brill.dsl was converted from.
+71.1% is therefore an *in-sample, first-call-only* figure. It was never a
+claim about auctions, because brill.dsl cannot bid one.
+
+**Confound to keep in mind.** In the hybrid, brill's rules are keyed on
+`opp_last_call` / `partner_last_call` but the preceding calls come from
+champion, whose 1C opening does not mean what Brill's does. Some incoherence
+is expected, so "indistinguishable from champion" could in principle be two
+errors cancelling. It does not change the practical answer — dropping brill's
+rules into the champion buys nothing — but it is why this is not read as
+"brill's opening logic is worthless in the abstract".
+
+**Consequence.** Replaces §6.54's conclusion, but on narrower grounds than
+first appeared. The case for retiring brill.dsl as a *system* rests on
+structure, not on score:
+
+* it can make 0% of second-and-later calls, so it cannot bid an auction;
+* it passes out 30% of boards;
+* grafting its converted rules onto a working system changes nothing.
+
+It is *not* the case that it plays badly — on the signed metric it ties the
+champion. So: treat brill.dsl as a *position catalogue* — a machine-readable
+record of what Brill authors at 2-deep positions, useful for lookup,
+comparison and teaching — and not as a candidate system. Atom recovery is not
+merely low-value (§6.54); there is no system for it to improve.
+
+If Brill's bidding is wanted as a playable system the only route is to capture
+the tree far deeper than 2 calls. The hybrid result says that work cannot be
+justified by an expected gain over the current champion — but note the
+caveat below, which is the one thing that could still change that verdict.
+
+**Caveat, and the reason not to over-read the hybrid.** In the hybrid,
+brill's rules are keyed on `opp_last_call` / `partner_last_call` while the
+preceding calls come from champion, whose 1C opening does not mean what
+Brill's does. The two halves are therefore talking past each other, and
+"indistinguishable from champion" could be coherence loss masking a real gain.
+A clean test would let *both* sides bid Brill for the first round — i.e.
+capture enough of the tree to run a self-consistent Brill auction — which is
+the same-depth problem again. §6.57 runs that clean test by a different route.
+
+---
+
+### 6.57 Remote Brill vs the conversion — the target was worth chasing
+
+`research/brill_remote_eval.py` (new). §6.56 asked whether to abandon the
+Brill line. It was the wrong question, because it compared our *conversion*
+against our own champion and never checked whether the thing being converted
+is any good. This scores **remote Brill itself**: every seat asks `/bid` for
+its call, the final contract is scored with native DDS against par.
+
+Same 250 boards, seed 42, as §6.56's set (champion reproduces at −1.05 / 6.13
+in both runs, which confirms the deal sets match):
+
+| system | signed IMP vs par | abs dev from par | passed out |
+| --- | --- | --- | --- |
+| **REMOTE Brill (`/bid`)** | **−0.62** | **5.15** | **1/250** |
+| champion_system | −1.05 | 6.13 | 0/250 |
+| hybrid brill→champion | −1.04 | 6.37 | 0/250 |
+| `brill.dsl` | −1.38 | 7.16 | 75/250 (30%) |
+
+Paired vs champion on the same boards (positive = better than champion):
+
+| | abs dev from par | signed vs par |
+| --- | --- | --- |
+| REMOTE Brill | **+0.98** (t 3.74, CI 0.51–1.45) | +0.43 (t 1.17) |
+| `brill.dsl` | **−1.03** (t 3.81) | −0.33 (t 0.80) |
+
+**Real Brill is better than our champion** — significantly on absolute
+deviation from par, and directionally on the signed metric. It plays complete,
+coherent auctions (1 pass-out in 250) and bids real sequences
+(`1NT-P-2H-P-2S-P-3NT`).
+
+**So the conversion destroyed the value, and the target is worth ~2.0
+IMP/board of it.** On one common board set: remote Brill is +0.98 abs vs
+champion, brill.dsl is −1.03. The gap between the engine and our rendering of
+it is ~2.0 abs / ~0.76 signed. §6.56's "the converted portion adds nothing"
+is therefore not evidence that Brill is weak; it is evidence that a 2-deep
+rule capture throws away essentially everything that makes Brill good.
+
+**How big a capture would be needed** (`research/brill_tree_size.py`, new).
+The data is there — Brill authors 24 rules at `1H-P-1S-P`, North's *second*
+turn — but the tree is wide:
+
+| depth | positions (extrapolated) | mean calls | rules at depth |
+| --- | --- | --- | --- |
+| 0 | 1 | 34.0 | 44 |
+| 1 | ~34 | 14.6 | 626 |
+| 2 | ~496 | 6.9 | 4,070 |
+| 3 | ~3,425 | 7.6 | 30,141 |
+| 4 | ~26,031 | 5.0 | 143,172 |
+| 5 | ~130,156 | 2.2 | 299,359 |
+
+~477k rules through depth 5, within 2x of Brill's published 1,040,694 — a
+sanity check on the extrapolation. Second calls begin at depth 4, so a useful
+capture needs ~26k positions (~5 h of requests at 0.7 s each).
+
+**Recommendation: distill, do not capture.** A deeper capture is ~26k requests
+and still yields rule-shaped output that the DSL cannot express (§6.53's
+dropped atoms). Distillation gets the same signal far cheaper: `/bid` answers
+*any* position, so every evaluation run is also a labelled training set.
+`--traces` on `brill_remote_eval.py` emits one `(position -> Brill's call)`
+record per call, and because the responses are cached the 2,442-call dataset
+costs nothing to re-harvest. That is the input for the existing ID3/learner
+machinery, which is the natural next step.
+
+**Caveat.** Brill's `/bid` was scored here playing itself on all four seats,
+so this is Brill-vs-par, not Brill-vs-our-champion head-to-head at the table.
+It says Brill reaches better contracts than champion does against par; it does
+not say it would beat champion in a direct match.
+
+---
+
+### 6.58 Distillation pipeline (`research/brill_distill.py`)
+
+§6.57 concluded "distil, do not capture". This is the pipeline that does it.
+Traces of `(position -> Brill's call)` from `brill_remote_eval.py --traces`
+are featurised with `BridgeFeatures.extract_all` — the same 121-key vector
+`DecisionNet.actions()` uses, so learned rules are directly executable — then
+fitted with the repo's own `ID3DecisionTree` and compiled with
+`id3_tree_to_rules`, whose guard mechanism pins each tree to the position it
+was trained on. Output goes through `export_dsl`, so it round-trips through
+`load_decision_net_dsl` like any hand-written system. No unpublished atoms,
+no tree crawl.
+
+**Grouping is the one real design decision.** ID3 here splits only on
+numeric/bool features, so it cannot partition on call *identity*
+(`opp_last_call`, `my_last_call` are strings). Four groupings compared with
+**5-fold CV** on the 2,442-trace pilot — a single 488-trace holdout carries
+~2pp of noise, which is wide enough to manufacture differences, so the
+estimate is averaged over folds (se ≈ sd/√5 ≈ 0.6–1.3pp):
+
+| grouping | rules | 5-fold CV agreement with Brill |
+| --- | --- | --- |
+| none (one global tree) | 203 | **69.8%** (fold sd 1.4) |
+| `is_opening` | 229 | 68.9% (sd 1.6) |
+| `auction_len` × `last_bid_level` × `last_bid_strain` | 349 | 65.4% (sd 1.6) |
+| `auction_len` | 516 | 64.0% (sd 3.0) |
+| majority-class baseline | — | 61.0% (PASS) |
+
+**Coarser wins at this data size, and the gap is real:** `none` beats
+`auction_len` by 5.8pp against a ~1pp standard error. The finer keys fragment
+1,954 examples into groups too small to learn from. This is a small-data
+artefact and should be expected to flip once the trace set is in the tens of
+thousands, so all four remain available via `--group`.
+
+**Depth matters, and 8 is the sweet spot** (group `none`, 5-fold CV):
+
+| `max_depth` | 3 | 5 | 8 | 12 | 16 |
+| --- | --- | --- | --- | --- | --- |
+| agreement | 63.0% | 68.3% | **69.8%** | 68.3% | — |
+
+12 overfits; 16 exhausts memory and the process is killed (exit 137).
+
+**The structural fix is confirmed.** The distilled system passed out **0/60
+boards**, against brill.dsl's 30%. Whatever its bidding quality, it can hold a
+full auction — which is precisely what the rule capture could not do.
+
+**Clean pilot result: the distilled system already matches champion.** The
+first board evaluation (60 boards) was contaminated — it trained on seed-42
+boards 0–249 and scored seed-42 boards 0–59. Re-scored on **250 unseen boards
+(seed 7, resolution 0.50)**, with the model trained only on the 2,442
+seed-42 traces:
+
+| | signed vs par | abs dev | passed out |
+| --- | --- | --- | --- |
+| distilled (207 rules, 2.4k traces) | **−0.48** | 7.16 | 6/250 |
+| champion_system (90 rules) | −0.81 | **6.78** | 0/250 |
+
+Paired (positive = distilled better): abs −0.38 (se 0.28, t −1.38), signed
+**+0.33** (se 0.46, t 0.71). **Neither significant — i.e. a system distilled
+from 2,442 traces is already indistinguishable from the repo's champion**,
+which was produced by many flywheel iterations. It reproduces Brill's actual
+call only 69.8% of the time, so this is a floor, not a ceiling.
+
+That matters because §6.57 put remote Brill at **+0.98 abs vs champion**: there
+is clear headroom above parity, and the only thing between here and it is
+trace volume. The 2.4% pass-out rate (vs brill.dsl's 30%) confirms the
+structural fix survives at board scale.
+
+**Data is the binding constraint.** 2,442 traces at 62% passes gives +7.8
+points over the majority baseline; that is a weak fit, not a broken one. What
+is needed is volume, and it is cheap: `/bid` traces cost one request per call
+and are cached, so scaling is a matter of wall-clock, not design.
+
+Also added: `hand_from_pbn` in `bid/brill/convert.py` (the missing inverse of
+`hand_pbn`, needed to feed Brill's answers back into the repo) with tests, and
+incremental checkpointing in `brill_remote_eval.py` — a 1,200-board harvest is
+~2.5 h and previously wrote nothing at all until it finished.
+
+---
+
+## 6.59 The distillation plateau, and where the ceiling actually is
+
+§6.58 ended on "data is the binding constraint", promised a 1,200-board
+harvest, and predicted that 5× the traces would beat champion. **Two of those
+three are wrong.** Measured, in order:
+
+### The learning curve is flat (data is NOT binding)
+
+`brill_distill.py --learning-curve` (fixed 20% holdout, trained on increasing
+fractions of the rest, group `none`, depth 8):
+
+| train | 195 (10%) | 390 | 781 (40%) | 1172 | 1563 | 1954 (100%) |
+| --- | --- | --- | --- | --- | --- | --- |
+| fidelity | 61.5% | 62.9% | 66.2% | 67.2% | 67.0% | **67.4%** |
+
++4.7pp from 10%→40%, then **+1.2pp from 40%→100%**. Extrapolating to 12k
+traces predicts ~+1–2pp, not the jump §6.58 assumed. Volume was the wrong
+lever to pull.
+
+### Model capacity is not binding either
+
+Depth sweep, 5-fold CV on all 2,442 traces: depth 8 **70.6%**, 10 **69.9%**,
+12 **69.7%** (se ≈ 0.9). Flat and within noise. Earlier, 16 exhausted memory.
+
+### The learner was structurally blind — fixed, and it barely helped
+
+`ID3DecisionTree.fit` kept only int/float/bool keys, so the most predictive
+features in bridge — `partner_last_call`, `opp_last_call`, `my_last_call`,
+`last_bid_strain` — were **unreachable**; they are strings. `group_key`'s
+docstring had documented this and the `--group` machinery existed purely to
+work around it.
+
+ID3 now splits on string features: `== value` vs `!= value`, emitted as
+`RuleCondition(k, "==", v)` / `("!=", v)`, both of which the DSL already
+supports. Over-cardinality strings (> `MAX_CATEGORICAL_VALUES` = 40 distinct)
+are refused so an identifier column cannot be memorised. 144 of 192 compiled
+rules now use a categorical split, dominated by `partner_last_call` (120) —
+exactly the ordering bridge intuition predicts.
+
+Payoff: **70.6% vs 69.8% before (+0.8pp, se 0.89 — not significant).** So the
+ceiling is neither data nor capacity nor the string blind spot.
+
+### 400 boards: a dead heat with champion
+
+Seed 7, resolution ~0.39, `group none`, depth 8, categorical splits on,
+trained on the 2,442 seed-42 traces:
+
+| | signed | abs | passed out | abs excl. pass-outs |
+| --- | --- | --- | --- | --- |
+| brill_distilled (199 rules) | −0.45 | 6.75 | 5/400 | 6.77 |
+| champion_system (90 rules) | −0.34 | **6.67** | 2/400 | 6.65 |
+
+Paired (positive = distilled better): abs **−0.07** (se 0.23, **t −0.32**),
+signed −0.10 (se 0.37, **t −0.29**). Parity, and this time resolved well
+enough to say so — §6.58's −0.38 abs gap was noise.
+
+### "Fix the pass-outs" — refuted, and the refutation is the interesting part
+
+Distilled passes out 5/400 vs champion's 2/400, and a passed-out board scores
+0 against a par usually worth 9+ IMP, so this looked like most of the deficit.
+It is not. Excluding pass-out boards leaves the gap **unchanged** (6.77 vs
+6.65). The reason is that our pass-outs occur on deals where par is itself
+≈0 — nothing was makeable, so passing cost almost nothing. Worth stating
+because the plausible-sounding fix would have been to force openings on weak
+deal, which would have cost IMPs.
+
+### Class-balanced training: the §6.28 duality again
+
+`--pass-cap 1.0` (keep at most one PASS trace per non-PASS trace) exists to
+stop leaves collapsing to PASS. Seed 7, 400 boards:
+
+| | signed | abs | passed out | vs champ abs | vs champ signed |
+| --- | --- | --- | --- | --- | --- |
+| default | −0.45 | 6.75 | 5/400 | −0.07 (t −0.32) | −0.10 (t −0.29) |
+| `--pass-cap 1.0` | −0.64 | **6.49** | 6/400 | **+0.18 (t +0.75)** | −0.30 (t −0.82) |
+
+Capping makes the system land *closer* to par in absolute terms but beat par
+*less* — and neither arm is significant. This is §6.28's duality exactly:
+`mean_imp_loss` is an absolute deviation and `mean_imp_diff` is signed, so a
+change can improve one and worsen the other with both t-stats under 1. **Do
+not report either arm as an improvement.** Note fidelity barely moved (71.5%
+vs 71.7%), so capping is not buying faithfulness either — it is trading
+variance for a slightly worse mean. Default stays uncapped.
+
+### Where the ceiling probably is
+
+`brill_ceiling.py` (new) buckets traces by feature vector and reports the
+Bayes-optimal agreement. At 2,442 traces every position is unique — 2,442
+buckets, zero collisions — so the bound is vacuously 100% and says only that
+the space is far too high-dimensional to collide at this sample size. **Re-run
+it at 12k+ traces**, where collisions start to appear; that is when it becomes
+a real measurement of how much Brill's call is determined by what we can see.
+
+Until then, the honest position, **after checking rather than assuming**:
+
+### CORRECTION: 4.9× the traces bought +5.2pp — data was NOT exhausted
+
+The learning curve above predicted +1–2pp from a 5× harvest. The actual
+result, on the 11,848-trace set (seed 1234, disjoint from every eval set),
+5-fold CV:
+
+| traces | depth 8 | depth 10 | depth 12 |
+| --- | --- | --- | --- |
+| 2,442 | **70.6%** | 69.9% | 69.7% |
+| 11,848 | 75.8% | **76.9%** (sd 0.2) | 76.4% |
+
+At matched depth 8 that is **70.6% → 75.8%, +5.2pp — about 3× more than
+predicted**, and depth 10 becomes the better setting (+1.1pp over depth 8),
+which is the expected interaction: more data supports more depth. At 2.4k the
+depth sweep was flat, so "capacity is not binding" was true *at that n* and
+false at 5× it.
+
+**The extrapolation was the error, not the curve.** Learning curves are fitted
+inside an observed range; predicting 5× outside it from the last two points
+(40%→100%) assumed the flattening would continue indefinitely. It did not.
+The flat-looking tail was the onset of a slower regime, not a ceiling.
+
+Also correcting the earlier framing in the other direction: the harvest was
+worth running, and "the plateau is structural" was too strong.
+
+### Board result at 11.8k traces: still parity, but a better model
+
+Trained on all 11,848 traces, depth 10, **650 rules**, scored on 600 unseen
+boards (seed 7, resolution ~0.32):
+
+| | signed | abs | passed out | abs excl. pass-outs |
+| --- | --- | --- | --- | --- |
+| brill_distilled (650 rules) | **−0.09** | 6.66 | 12/600 | 6.71 |
+| champion_system (90 rules) | −0.34 | 6.61 | 2/600 | 6.60 |
+
+Paired (positive = distilled better): abs **−0.05** (se 0.19, **t −0.25**),
+signed **+0.25** (se 0.29, **t +0.87**). Neither significant.
+
+So: fidelity +6.3pp (70.6% → 76.9%) moved signed IMP from −0.45 to −0.09
+(+0.36) and left the comparison with champion **statistically unchanged — a
+dead heat on both metrics**. That is the honest result: 4.9× the data produced
+a measurably better model of Brill and no measurable gain against champion.
+Fidelity is not the same currency as IMP.
+
+Note the pass-out rate rose to 12/600 (2.0%) — but remote Brill itself passes
+out 25/1200 (2.1%), so the distilled system is now faithfully reproducing the
+target's behaviour, pass-outs included. That is improved fidelity showing up
+as a nominally worse-looking statistic.
+
+### Re-tuning on 14,290 traces: grouping order FLIPS with scale
+
+Both disjoint trace sets combined (2,442 seed-42 + 11,848 seed-1234 =
+`data/brill_traces_all.jsonl`, 14,290; eval boards are seed 7, so all
+training data stays unseen). 5-fold CV:
+
+| group | depth 10 | depth 12 |
+| --- | --- | --- |
+| `none` | 77.6% (sd 1.0) | 77.6% (sd 0.9) |
+| `opening` | **78.1% (sd 0.8)** | 78.0% (sd 0.8) |
+| `auction_len` | 72.3% (sd 0.8) | — |
+| `bid` | 71.3% (sd 1.1) | — |
+
+**`opening` now beats `none`.** At 2,442 traces the order was the other way
+(`none` 69.8% > `opening` 68.9%) because the split halved an already-small
+set. At 6× the data the split is affordable and the two-position model wins.
+Fold-by-fold it is consistent: `opening` 78 78 78 78 79 vs `none`
+76 77 77 78 79.
+
+The finer groupings are still **nowhere near** competitive (71–72%, ~6pp
+worse). `group_key`'s docstring predicted `bid` would become usable "once the
+trace set is in the tens of thousands" — at 14,290 that has not happened, and
+the gap is far too large to be a near miss. The prediction looks wrong, not
+merely premature: `bid` keys on `(auction_len, last_bid_level,
+last_bid_strain)`, which is a large cartesian product, so most cells stay
+under `min_samples` and collapse to a majority rule.
+
+### Best configuration scored: still a dead heat
+
+`--group opening --max-depth 10` on all 14,290 traces → **765 rules**, CV
+**78.1%**. Scored on 600 unseen boards (seed 7, resolution 0.32):
+
+| | signed | abs | passed out |
+| --- | --- | --- | --- |
+| brill_distilled (765 rules, 78.1%) | −0.55 | **6.52** | 12/600 |
+| previous (650 rules, 76.9%) | −0.09 | 6.66 | 12/600 |
+| champion_system (90 rules) | −0.34 | 6.61 | 2/600 |
+
+Paired vs champion: abs **+0.10** (se 0.18, t +0.53), signed **−0.21**
+(se 0.28, t −0.74). Neither significant.
+
+Note the trade: +1.2pp fidelity bought +0.14 abs and **cost 0.46 signed**.
+Higher fidelity to Brill systematically moves abs toward Brill's 5.00 while
+signed does not follow — again because abs rewards *tracking* par and signed
+rewards *beating* it (§6.28).
+
+**Every configuration tried now lands at |t| < 1 against champion.** Across
+2,442 / 11,848 / 14,290 traces, depths 8–12, and all four groupings, the
+distilled system has never significantly beaten or lost to the champion.
+That is seven-ish independent comparisons; if there were a real effect of the
+size needed, one of them would have cleared t ≈ 2. Distillation is capped at
+parity with this representation, and further fidelity gains are not
+self-evidently worth paying for.
+
+### The "we're missing Brill's atoms" hypothesis is mostly WRONG
+
+Brill's `requires` field (1,510 of 2,442 traces) states its hand predicates
+symbolically, so the obvious explanation for the plateau — our 121 features
+don't compute Brill's atoms — is directly testable. It does not survive the
+test. Diffing the 131 distinct atoms against `extract_all`, weighted by how
+often each is used (7,457 atom occurrences):
+
+| | share of atom usage |
+| --- | --- |
+| covered by an existing feature | **88.9%** |
+| Brill *rule references* (`Opening1H`/`Opening1S`) | 1.4% |
+| genuinely missing | **9.7%** |
+
+The high-usage atoms are all present under different names —
+`clublongest`→`c_is_longest`, `S_points`→`spade_hcp`,
+`losers`/`loserlevel`→`losing_trick_count`, `aces`→`ace_count`,
+`havekeycards`→`keycard_count_1430`, `explicitshape`→`shape_pattern`,
+`semibalanced`→`is_semi_balanced`, `stopper`→`has_stopper`,
+`totalpoints`→`total_points`, `ruleof21`→`rule_of_21`.
+
+(A naive string diff says 27% missing. That is wrong — it is inflated by
+false positives from the name differences above. Worth stating because that
+number is the one that makes the story look tidy.)
+
+What is actually missing is not hand shape but **auction-context and
+conventional judgement**: `lightmajoropening` (73), `fourthseatopening` (73),
+`slammish` (64), `doublethenovercall` (55), `makessense` (34), `overcall` (32),
+`opponentsuit` (27), `balish` (22), `bestmajor` (21), `twosuited` (16).
+
+That reframes the residual. `requires` only ever describes the **hand** half of
+a Brill decision; which of its 1,040,694 rules fires is decided by an auction
+routing tree that `requires` says nothing about. So the unexplained ~30% is
+most likely *"which convention am I in"*, not *"what is my hand"* — a deep
+routing problem, and precisely the part a fixed-width feature vector is worst
+at. Adding the ~10 genuinely-missing predicates is cheap and worth doing, but
+9.7% of atom usage does not account for a 30% fidelity gap, so it should not
+be sold as the fix.
+
+### The 1,200-board harvest landed — and re-measured remote Brill properly
+
+`brill_remote_eval.py --boards 1200 --seed 1234` finished in 2h37m, writing
+**11,848 position→call records** (vs 2,442 before, 4.9×). It also re-ran the
+remote-Brill-vs-champion comparison at **1,200 boards, resolution 0.23** — 25×
+the board count of §6.57:
+
+| | signed | abs | passed out |
+| --- | --- | --- | --- |
+| remote Brill (`/bid`) | −0.04 | **5.00** | 25/1200 |
+| champion_system | +0.14 | 6.36 | — |
+
+Paired (positive = Brill better): abs **+1.36 (se 0.13, t +10.81)**, signed
+−0.18 (se 0.20, t −0.91).
+
+Two things worth separating. First, the abs advantage is now overwhelming
+(t 10.81 vs §6.57's t 3.74) — remote Brill really does land much closer to par,
+and the target is confirmably strong. Second, **on the signed metric it is
+*slightly worse* than champion and not significant**, while champion is
+nominally *beating* par (+0.14). This is §6.28's duality at its starkest:
+Brill is more accurate, champion is more optimistic. "Brill is better" is true
+of absolute deviation from par and is not true of signed IMP.
+
+Brill passes out 25/1200 (2.1%), so the pass-out rate seen in the distilled
+system is inherited from the target, not introduced by distillation.
+
+### Latent bug found and fixed: string condition values were exported unquoted
+
+`DecisionNet.export_dsl` wrote `CONDITION: {key} {op} {value}` with no
+quoting, while `load_decision_net_dsl` coerces bare numeric-looking tokens to
+**int**. So a rule on the string feature `shape_pattern` exported as
+
+    CONDITION: shape_pattern == 4432
+
+loaded back as the integer 4432 and never equalled the feature's string
+`'4432'` — **the rule was silently dead**. The line looks correct, which is
+what makes it dangerous; nothing warns you.
+
+Found only because the round-trip was checked directly: fidelity of the
+in-memory net vs the reloaded one was 84.40% vs 83.99%. **20 of 192 distilled
+rules were dying this way** (every rule splitting on `shape_pattern`;
+`PASS`, `E`, `NONE` survived because they are not numeric-looking).
+
+Fixed with `DecisionNet._fmt_cond_value`, which quotes strings on export
+(`shape_pattern == '4432'`), matching how hand-written systems already spell
+string literals (`partner_last_call == 'NONE'` in brill.dsl). Round-trip is
+now bit-identical. Regression tests in `TestDslValueQuoting`.
+
+**General lesson: a save→load cycle is not free. Verify behaviour is
+preserved, not just that the file parses.** This is the second time in this
+project that a round-trip silently degraded a system (see §6.5x on
+`intersection_nodes` being dropped).
+
+### Gotcha: generated systems leak into the frozen CoT vocab
+
+Writing `system/brill_distilled.dsl` broke `test_frozen_vocab_file_integrity`
+(423 vs 615). `build_frozen_vocab` globs `system/*.dsl` for `RULE <id>` atoms
+and 192 new ids landed in it — the same hazard `_VOCAB_EXCLUDED_DSL` already
+existed to prevent for `brill.dsl`. Fixed by adding `brill_distilled.dsl` to
+that set. **Any new generated .dsl dropped into `system/` will do this again.**
+
+---
+
 ## 9. References
 
 - Amit & Markovitch, *Learning to Bid in Bridge*, MLJ 63(3), 2006 — BIDI/RBMBMC/PIDM/ID3/co-training foundations.
