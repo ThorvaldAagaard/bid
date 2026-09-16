@@ -4274,6 +4274,128 @@ arm) as the minimum for claiming a candidate is worth deploying, and
 ~5,000 when the decision matters. Nothing in §6.67–§6.69 was measured to
 that standard, so none of it should be read as "this does not work".
 
+### 6.71 Measured directly: remote Brill is +2.46 against the distilled system
+
+§6.69 inferred the gap to Brill from two indirect comparisons. This
+measures it head-to-head: `team_match.py --remote-a`, 200 boards, seed 7,
+23 min, ~4,000 requests.
+
+| | net IMP/board | se | t | won / lost / tied |
+| --- | --- | --- | --- | --- |
+| **remote Brill vs `brill_distilled`** | **+2.455** | 0.410 | **+5.99** | 90 / 36 / 74 |
+
+| bucket | n | mean | se | t | total |
+| --- | --- | --- | --- | --- | --- |
+| contested | 75 | +3.067 | 0.680 | +4.51 | +230 |
+| uncontested | 125 | +2.088 | 0.514 | +4.07 | +261 |
+
+This replicates §6.60's +2.63 against champion, so the programme's central
+number is real: **Brill beats our best system by about 2.5 IMP/board.**
+
+**Where it comes from.** 74 boards (37%) are exact ties — both systems
+reach the same contract and score the same. On the 126 that diverge,
+**Brill wins 90 and loses 36 — 71% of all decided boards** — and its wins
+are roughly 60% larger than ours (top decile +138 against our −86). Bril
+is not squeaking past; it is right far more often *and* by more.
+
+**The one caveat that must be attached to the contested/uncontested
+split.** The `contested` label is computed from table 1's auction only
+(`contested(h1, ...)`). At table 2 the seat assignments are swapped, so a
+board classified "uncontested" can still have Brill competing or doubling
+as EW against the distilled NS. The +2.09 in the uncontested bucket
+therefore does **not** show that Brill wins without competing, and it must
+not be read that way. All that can be said is that the edge is present in
+both buckets.
+
+**Why self-play said parity and the board says −2.46.** §6.69's static
+match put the two systems within noise (−0.272, t −0.80). That is not a
+contradiction, and the reason matters: **self-play cancels competitive
+aggressiveness by construction.** When all four seats use the same system,
+both partnerships are equally willing to compete, so neither can push the
+other out, buy the contract, or double the other into a bad score. The
+entire dimension on which Brill beats weaker systems is projected out.
+
+So §6.69's conclusion stands but needs its scope narrowed: the gap is not
+in *contract finding*, which is what the static measure isolates, and it
+is not measurable by any self-play design. `static_team_match.py` remains
+a useful diagnostic for contract quality — it is the only instrument that
+has ever resolved one of these interventions — and it is structurally
+blind to the thing that actually decides matches.
+
+**The paradox this leaves, stated plainly.** §6.68 proved that making the
+distilled system more willing to act costs −0.76 to −2.85 IMP/board, and
+§6.69 measured that it competes at 12.3% against Brill's 22.5%
+(bias −10.21pp, t −12.15). Both are true. The resolution is that
+willingness is not the scarce resource — judgement is. Brill competes
+twice as often *and is right when it does*; the distilled system forced to
+compete bids badly, because it does not know which competitions are good.
+That is a knowledge gap, and knowledge has been the one thing no
+representation change, reweighting, or capacity increase has supplied.
+
+### 6.72 The first adequately powered comparison: se 0.148, and a coin flip
+
+§6.70 concluded that 600 boards resolves only ±0.6 and recommended ≥2,200
+for promotion decisions. This runs the project's best-motivated candidate
+— `opening_contested`, the only intervention that has ever produced a
+significant board-level result — at that standard. Two arms, 2,200 boards
+each, seed 7, 24 min.
+
+| arm | vs champion | se | t | contested | uncontested |
+| --- | --- | --- | --- | --- | --- |
+| `opening_contested` | +0.010 | 0.14 | +0.10 | +0.11 (t +0.42) | −0.03 |
+| control (133k d10) | −0.040 | 0.14 | −0.30 | +0.15 (t +0.58) | −0.13 |
+
+**Paired, candidate minus control: +0.055 IMP/board, se 0.148, t +0.37,
+95% CI [−0.236, +0.346].**
+
+**The power model is confirmed empirically.** Scaling from 600 to 2,200
+boards should cut the se by √(2200/600) = 1.91×. It fell from 0.294 to
+0.148 — a factor of **1.99**. §6.70's table can be trusted for sizing
+future runs.
+
+**The 600-board number was misleading in the way §6.70 predicted.** The
+same comparison measured −0.130 (se 0.294) at 600 boards and **+0.055**
+(se 0.148) at 2,200. The sign flipped. Both are consistent with zero,
+which is exactly the point: at ±0.58 the interval spanned
+[−0.71, +0.45] and supported almost any story, while at ±0.29 it now
+supports only one — **this intervention is worth somewhere between a
+quarter of an IMP worse and a third of an IMP better, and is very probably
+worth nothing at all.**
+
+**Both systems are now pinned at exact parity with champion** — +0.010 and
+−0.040, each with se 0.14, so ±0.27 at 95%. That is a far sharper
+statement than the "+0.04, t +0.27" of §6.66: parity is not an
+underpowered guess, it is measured to ±0.27.
+
+**Decision: not promoted.** The team match is a coin flip inside a
+resolved interval, and the candidate is 50% larger (1,679 rules against
+1,120). It does hold two real advantages — the highest fidelity ever
+measured here (84.2% against 82.2%) and the only significant board-level
+gain of the whole programme on the static contested measure (+1.131,
+t +2.44) — and §6.68/§6.69 are precisely the warnings against promoting on
+those. Anyone revisiting this should know the choice is genuinely close
+and that the tie-breakers point mildly towards the candidate; it is being
+declined because the objective does not support it, not because it is
+worse.
+
+**What is now firmly established, and what is not.**
+
+| quantity | value | resolution |
+| --- | --- | --- |
+| distilled vs champion | +0.01 | ±0.27 |
+| `opening_contested` vs control | +0.055 | ±0.29 |
+| remote Brill vs distilled | **+2.455** | ±0.80 |
+| distilled vs Brill, self-play | −0.272 | ±0.67 |
+
+The target is **+2.46 IMP/board**, measured directly (§6.71), and every
+local system sits at **0.00 ± 0.27** against champion. Nothing in eleven
+interventions has moved that zero, and the two attempts that were measured
+well enough to rule out moderate gains (§6.67, this section) both came
+back as coin flips. The distributions in §6.70 and §6.71 say why: the
+boards on which systems differ are decided by large, symmetric swings, and
+the only systematic edge in the data belongs to a system that competes
+twice as often and is right when it does.
+
 ---
 
 ## 9. References
