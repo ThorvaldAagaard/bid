@@ -4053,6 +4053,156 @@ calibrated away; it is the correct policy for a model with this much
 knowledge. Any future proposal that amounts to "make it bid more" is
 predicted to lose, and the predicted size of the loss is now known.
 
+### 6.69 Where the 2.6 IMP/board actually lives: competitive bidding
+
+§6.68 left the distilled system at parity with champion and no lever
+working. This section locates the gap to remote Brill — and finds it is
+not where any of the ten interventions were aimed.
+
+**A team match with no network.** Every Brill harvest already contains
+complete auctions played by remote Brill in all four seats: each trace is
+(deal, seat, ctx, call), so grouping by deal and ordering by `ctx` length
+reconstructs the exact auction Brill reaches on that board. That means
+Brill's half of a match can be *replayed from disk*
+(`research/static_team_match.py`), scored by the same `BiddingArena`, and
+differenced against a local system's self-play on the same cards.
+
+Cost: **zero HTTP requests** and ~1–3.5 minutes, against the ~12,000
+requests (~2 h sequential) a live `team_match.py --remote-a` run needs. It
+also makes every future harvest reusable as a benchmark. The replay is
+exact — verified to reproduce Brill's recorded auction on 60/60 boards.
+
+It measures a different thing, and that turned out to be the point. A real
+team match puts A at NS on one table and EW on the other, so the two
+systems are **in the same auction**. Here each side plays all four seats,
+so contract-finding is isolated from competition.
+
+**Result on the 298 usable held-out boards (seed 555):**
+
+| system | IMP/board vs remote Brill | se | t | contested | uncontested |
+| --- | --- | --- | --- | --- | --- |
+| `brill_distilled.dsl` | −0.272 | 0.341 | −0.80 | −1.271 (t −2.04) | +0.288 |
+| `champion_system.dsl` | **+0.225** | 0.381 | +0.59 | −0.150 | +0.435 |
+
+Paired, distilled vs champion on those same boards: **−0.497 (se 0.376,
+t −1.32)** overall, and **−1.121 (se 0.655, t −1.71) on the 107 contested
+boards** against −0.147 uncontested.
+
+**Both local systems are statistically indistinguishable from remote
+Brill in isolation.** Yet §6.60 measured remote Brill at **+2.63 (se 0.50,
+t +5.22)** against champion in the two-table design. The difference
+between the two designs is ~2.9 IMP/board, far outside either standard
+error, so it is not noise and not a design artefact of sensitivity — both
+designs resolve effects far smaller than 2.6.
+
+The only thing that differs is whether the two systems bid *against each
+other*. So **the +2.63 is a competitive-bidding gap, not a contract-
+finding gap.** In isolation all three systems reach contracts of
+comparable value; the advantage appears only when a stronger and a weaker
+system share an auction.
+
+**It is not a fidelity gap either.** Held-out agreement with Brill, split
+by whether the opponents have entered:
+
+| positions | n | agreement | share |
+| --- | --- | --- | --- |
+| contested (opponents bid) | 1,685 | **82.8%** | 56.1% |
+| uncontested | 1,321 | 81.0% | 43.9% |
+
+The model reproduces Brill's contested calls *better* than its
+uncontested ones. Whatever is lost in competition, it is not lost because
+the model fails to imitate Brill there.
+
+**It is a rate gap, and a very large one.** Among the 1,685 contested
+held-out positions, how often each side refuses to pass:
+
+| | competes | Brill competes | net bias | | precision | recall |
+| --- | --- | --- | --- | --- | --- | --- |
+| remote Brill | 22.5% | — | — | | — | — |
+| champion | 15.3% | 22.5% | −7.18pp | t −6.87 | 0.616 | 0.419 |
+| **distilled** | **12.3%** | 22.5% | **−10.21pp** | **t −12.15** | **0.889** | 0.485 |
+
+The distilled system competes at **55% of Brill's rate**; champion manages
+68%. The ordering matches the IMP ordering — champion is the less passive
+of the two and is the better competitor (static contested −0.150 vs
+−1.271).
+
+At **t −12.15** this is the largest behavioural deficit measured anywhere
+in this project, larger than the game-rate bias of §6.68 (t −7.00), and
+it points exactly where the board-level numbers point.
+
+**And the obvious fix is already refuted.** §6.68's leaf-margin sweep is
+precisely the "stop passing so much" experiment, and it cost −0.76 to
+−2.85 IMP/board — with the damage roughly **twice as large in contested
+auctions** as in uncontested ones (−1.605 vs −0.268 at margin 0.5). So
+"compete more" has been run and lost. The shape here is the same trap as
+§6.68 — precision 0.889, recall 0.485, a good chooser that chooses rarely
+— and the lesson of §6.68 is that this shape does **not** license
+lowering the bar.
+
+What is left is the one lever that is direction-**neutral**: give
+competitive positions their own model capacity instead of making them
+share a tree with uncontested ones, and change no rate at all.
+`brill_distill.py --group opening_contested` crosses the existing
+`is_opening` split with `opponents_bid`, giving four trees instead of two.
+It cannot be accused of forcing any behaviour — it only decides whether
+contested decisions get their own budget.
+
+#### Result: it fixes the proxy significantly and leaves the objective flat
+
+| | CV agreement | rules | team match vs champion (paired) | contested |
+| --- | --- | --- | --- | --- |
+| control (`opening`) | 82.2% | 1,120 | — | — |
+| **`opening_contested`** | **84.2%** | 1,679 | **−0.130** (se 0.294, t −0.44) | **+0.032** (t +0.06) |
+
+Graded on the **objective** — 600 boards, seed 7, paired against the
+production control — this is another null. The contested bucket, which is
+where the entire −10.21pp deficit lives and which this was built to fix,
+moved by **+0.032 IMP/board (t +0.06)**. Nothing.
+
+Graded on the **proxy** — the static self-play match on 298 held-out
+boards — it is the first *significant* board-level result in eleven
+attempts:
+
+| comparison (static, paired) | all | contested | uncontested |
+| --- | --- | --- | --- |
+| `opening_contested` − control | +0.383 (t +1.34) | **+1.131 (t +2.44)** | −0.037 |
+| `opening_contested` − champion | −0.114 (t −0.30) | +0.009 (t +0.01) | −0.183 |
+
+Contested self-play improved by **+1.131 IMP/board, 95% CI [+0.221,
++2.040]** — significant — and brought the system from −1.121 behind
+champion on contested boards to **+0.009, dead level**. Its competitiveness
+rate also rose on its own, from 12.3% to 14.2%, without anything forcing
+it.
+
+**So the two measures disagree, and that is the finding.** The proxy says
+the competitive weakness is fixed; the objective says nothing changed.
+Since the team match is the stated goal, the honest verdict is a null —
+and `system/brill_distilled.dsl` is **not** promoted, because promoting on
+a proxy that has just been demonstrated to disagree with the objective is
+precisely the mistake §6.66 warned about and §6.68 confirmed.
+
+What the disagreement means is that **self-play competitive contract-
+finding and two-system competitive interaction are different skills.**
+Improving how a system bids when left alone to fight its own auction does
+not improve how it does against an opponent bidding a different system.
+That is also the most likely reading of the +2.63 itself: Brill's edge
+over champion is an *interaction* edge, not a contract-quality edge, which
+is why eleven attempts to improve contract quality — including this one,
+which genuinely succeeded on its own terms — have all left it untouched.
+
+**Practical consequence.** `research/static_team_match.py` remains useful
+and cheap, and it is the only board-level measure that has ever resolved
+an intervention. But it is a *diagnostic*, not a substitute for the team
+match, and a significant proxy result must not be treated as a result.
+
+**State after §6.67–§6.69:** the distilled system is at parity with
+champion (+0.04, t +0.27) and statistically indistinguishable from remote
+Brill in isolation (−0.272, t −0.80). Eleven interventions, of which one
+moved a proxy significantly and none moved the objective. The remaining
+2.6 IMP/board is a two-system interaction effect and is not reachable by
+better imitation of Brill's calls.
+
 ---
 
 ## 9. References

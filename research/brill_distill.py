@@ -122,6 +122,21 @@ def group_key(feats: Dict[str, Any], mode: str) -> Any:
         return "all"
     if mode == "opening":
         return bool(feats.get("is_opening"))
+    if mode == "opening_contested":
+        # Same split as `opening`, crossed with whether the opponents have
+        # entered the auction. Gives competitive positions their OWN tree
+        # instead of making them share one with uncontested auctions.
+        #
+        # Direction-neutral on purpose: this adds capacity, it does not push
+        # any rate up or down. That matters because section 6.68 showed the
+        # direct approach -- forcing the model to stop passing -- costs
+        # -0.76 to -2.85 IMP/board, and 6.69 measures a -10.21pp (t -12.15)
+        # competitiveness deficit that is very tempting to "fix" the same
+        # way. If contested decisions are under-modelled because they share
+        # a tree with uncontested ones, this fixes it; if they are simply
+        # hard, it changes nothing.
+        return (bool(feats.get("is_opening")),
+                bool(feats.get("opponents_bid")))
     if mode == "bid":
         # last_bid_strain is a STRING ('NONE'/'C'/'D'/'H'/'S'/'NT'), so key on
         # it directly — RuleCondition handles string equality fine (brill.dsl
@@ -138,6 +153,9 @@ def guard_for(key: Any, mode: str) -> List[DecisionNetRule]:
         return []
     if mode == "opening":
         conds = [RuleCondition("is_opening", "==", bool(key))]
+    elif mode == "opening_contested":
+        conds = [RuleCondition("is_opening", "==", bool(key[0])),
+                 RuleCondition("opponents_bid", "==", bool(key[1]))]
     elif mode == "bid":
         conds = [RuleCondition("auction_len", "==", int(key[0])),
                  RuleCondition("last_bid_level", "==", int(key[1])),
@@ -157,6 +175,10 @@ def _num(v: Any, default: int = 0) -> int:
 def key_label(key: Any) -> str:
     if not isinstance(key, tuple):
         return str(key)
+    if len(key) == 2 and isinstance(key[0], bool):
+        # opening_contested: (is_opening, opponents_bid)
+        return "%s_%s" % ("open" if key[0] else "later",
+                          "cont" if key[1] else "uncont")
     return "L%d/%d/%s" % (key[0], key[1], key[2])
 
 
@@ -168,7 +190,8 @@ def main():
     ap.add_argument("--out", default=os.path.join(SYSTEM_DIR,
                                                   "brill_distilled.dsl"))
     ap.add_argument("--group", default="auction_len",
-                    choices=["auction_len", "bid", "opening", "none"])
+                    choices=["auction_len", "bid", "opening",
+                             "opening_contested", "none"])
     ap.add_argument("--max-depth", type=int, default=8)
     ap.add_argument("--min-samples", type=int, default=25,
                     help="below this a group gets a single majority rule")
