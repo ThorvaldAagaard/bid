@@ -4484,6 +4484,39 @@ lever is worth further slices only where the dimension is an *interaction*
 rather than an additive input. Untested candidates in that class: whether
 partner has bid, and whether the auction has already been doubled.
 
+#### The specialisation sweep, complete: one win, then nothing
+
+The mechanism predicted another dimension would pay again. Three were
+tested, each at 133k / depth 10, each head-to-head against the then-
+incumbent at 2,200 boards:
+
+| grouping | groups | rules | CV | vs incumbent | replication |
+| --- | --- | --- | --- | --- | --- |
+| **`opening_contested`** | 4 | 1,679 | 84.2% | **+0.27 (t +2.43)** | **+0.33 (t +2.96)** |
+| `opening_contested_vul` | 8 | 3,002 | 83.1% | +0.01 (t +0.13) | — |
+| `opening_contested_rebid` | 8 | 2,708 | 84.8% | +0.09 (t +0.87) | +0.03 (t +0.23) |
+| `uncont_rebid` | 4 | 2,133 | 84.7% | +0.04 (t +0.46) | — |
+
+None promoted. `opening_contested_rebid` combines across seeds to
+**+0.06 ± 0.15**, so it is resolved as a null rather than left open.
+`uncont_rebid` was built to fix the specific failure of the previous one:
+`opening_contested_rebid` spread a rebid split across all four groups,
+but the measured `opening_contested` gain lived entirely in the
+uncontested slice, so this applied the split to that slice only and left
+contested whole — 4 groups, the same count as the winner. It made no
+difference, which argues the problem is not *where* the extra split is
+placed.
+
+`uncont_rebid` also produced the sharpest measurement in the project:
+**se 0.08**, because two models this similar tie on 75% of boards. The
+instrument is now good enough to resolve ±0.16, and it sees nothing.
+
+**Conclusion.** Specialisation bought one real gain — +0.30, replicated —
+and has now been tested on three further dimensions with a combined
+result indistinguishable from zero. It is not a general lever; it was one
+specific split that mattered. Notably, `opponents_bid` is the only one of
+the four that changes *what a hand is for* rather than adding an input.
+
 **The caveat that must travel with it.** Against *champion* the
 improvement is +0.010 against the incumbent's −0.040 — a difference of
 **+0.05 ± 0.29**, not significant. The +0.30 is measured against the

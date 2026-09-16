@@ -158,6 +158,43 @@ def group_key(feats: Dict[str, Any], mode: str) -> Any:
         return (bool(feats.get("is_opening")),
                 bool(feats.get("opponents_bid")),
                 bool(feats.get("is_vulnerable")))
+    if mode == "opening_contested_rebid":
+        # The remaining lump, and the biggest one. `opening_contested` has
+        # only three non-empty groups, because is_opening=True implies
+        # opponents_bid=False -- and "later + uncontested" still contains
+        # the responder's first call, the opener's rebid, the responder's
+        # rebid and everything after, all sharing one tree. That is most
+        # of a ~10-call auction collapsed into a single model.
+        #
+        # "Have I already bid?" is the interaction that separates them: a
+        # hand means something completely different on your first turn
+        # (describing) than on your second (narrowing or placing the
+        # contract). It is an interaction rather than an additive input,
+        # which is the property that made `opponents_bid` pay and that
+        # `is_vulnerable` lacked.
+        return (bool(feats.get("is_opening")),
+                bool(feats.get("opponents_bid")),
+                str(feats.get("my_first_call", "NONE")) != "NONE")
+    if mode == "uncont_rebid":
+        # Concentrate the split where the win actually was.
+        #
+        # `opening_contested_rebid` spread the rebid split over all four
+        # groups and returned +0.06 +/- 0.15 -- a null. But the
+        # `opening_contested` gain was measured entirely in UNCONTESTED
+        # auctions, so a split that also fragments the contested slice may
+        # simply be spending its budget in the wrong place. This applies
+        # the rebid split to the uncontested slice only, leaving contested
+        # as one group.
+        #
+        # Result is 4 non-empty groups, the same count as the model that
+        # won -- so if this pays it is the placement of the split that
+        # matters, not the number of groups.
+        is_open = bool(feats.get("is_opening"))
+        opp = bool(feats.get("opponents_bid"))
+        if is_open or opp:
+            return (is_open, opp, None)
+        return (is_open, opp,
+                str(feats.get("my_first_call", "NONE")) != "NONE")
     if mode == "bid":
         # last_bid_strain is a STRING ('NONE'/'C'/'D'/'H'/'S'/'NT'), so key on
         # it directly — RuleCondition handles string equality fine (brill.dsl
@@ -181,6 +218,19 @@ def guard_for(key: Any, mode: str) -> List[DecisionNetRule]:
         conds = [RuleCondition("is_opening", "==", bool(key[0])),
                  RuleCondition("opponents_bid", "==", bool(key[1])),
                  RuleCondition("is_vulnerable", "==", bool(key[2]))]
+    elif mode == "opening_contested_rebid":
+        conds = [RuleCondition("is_opening", "==", bool(key[0])),
+                 RuleCondition("opponents_bid", "==", bool(key[1])),
+                 RuleCondition("my_first_call",
+                               "!=" if key[2] else "==", "NONE")]
+    elif mode == "uncont_rebid":
+        # key[2] is None for the groups this mode deliberately leaves
+        # unsplit, so no third condition is emitted for them.
+        conds = [RuleCondition("is_opening", "==", bool(key[0])),
+                 RuleCondition("opponents_bid", "==", bool(key[1]))]
+        if key[2] is not None:
+            conds.append(RuleCondition("my_first_call",
+                                       "!=" if key[2] else "==", "NONE"))
     elif mode == "bid":
         conds = [RuleCondition("auction_len", "==", int(key[0])),
                  RuleCondition("last_bid_level", "==", int(key[1])),
@@ -197,16 +247,28 @@ def _num(v: Any, default: int = 0) -> int:
         return default
 
 
-def key_label(key: Any) -> str:
+def key_label(key: Any, mode: Optional[str] = None) -> str:
     if not isinstance(key, tuple):
         return str(key)
     if len(key) in (2, 3) and isinstance(key[0], bool):
-        # opening_contested:      (is_opening, opponents_bid)
-        # opening_contested_vul:  (is_opening, opponents_bid, is_vulnerable)
+        # opening_contested:        (is_opening, opponents_bid)
+        # opening_contested_vul:    (..., is_vulnerable)
+        # opening_contested_rebid:  (..., have I already bid)
+        # Both 3-tuples are all-bool, so the third element is
+        # distinguished by mode -- rule ids are only labels, but a
+        # "_vul"/"_nv" suffix on a rebid split would be actively
+        # misleading when reading an exported system.
         out = "%s_%s" % ("open" if key[0] else "later",
                          "cont" if key[1] else "uncont")
         if len(key) == 3:
-            out += "_vul" if key[2] else "_nv"
+            if key[2] is None:
+                pass                      # uncont_rebid: deliberately unsplit
+            elif mode == "opening_contested_rebid":
+                out += "_rebid" if key[2] else "_first"
+            elif mode == "uncont_rebid":
+                out += "_rebid" if key[2] else "_first"
+            else:
+                out += "_vul" if key[2] else "_nv"
         return out
     return "L%d/%d/%s" % (key[0], key[1], key[2])
 
@@ -221,6 +283,7 @@ def main():
     ap.add_argument("--group", default="auction_len",
                     choices=["auction_len", "bid", "opening",
                              "opening_contested", "opening_contested_vul",
+                             "opening_contested_rebid", "uncont_rebid",
                              "none"])
     ap.add_argument("--max-depth", type=int, default=8)
     ap.add_argument("--min-samples", type=int, default=25,
@@ -389,12 +452,12 @@ def main():
                 conds = [RuleCondition(c.key, c.op, c.value)
                          for r in guard for c in r.conditions]
                 net.add_rule(DecisionNetRule(
-                    "BD_%s_maj" % key_label(k), maj_call, conds, priority=1,
+                    "BD_%s_maj" % key_label(k, args.group), maj_call, conds, priority=1,
                     description="majority call (n=%d)" % len(gx)))
                 continue
             tree = ID3DecisionTree(max_depth=args.max_depth)
             tree.fit(gx, gy)
-            for r in id3_tree_to_rules(tree, guard, "BD_%s" % key_label(k),
+            for r in id3_tree_to_rules(tree, guard, "BD_%s" % key_label(k, args.group),
                                        base_priority=10,
                                        description="distilled from Brill /bid"):
                 net.add_rule(r)
