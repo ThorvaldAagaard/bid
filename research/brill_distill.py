@@ -60,15 +60,29 @@ from bid.learner import ID3DecisionTree, id3_tree_to_rules    # noqa: E402
 SYSTEM_DIR = os.path.join(REPO, "system")
 
 
-def featurise(rows: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]],
-                                                   List[Any], List[str],
-                                                   List[Tuple]]:
+def featurise(rows: List[Dict[str, Any]],
+              only_group: Any = None,
+              group_mode: str = "auction_len",
+              ) -> Tuple[List[Dict[str, Any]], List[Any], List[str],
+                         List[Any], List[str]]:
     """(features, target calls, skip reasons, contexts) for each trace.
 
-    `contexts` keeps the raw (hand, history, seat, dealer, vuln) so a fitted
-    net can be scored against held-out traces later.
+    `contexts` keeps enough to re-create each position so a fitted net can
+    be scored against held-out traces later. It stores the **raw row**, not
+    a parsed (Hand, history, ...) tuple: at 330k traces the parsed form
+    pins ~4.3m Card objects in memory for the whole run, and only the
+    held-out slice is ever actually scored. Parsing is deferred to
+    :func:`_context`.
+
+    `only_group` drops every row outside one slice of `group_mode` as it is
+    featurised. `fit_net` fits each slice independently, so running the
+    slices in separate processes produces a bit-identical model at a
+    fraction of the peak memory — which is what makes 330k traces fit on a
+    16 GB machine. `deals` is returned alongside, because once rows are
+    dropped the caller can no longer recover the deal for row *i* from
+    `rows`, and the split must stay deal-level (see main).
     """
-    X, y, skipped, ctxs = [], [], [], []
+    X, y, skipped, ctxs, deals = [], [], [], [], []
     for r in rows:
         try:
             hand = hand_from_pbn(r["hand"])
@@ -83,13 +97,36 @@ def featurise(rows: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]],
         except Exception as exc:                                # noqa: BLE001
             skipped.append("%s: %s" % (type(exc).__name__, exc))
             continue
+        if (only_group is not None
+                and group_key(feats, group_mode) != only_group):
+            continue
         X.append(feats)
         y.append(call)
-        ctxs.append((hand, history, seat, dealer, vuln))
-    return X, y, skipped, ctxs
+        ctxs.append(r)
+        deals.append(r.get("deal", ""))
+    return X, y, skipped, ctxs, deals
 
 
-def fidelity(net: DecisionNet, ctxs: List[Tuple],
+def _literal(tok: str) -> Any:
+    """'True' -> True, 'None' -> None, '3' -> 3. For --only-group parsing."""
+    import ast
+    try:
+        return ast.literal_eval(tok.strip())
+    except (ValueError, SyntaxError):
+        return tok.strip()
+
+
+def _context(row: Any) -> Tuple:
+    """(hand, history, seat, dealer, vuln) from a raw trace row."""
+    return (hand_from_pbn(row["hand"]),
+            [parse_call(t) for t in (row.get("ctx") or "").split("-")
+             if t.strip()],
+            seat_from_letter(row["seat"]),
+            seat_from_letter(row["dealer"]),
+            int(row.get("vul", 0)))
+
+
+def fidelity(net: DecisionNet, ctxs: List[Any],
              y: List[Any]) -> Tuple[float, int]:
     """How often the distilled net reproduces Brill's call on held-out traces.
 
@@ -101,7 +138,8 @@ def fidelity(net: DecisionNet, ctxs: List[Tuple],
     if not ctxs:
         return 0.0, 0
     ok = 0
-    for (hand, history, seat, dealer, vuln), want in zip(ctxs, y):
+    for row, want in zip(ctxs, y):
+        hand, history, seat, dealer, vuln = _context(row)
         acts = net.actions(hand, history, seat, dealer, vuln)
         pred = acts[0] if acts else None
         if pred is not None and str(pred) == str(want):
@@ -285,6 +323,14 @@ def main():
                              "opening_contested", "opening_contested_vul",
                              "opening_contested_rebid", "uncont_rebid",
                              "none"])
+    ap.add_argument("--only-group", default="",
+                    help="fit one slice only, as its key tuple, e.g. "
+                         "'True,False' for opening_contested. Slices are "
+                         "fit independently, so running them in separate "
+                         "processes yields an identical model while keeping "
+                         "peak memory proportional to the largest slice "
+                         "rather than the whole trace set. Merge the result "
+                         "with research/merge_dsl.py.")
     ap.add_argument("--max-depth", type=int, default=8)
     ap.add_argument("--min-samples", type=int, default=25,
                     help="below this a group gets a single majority rule")
@@ -326,9 +372,14 @@ def main():
                  "brill_remote_eval.py --boards N --traces %s"
                  % (args.traces, args.traces))
 
+    only_group = None
+    if args.only_group:
+        only_group = tuple(_literal(p) for p in args.only_group.split(","))
+        print("only group: %r" % (only_group,))
+
     rows = [json.loads(l) for l in open(args.traces) if l.strip()]
     print("traces: %d" % len(rows))
-    X, y, skipped, ctxs = featurise(rows)
+    X, y, skipped, ctxs, deal_of = featurise(rows, only_group, args.group)
     if skipped:
         print("skipped %d (%s)" % (len(skipped), skipped[0]))
     print("featurised: %d" % len(X))
@@ -351,8 +402,7 @@ def main():
     # generalises over hands reasonably, but the deal split is the honest
     # one and costs nothing.)
     order = list(range(len(X)))          # also used by the CV loop below
-    if len(X) == len(rows):
-        deal_of = [r.get("deal", "") for r in rows]
+    if len(deal_of) == len(X):
         deal_ids = sorted(set(deal_of))
         random.Random(0).shuffle(deal_ids)
         deal_fold = {d: pos % folds for pos, d in enumerate(deal_ids)}

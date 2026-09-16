@@ -11,6 +11,7 @@ Emits traces with a fixed alphabet of semantic atoms:
 Special tokens: <pad>=0 <bos>=1 <sep>=2 <eot>=3
 """
 
+import fnmatch
 import glob
 import json
 import os
@@ -155,7 +156,19 @@ class Tokenizer:
 # so they are unstable across regenerations and no trace will ever contain
 # them. brill_distilled.dsl adds 192 of them, which is enough to break the
 # frozen-vocab integrity check.
-_VOCAB_EXCLUDED_DSL = frozenset({"brill.dsl", "brill_distilled.dsl"})
+# Captured reference systems and distilled systems live in system/ but are
+# never traced by the pipeline, so their rule ids must not enter the frozen
+# vocabulary: brill.dsl alone carries 1,830 rule ids and a distilled system
+# 1,700-1,900, either of which would quadruple the vocab (404 -> 2234) with
+# atoms no trace will ever contain.
+#
+# Matched by PATTERN, not by name. Distillation writes candidates into
+# system/ under versioned names (brill_distilled_330k.dsl and so on), and an
+# exact-name list silently let one in -- it added 1,910 dead atoms and broke
+# test_frozen_vocab_file_integrity the moment it appeared. `brill*.dsl`
+# covers exactly the two names already excluded plus any future candidate,
+# and matches nothing that was previously included.
+_VOCAB_EXCLUDED_DSL_GLOBS = ("brill*.dsl",)
 
 
 def build_frozen_vocab(repo_root: Optional[str] = None) -> Dict[str, int]:
@@ -186,7 +199,8 @@ def build_frozen_vocab(repo_root: Optional[str] = None) -> Dict[str, int]:
     # brill.dsl alone carries 1,830 rule ids, which would quadruple the vocab
     # (404 -> 2234) with atoms no trace will ever contain.
     dsl_files = [f for f in dsl_files
-                 if os.path.basename(f) not in _VOCAB_EXCLUDED_DSL]
+                 if not any(fnmatch.fnmatch(os.path.basename(f), g)
+                            for g in _VOCAB_EXCLUDED_DSL_GLOBS)]
     for f in dsl_files:
         try:
             with open(f) as fh:
