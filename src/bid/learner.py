@@ -18,12 +18,19 @@ class ID3Node:
                  threshold: Optional[Any] = None,
                  is_continuous: bool = True,
                  is_leaf: bool = False,
-                 prediction: Optional[Call] = None):
+                 prediction: Optional[Call] = None,
+                 class_counts: Optional[Dict[Call, int]] = None):
         self.feature_name = feature_name
         self.threshold = threshold
         self.is_continuous = is_continuous
         self.is_leaf = is_leaf
         self.prediction = prediction
+        # How the leaf's training mass is distributed. Majority vote throws
+        # this away, but it is what lets the decision *threshold* be moved
+        # after fitting: a leaf that is 55% PASS / 45% 1S is a very
+        # different situation from one that is 95% PASS, and only the
+        # counts can tell them apart. See `id3_leaf_paths(leaf_margin=)`.
+        self.class_counts = class_counts or {}
         self.left_child: Optional['ID3Node'] = None  # <= threshold or == threshold
         self.right_child: Optional['ID3Node'] = None # > threshold or != threshold
 
@@ -61,6 +68,15 @@ class ID3DecisionTree:
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.root: Optional[ID3Node] = None
+
+    @staticmethod
+    def _class_counts(labels: List[Call]) -> Dict[Call, int]:
+        """Training mass per call at a leaf. `Call` is hashable by
+        (type, level, strain), so the objects themselves can be keys."""
+        counts: Dict[Call, int] = {}
+        for lab in labels:
+            counts[lab] = counts.get(lab, 0) + 1
+        return counts
 
     @staticmethod
     def calculate_entropy(labels: List[Call]) -> float:
@@ -120,7 +136,8 @@ class ID3DecisionTree:
         maj_call = self.majority_class(y)
 
         if entropy == 0.0 or depth >= self.max_depth or len(y) < self.min_samples_split:
-            return ID3Node(is_leaf=True, prediction=maj_call)
+            return ID3Node(is_leaf=True, prediction=maj_call,
+                           class_counts=self._class_counts(y))
 
         best_gain = -1.0
         best_feature = None
@@ -183,7 +200,8 @@ class ID3DecisionTree:
                        False)
 
         if best_gain <= 1e-6 or best_split is None:
-            return ID3Node(is_leaf=True, prediction=maj_call)
+            return ID3Node(is_leaf=True, prediction=maj_call,
+                           class_counts=self._class_counts(y))
 
         left_idx, right_idx = best_split
         left_X = [X[i] for i in left_idx]
@@ -207,7 +225,46 @@ class ID3DecisionTree:
             return Call(CallType.PASS)
         return self.root.predict(features)
 
-def id3_leaf_paths(tree: "ID3DecisionTree") -> List[Tuple[List[RuleCondition], Optional[Call]]]:
+def _leaf_call(node, leaf_margin: float) -> Optional[Call]:
+    """A leaf's call, optionally with the PASS threshold moved.
+
+    `leaf_margin` is the PASS share below which a leaf stops passing. A
+    leaf that is 55% PASS / 45% 1S is not a "pass" leaf in any useful
+    sense -- it is an unresolved leaf, and depth limits manufacture a lot
+    of them. Defaulting those to PASS is what makes a distilled system
+    systematically timid.
+
+    Only PASS is ever overridden, and only by a call that actually
+    occurred in the leaf's own training mass. This cannot invent a call or
+    touch a leaf with a confident PASS.
+
+    Deliberately NOT the same as deleting PASS traces before fitting
+    (`--pass-cap`, which cost -1.91 IMP/board): that throws away the
+    model's knowledge of when passing is right. This keeps every trace and
+    moves only the decision boundary, which is a calibration change.
+    """
+    call = node.prediction
+    if not leaf_margin or not node.class_counts:
+        return call
+    if str(call) != "PASS":
+        return call
+    counts = node.class_counts
+    total = sum(counts.values())
+    if not total:
+        return call
+    if counts.get(call, 0) / total >= leaf_margin:
+        return call                      # confident PASS, leave it alone
+    alts = [(c, n) for c, n in counts.items() if str(c) != "PASS"]
+    if not alts:
+        return call
+    # Ties broken by call name so the export is deterministic.
+    alts.sort(key=lambda t: (-t[1], str(t[0])))
+    return alts[0][0]
+
+
+def id3_leaf_paths(tree: "ID3DecisionTree",
+                   leaf_margin: float = 0.0
+                   ) -> List[Tuple[List[RuleCondition], Optional[Call]]]:
     """Every root-to-leaf path of a fitted ID3 tree, as (conditions, call)."""
     paths: List[Tuple[List[RuleCondition], Optional[Call]]] = []
 
@@ -215,7 +272,7 @@ def id3_leaf_paths(tree: "ID3DecisionTree") -> List[Tuple[List[RuleCondition], O
         if node is None:
             return
         if node.is_leaf:
-            paths.append((list(conds), node.prediction))
+            paths.append((list(conds), _leaf_call(node, leaf_margin)))
             return
         if node.is_continuous:
             walk(node.left_child,
@@ -245,7 +302,8 @@ def id3_tree_to_rules(tree: "ID3DecisionTree",
                       intersection_rules: List[DecisionNetRule],
                       base_id: str,
                       base_priority: int = 10,
-                      description: str = "") -> List[DecisionNetRule]:
+                      description: str = "",
+                      leaf_margin: float = 0.0) -> List[DecisionNetRule]:
     """Compile a fitted ID3 tree into ordinary DecisionNetRules.
 
     Why compile instead of attaching: `DecisionNet.export_dsl` writes only a
@@ -275,7 +333,8 @@ def id3_tree_to_rules(tree: "ID3DecisionTree",
 
     tag = "^".join(sorted(r.rule_id for r in intersection_rules))
     out: List[DecisionNetRule] = []
-    for i, (path_conds, call) in enumerate(id3_leaf_paths(tree)):
+    for i, (path_conds, call) in enumerate(
+            id3_leaf_paths(tree, leaf_margin=leaf_margin)):
         if call is None:
             continue
         conds = ([RuleCondition(c.key, c.op, c.value) for c in guard]

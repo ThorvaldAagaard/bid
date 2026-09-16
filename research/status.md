@@ -3953,6 +3953,106 @@ completely different fixes.
   held-out traces; nothing in the repo currently qualifies, since all
   13,450 harvested boards are in the 133k training set.
 
+### 6.68 The timidity is ADAPTIVE: a monotone dose-response the wrong way
+
+§6.67 closed with the distilled system at parity with champion and no
+representation lever left. It also noted that no held-out data existed to
+attribute the ~2.6 IMP/board gap to remote Brill. Both are addressed here.
+
+**First, a clean held-out set.** 300 boards were harvested at seed 555
+(3,006 traces, 10.0 calls/board, 4 shards verified disjoint, zero duplicate
+positions) and checked against the 13,450 training boards: **overlap 0**.
+This is the first held-out set in the project that is genuinely unseen, and
+it is what made the rest of this section possible — §6.64's contamination
+bug happened precisely because none existed.
+`data/brill_traces_holdout555.jsonl`.
+
+**Second, a real and significant directional defect** — measured, not
+assumed, with `research/brill_rate_bias.py`:
+
+| system | game rate | Brill | net bias | t | precision | recall |
+| --- | --- | --- | --- | --- | --- | --- |
+| remote Brill | — | 5.39% | — | — | — | — |
+| champion_system | 4.96% | 5.39% | −0.43pp | −0.84 (n.s.) | 0.248 | 0.228 |
+| **distilled (133k d10)** | **2.83%** | 5.39% | **−2.56pp** | **−7.00** | **0.729** | 0.383 |
+
+The distilled system bids game **half as often as Brill**. The defect is
+specific to distillation — champion has no detectable game-rate bias at all
+(t −0.84). And the shape of it is suggestive: precision 0.729 against
+champion's 0.248. The distilled model is a *better chooser* of games that
+merely bids too few, which is the textbook signature of a good
+discriminator with its decision threshold set too high.
+
+**Third, the obvious fix, and it is wrong.** A depth-limited ID3 tree
+cannot resolve every region of feature space, so it manufactures many
+*unresolved* leaves (say 55% PASS / 45% 1S) and majority vote files them
+all under PASS. Rather than delete PASS traces before fitting — which is
+what `--pass-cap` did, and it cost −1.91 — the threshold can be moved
+after fitting: a leaf whose PASS share is below `margin` emits its most
+common non-PASS call instead. Same symptom, but it keeps every trace and
+every leaf's real distribution, and it cannot invent a call or touch a
+confident PASS. Implemented as `id3_leaf_paths(leaf_margin=)` in
+`src/bid/learner.py` (leaves now carry `class_counts`; default 0.0, so
+existing behaviour is unchanged).
+
+Fitting once on 133k and recompiling per margin makes the sweep nearly
+free, so this is a dose-response rather than a single guess
+(`research/brill_leaf_margin.py`):
+
+| margin | agreement | game rate | bias | t | recall | precision |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0.0 | 82.1% | 2.83% | −2.56pp | −7.00 | 0.383 | 0.729 |
+| 0.5 | 80.9% | 4.29% | −1.10pp | −2.74 | 0.451 | 0.566 |
+| 0.6 | 80.5% | 4.96% | −0.43pp | −1.06 | 0.494 | 0.537 |
+| 0.7 | 79.0% | 5.52% | +0.13pp | +0.32 | 0.531 | 0.518 |
+| 0.8 | 76.6% | 6.79% | +1.40pp | +3.21 | 0.599 | 0.475 |
+| 0.9 | 73.9% | 8.42% | +3.03pp | +6.43 | 0.654 | 0.419 |
+
+Margin 0.8 matches Brill's game rate essentially exactly (6.79% vs 5.39%,
+overshooting) and the bias is gone. On the metric the defect was measured
+on, the fix works perfectly.
+
+**Then it was graded on the board** — 600 boards, seed 7, paired against
+the margin-0.0 arm of the *same* fit:
+
+| margin | IMP/board vs margin 0 | se | t | contested | uncontested |
+| --- | --- | --- | --- | --- | --- |
+| 0.5 | −0.758 | 0.240 | **−3.15** | −1.605 (t −3.41) | −0.268 |
+| 0.6 | −0.958 | 0.281 | **−3.41** | −1.972 (t −3.51) | −0.384 |
+| 0.7 | −1.535 | 0.319 | **−4.81** | −2.843 (t −4.42) | −0.761 |
+| 0.8 | −2.850 | 0.361 | **−7.91** | −4.430 (t −6.61) | −1.713 |
+
+Monotone, every step significant, spanning 2.85 IMP/board — and in the
+**opposite direction to the diagnosis**. Forcing the model to stop passing
+costs it roughly twice as much in contested auctions as in uncontested
+ones, which is where an ill-judged bid gets doubled.
+
+Sanity check that the arms are comparable: margin 0.0 vs the production
+1,120-rule control is **+0.200 (se 0.235, t +0.85, n.s.)**, so the new
+compilation path reproduces the shipped model and the effects above are
+attributable to the margin, not to the refit.
+
+**What this settles.** The game-rate deficit is real (−2.56pp, t −7.00)
+and it is *not* a miscalibration. The distilled model is precise because
+it is selective: the marginal games it would add are wrong more often than
+right. Absent-mindedly bidding more is not what separates it from Brill —
+Brill finds twice as many games **and is right about them**. Champion bids
+game at Brill's rate with precision 0.248, essentially at random, and is
+no better a player than the timid distilled model (+0.04). Game *frequency*
+buys nothing on its own; game *accuracy* is the whole thing.
+
+This is also the mechanism behind `--pass-cap`'s −1.91, now with a
+dose-response instead of one bad number: making a model that does not know
+bid anyway is strictly worse than letting it pass.
+
+**Tenth intervention, tenth null — but the most informative one.** Unlike
+the previous nine, this had a measured defect, a mechanism, a knob, and a
+monotone dose-response, and the dose-response says the defect is adaptive
+rather than reparable. The system's conservatism is not a bug to be
+calibrated away; it is the correct policy for a model with this much
+knowledge. Any future proposal that amounts to "make it bid more" is
+predicted to lose, and the predicted size of the loss is now known.
+
 ---
 
 ## 9. References
