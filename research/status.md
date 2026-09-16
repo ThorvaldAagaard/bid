@@ -4203,6 +4203,77 @@ moved a proxy significantly and none moved the objective. The remaining
 2.6 IMP/board is a two-system interaction effect and is not reachable by
 better imitation of Brill's calls.
 
+### 6.70 Power: every experiment so far could only detect ≥0.6 IMP/board
+
+Eleven interventions have now been graded on the team match, and the
+recurring result is "not significant". This section asks what those
+non-results were actually capable of detecting. The answer reframes them.
+
+**Per-board variance is far larger than the repo assumes.** §6.18 measured
+a per-board sd of 3.82 and calibrated `BOARD_IMP_LOSS_SD = 4.0` from it.
+That was for absolute deviation from par. In a team match the quantity is
+the *difference between two systems on the same board*, and its sd is
+roughly double:
+
+| run (600 boards, seed 7) | mean | sd | se | resolves (95%) |
+| --- | --- | --- | --- | --- |
+| `opening_contested` | −0.060 | 6.83 | 0.279 | ±0.55 |
+| control (133k d10) | +0.070 | 6.46 | 0.264 | ±0.52 |
+| + partnership HCP | +0.037 | 6.65 | 0.271 | ±0.53 |
+| margin 0.0 | +0.270 | 6.58 | 0.269 | ±0.53 |
+| `bid` grouping | −1.192 | 7.73 | 0.316 | ±0.62 |
+| margin 0.8 | −2.580 | 8.15 | 0.333 | ±0.65 |
+
+Ten runs, sd 6.46–8.15, mean **7.19**. The better the system the lower its
+sd (6.5–6.8 for the good arms, 7.3–8.2 for the damaged ones), which is
+itself a sanity check: making a system worse adds variance.
+
+Pairing helps but nowhere near enough. For `opening_contested` vs the
+control the paired se is 0.294 against 0.384 for two independent samples
+— a correlation of only ~0.41, because two systems can differ by ±13 IMP
+on a board and still be equal on average.
+
+**What 600 boards can and cannot see.** At se ≈ 0.29 the 95% interval is
+±0.58, so 600 boards resolves an effect of about **±0.6 IMP/board**:
+
+| to detect | boards needed per arm | wall-clock per arm |
+| --- | --- | --- |
+| ±0.6 | 550 | ~5 min |
+| ±0.4 | 1,240 | ~10 min |
+| ±0.3 | 2,200 | ~18 min |
+| ±0.2 | 4,960 | ~41 min |
+| ±0.1 | 19,800 | ~2.8 h |
+
+**Consequence: the eleven "nulls" are not nulls.** They are results of the
+form "this intervention is not worth ≥0.6 IMP/board". Every one of them is
+still fully consistent with a true effect of +0.2 or +0.3, which would be
+a real and useful gain. §6.67's partnership-HCP features measured −0.033
+with CI [−0.52, +0.45]; §6.69's contested grouping measured −0.130 with CI
+[−0.71, +0.45]. Neither is a finding of no effect. They are findings of
+*no resolution*.
+
+This also explains the shape of the whole history. The only results that
+were ever significant were the large ones — the data lever (+1.49, +0.88)
+and the interventions that were actively harmful (−1.91, −2.85). The
+instruments were built to catch earthquakes, and every result since §6.63
+has been a tremor or nothing.
+
+**There is no concentration to exploit.** If the loss were carried by a
+few catastrophic boards, a targeted fix could avoid them and small-sample
+experiments would still detect it. It is not. In the production run the
+best ten boards sum to **+135** and the worst ten to **−141** — the
+distribution is essentially symmetric, with 23% of boards tied and swings
+of ±10–13 common in both directions. The loss is diffuse, so only a
+systematic improvement will show up, and a systematic improvement of the
+size available here requires thousands of boards to see.
+
+**Recommended standard.** 600 boards is fine for *screening out* damage
+and was the right tool for catching −1.9 and −2.9. It is the wrong tool
+for promotion decisions. Use **≥2,200 boards** (resolves ±0.3, ~18 min per
+arm) as the minimum for claiming a candidate is worth deploying, and
+~5,000 when the decision matters. Nothing in §6.67–§6.69 was measured to
+that standard, so none of it should be read as "this does not work".
+
 ---
 
 ## 9. References
