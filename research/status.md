@@ -4530,6 +4530,57 @@ because the objective confirms the size of the gain.
 
 ---
 
+### 6.74 Re-measured against Brill: the gap is +1.88, and the +0.30 transfers
+
+§6.71 measured **+2.455** against the *old* 1,120-rule model. §6.73 then
+promoted a new model whose advantage (+0.27 / +0.33) was measured **against
+that same old model**, and closed with an explicit worry: bridge scoring is
+not transitive, and against champion the new model was worth only +0.05
+± 0.29. A gain that only exists relative to the system it replaced would
+not be a gain at all.
+
+This re-runs §6.71 verbatim against the promoted model:
+`team_match.py --remote-a --b system/brill_distilled.dsl --boards 200
+--seed 7`, 24 min, ~4,000 requests.
+
+| | vs remote Brill | se | t | won / lost / tied (Brill) |
+| --- | --- | --- | --- | --- |
+| §6.71, old 1,120-rule | +2.455 | 0.410 | +5.99 | 90 / 36 / 74 |
+| **promoted 1,679-rule** | **+1.875** | 0.394 | +4.76 | 74 / 30 / 96 |
+
+Both runs used the same 200 boards and the same seed, so they can be
+differenced board by board:
+
+> **New model vs old, judged against remote Brill: +0.580 IMP/board,
+> se 0.413, t +1.41, 95% CI [−0.229, +1.389].**
+
+Not significant — 200 boards resolves only ±0.81 — but the point estimate
+is *larger* than the +0.30 measured head-to-head, not smaller. **§6.73's
+transitivity caveat is answered as far as this evidence goes: the gain
+does not evaporate against a different opponent.** The worry was real in
+principle; it did not bite.
+
+**The mechanism is visible in the tie rate.** Ties rose from 74 (37%) to
+96 (48%); Brill's wins fell 90 → 74 and its losses 36 → 30. Higher
+fidelity (84.2% against 82.2%) converts boards we used to *lose* into
+boards where we reach exactly the contract Brill reaches, and a tie is
+worth 0 IMP by construction. Against **Brill**, fidelity pays. Against
+**champion** it did not (§6.68, §6.73). That is the clearest statement
+yet that these proxies are objective-specific: fidelity is a good proxy
+for the distance to the system being imitated and a bad one for the
+distance to any other.
+
+**The programme's central number is now +1.88 ± 0.77**, not +2.46 ± 0.80.
+
+**Confound check.** Both runs must be against the same Brill build for
+this to mean anything. `/version` reports build `2026-09-16T09:16:46Z`,
+which predates §6.71's commit (`a1ee252`, 2026-09-16 13:11 local) and is
+unchanged at the time of the new run, so both were served by the same
+build. The old response cache was not retained, so this rests on the
+version string rather than on a response-by-response diff.
+
+---
+
 ## 9. References
 
 - Amit & Markovitch, *Learning to Bid in Bridge*, MLJ 63(3), 2006 — BIDI/RBMBMC/PIDM/ID3/co-training foundations.
