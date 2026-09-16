@@ -3842,6 +3842,117 @@ comparisons between configurations, which is how they were used.
 `brill_miss_stakes.py` splits by deal and is the clean number (80.6% on the
 same data and depth, which is reassuringly close).
 
+### 6.67 Partnership-HCP features: +0.4pp fidelity, −0.03 IMP (ninth null)
+
+§6.65 located the failure precisely: agreement with Brill is 96.5% on PASS
+and 92.6% on 1-level calls but **22–27% on game and slam**, and game+slam is
+25% of the data carrying 84% of the disagreement mass. The proposed
+mechanism was that the model cannot combine *its own hand* with *the range
+partner has shown*, because `partner_last_call` is a bare string category —
+so learning "with 1NT opposite, 25 is enough" costs one split per call
+value, which a depth-10 tree cannot afford.
+
+Measured before building (40,779 traces where partner's call is
+invertible): P(Brill bids game) rises monotonically **0% → 51%** with
+combined HCP. The signal existed and was simply unreachable.
+
+Added four features (`src/bid/features.py`, 125 → 129 keys):
+
+| feature | meaning |
+| --- | --- |
+| `partner_hcp_min` / `partner_hcp_max` | HCP window partner's bids promise |
+| `combined_hcp_min` / `combined_hcp_max` | that window plus my own HCP |
+
+The inversion is deliberately conservative. NT bids are precise (1NT 15–17,
+2NT 20–21, …), a 1-level suit bid 11–21, 2C strong 22–37, other 2-levels
+weak 5–10, 3+ a preempt 5–10. Passes, doubles and redoubles are **not**
+inverted — a pass is only "no opening values" in some seats and a double is
+ambiguous between takeout and penalty, so inverting either would be a
+guess. Windows intersect in the order bid (1H then 2NT → 20–21), and when a
+later bid contradicts the range already established the *earlier, wider*
+commitment is kept rather than collapsing to "unknown" (1H then 3H → 11–21,
+not 0–37).
+
+The features are used — 1,093 of the probe model's conditions reference
+`combined_hcp_min` — so the hypothesis "this quantity is not reachable" was
+correct. It was also not the thing costing IMPs.
+
+| | CV agreement | rules | IMP/board vs champion | paired vs control |
+| --- | --- | --- | --- | --- |
+| control (133k d10) | 82.2% | 1,120 | +0.07 | — |
+| **+ partnership HCP** | **82.6%** | 1,060 | **+0.04** (se 0.27, t +0.14) | **−0.033** (se 0.248, t −0.13) |
+
+Team match, 600 boards, seed 7, paired against the control on identical
+cards: **−0.033 IMP/board, t −0.13**. Contested +0.091 (t +0.17),
+uncontested −0.094 (t −0.36). Nothing is significant, and the 95% CI is
+[−0.52, +0.45] — this is a *decisive* null, not an underpowered one. Even
+the most favourable reading of the interval excludes the +0.5 IMP/board
+that would have made this worth deploying.
+
+**This is the ninth intervention in a row where fidelity moved and the
+board did not:**
+
+| intervention | fidelity | IMP/board |
+| --- | --- | --- |
+| auction-identity features | +0.4pp | ~0 |
+| pass-capping | — | −1.91 |
+| DAgger | +0.5pp | 0 |
+| depth tuning (8/9/10/12) | ±3pp | 0 (inverted U, 10 optimal) |
+| stakes weighting, global | — | −1.31 to −2.10 |
+| stakes weighting, surgical | — | −0.79 uncontested |
+| more data 14k→44k | +2.3pp | **+0.88** |
+| more data 44k→133k | +1.9pp | +0.17 (n.s.) |
+| **partnership HCP** | **+0.4pp** | **−0.03 (n.s.)** |
+
+Only *more data* has ever moved the number, and §6.66 showed it has
+saturated. The representation is not the bottleneck. Adding features that
+make Brill easier to imitate makes a better model of Brill and the same
+player.
+
+**What this rules out.** Nine failures with a consistent signature is not
+nine unlucky guesses; it is evidence about the objective. The distilled
+system reproduces 82.6% of a strong engine's calls and is *exactly as good
+a player* as the 82.2% model. Either the residual 17.4% is close to
+irreducible noise in Brill's own choices, or the calls that matter are
+distributed differently from the calls that are frequent. §6.65's
+concentration result says which; this result says fixing the frequency-
+weighted representation does not cash it in.
+
+**Where the remaining lever is.** Remote Brill is +2.63 against champion
+and the distilled system is at +0.04 — a gap of ~2.6 IMP/board that no
+amount of imitation has touched. Before another representation change,
+attribute that gap per board: run the distilled system against *remote*
+Brill in the team match and bucket the losses (contract level reached,
+contested or not, partscore vs game vs slam). A per-board attribution is
+the only thing that can distinguish "we under-bid game" from "we misdefend
+competitive auctions" from "our slams are wrong", and those three have
+completely different fixes.
+
+#### Two bugs caught before they shipped
+
+1. `combined_hcp_*` was first computed inside `extract_auction_features`,
+   which builds its **own** features dict and therefore has no `hcp` key —
+   `features.get("hcp")` was always `None`, silently making the combined
+   features equal to partner's window alone. Moved to `extract_all`, where
+   both halves exist. Regression test:
+   `test_combined_hcp_uses_my_hand_not_zero`.
+2. "Partner unknown" reads as `my_hcp + 37`, which exceeds the 40 HCP in
+   the deck. Unclamped, the tree could split on combined totals no deal
+   can produce. Clamped at 40.
+
+#### Tooling added
+
+- `research/paired_diff.py` — paired IMP difference between two
+  `team_match.py --dump` files, with contested/uncontested split and CIs.
+  It refuses to difference runs whose board counts differ, because
+  `build_deals` is not prefix-stable. Validated by reproducing §6.66's
+  d12-vs-d10 result (−0.003, t −0.01) exactly.
+- `research/brill_rate_bias.py` — is the system systematically
+  *under-bidding game*? Distinguishes "game decisions are genuinely hard"
+  from a correctable rate bias, which an accuracy number cannot. Needs
+  held-out traces; nothing in the repo currently qualifies, since all
+  13,450 harvested boards are in the 133k training set.
+
 ---
 
 ## 9. References

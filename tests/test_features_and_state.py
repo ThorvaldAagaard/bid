@@ -74,6 +74,64 @@ class TestFeaturesAndState(unittest.TestCase):
         self.assertEqual(feats["last_bid_level"], 2)
         self.assertEqual(feats["last_bid_strain"], "H")
 
+    def test_partner_hcp_window_inversion(self):
+        """partner's bids must invert to the range they promised."""
+        from bid.features import _partner_hcp_window
+        B = lambda l, s: Call(CallType.BID, l, s)
+        P = Call(CallType.PASS)
+        cases = [
+            ([], (0, 37)),                                  # nothing said
+            ([P], (0, 37)),                                 # passes are not invertible
+            ([B(1, Strain.NT)], (15, 17)),                  # precise
+            ([B(2, Strain.NT)], (20, 21)),
+            ([B(1, Strain.SPADES)], (11, 21)),              # wide
+            ([B(2, Strain.CLUBS)], (22, 37)),               # strong/artificial
+            ([B(2, Strain.HEARTS)], (5, 10)),               # weak two
+            ([B(4, Strain.SPADES)], (5, 10)),               # preempt
+            ([B(1, Strain.HEARTS), B(2, Strain.NT)], (20, 21)),   # narrows
+            ([B(1, Strain.HEARTS), B(3, Strain.HEARTS)], (11, 21)),  # keeps the earlier
+        ]
+        for calls, expected in cases:
+            self.assertEqual(_partner_hcp_window(calls), expected,
+                             "calls=%s" % [str(c) for c in calls])
+
+    def test_partner_hcp_window_ignores_non_bids(self):
+        from bid.features import _partner_hcp_window
+        calls = [Call(CallType.PASS),
+                 Call(CallType.DOUBLE),
+                 Call(CallType.REDOUBLE),
+                 Call(CallType.BID, 1, Strain.NT)]
+        # A takeout double says "values" but so does a penalty double say
+        # something else; neither is safe to invert, so 1NT alone decides.
+        self.assertEqual(_partner_hcp_window(calls), (15, 17))
+
+    def test_combined_hcp_uses_my_hand_not_zero(self):
+        """Regression: the combined features used to read `hcp` from the
+        auction-features dict, which has no such key, silently making
+        combined == partner's window."""
+        # 16 HCP
+        hand = Hand.from_string("SAKQ32 HK32 DA32 C43")
+        history = [Call(CallType.BID, 1, Strain.NT), Call(CallType.PASS)]
+        feats = BridgeFeatures.extract_all(hand, history, Seat.SOUTH,
+                                           Seat.NORTH, 0)
+        self.assertEqual(feats["hcp"], 16)
+        self.assertEqual(feats["partner_hcp_min"], 15)
+        self.assertEqual(feats["partner_hcp_max"], 17)
+        self.assertEqual(feats["combined_hcp_min"], 31)
+        self.assertEqual(feats["combined_hcp_max"], 33)
+
+    def test_combined_hcp_max_never_exceeds_the_deck(self):
+        hand = Hand.from_string("SAKQ32 HK32 DA32 C43")
+        # No information about partner -> the honest upper bound is "any",
+        # but it must still be clamped to 40 or the tree can split on
+        # combined totals no deal can produce.
+        feats = BridgeFeatures.extract_all(hand, [], Seat.SOUTH,
+                                           Seat.NORTH, 0)
+        self.assertEqual(feats["partner_hcp_min"], 0)
+        self.assertEqual(feats["partner_hcp_max"], 37)
+        self.assertEqual(feats["combined_hcp_min"], 16)
+        self.assertEqual(feats["combined_hcp_max"], 40)
+
     def test_bitmask_representation_and_caching(self):
         hand = Hand.from_string("SAKQ32 HK32 DA32 C43")
         # Check that suit_masks has bits set correctly (bit 0 = 2, bit 12 = Ace)

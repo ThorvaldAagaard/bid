@@ -1,6 +1,78 @@
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from bid.models import Hand, Card, Suit, Strain, Seat, Rank, Call, CallType
 from bid.scoring import Vulnerability
+
+# Partner's calls inverted into an HCP window. Deliberately conservative:
+# only calls that unambiguously promise a range narrow it, everything else
+# leaves it wide. NT bids are precise (1NT is a 2-point window), suit bids
+# are wide, and preempts are capped from above.
+#
+# UNINFORMATIVE is the "no idea" window, not "no points". Distinguishing it
+# matters: a feature that silently says 0 when it means "unknown" teaches
+# the tree that partner is broke. 0 and 37 are the true bounds of HCP, so
+# they are the honest encoding of ignorance.
+_HCP_UNINFORMATIVE = (0, 37)
+
+# level -> (lo, hi) for notrump bids. Brill's NT ladder is standard.
+_NT_WINDOWS = {
+    1: (15, 17),
+    2: (20, 21),
+    3: (25, 27),
+    4: (28, 30),
+    5: (31, 32),
+    6: (33, 34),
+    7: (35, 37),
+}
+
+# 1-level suit opening: wide, and it is the single most common case.
+_SUIT_1_WINDOW = (11, 21)
+# 2C strong/artificial vs every other 2-level call, which is weak.
+_SUIT_2C_WINDOW = (22, 37)
+_SUIT_2_WEAK_WINDOW = (5, 10)
+# 3-level and up in a suit is a preempt unless it was forced there.
+_SUIT_PREEMPT_WINDOW = (5, 10)
+
+
+def _partner_hcp_window(partner_calls: List[Call]) -> Tuple[int, int]:
+    """Invert partner's *bids* into the HCP range they have promised.
+
+    Passes, doubles and redoubles are ignored: a pass says "not enough to
+    open" only in some seats, and a double is ambiguous between takeout and
+    penalty, so neither is safe to invert. That keeps this a lower bound on
+    what is knowable rather than a guess.
+
+    Windows are intersected in the order the bids were made, which is what
+    a real partnership does -- 1H then 2NT means 20-21, not 11-21. When a
+    later bid contradicts the range already established (e.g. an opening
+    followed by a preemptive-looking jump) the later bid is dropped rather
+    than collapsing the whole thing to "unknown": the earlier, wider
+    commitment is the one that is still true.
+    """
+    lo, hi = _HCP_UNINFORMATIVE
+    for call in partner_calls or []:
+        if call.type != CallType.BID:
+            continue
+        lvl = call.level
+        if call.strain == Strain.NT:
+            win = _NT_WINDOWS.get(lvl)
+        elif lvl == 1:
+            win = _SUIT_1_WINDOW
+        elif lvl == 2:
+            win = (_SUIT_2C_WINDOW if call.strain == Strain.CLUBS
+                   else _SUIT_2_WEAK_WINDOW)
+        elif lvl >= 3:
+            win = _SUIT_PREEMPT_WINDOW
+        else:
+            win = None
+        if win is None:
+            continue
+        nlo, nhi = max(lo, win[0]), min(hi, win[1])
+        if nlo > nhi:
+            # Contradiction: keep what was already established.
+            continue
+        lo, hi = nlo, nhi
+    return lo, hi
+
 
 class BridgeFeatures:
     """
@@ -262,6 +334,26 @@ class BridgeFeatures:
         features["partner_opened"] = len(partner_bids) > 0 and partner_bids[0].type == CallType.BID and (last_bid_seat == my_seat.partner or (len(history) > 0 and history[0] == partner_bids[0]))
         features["partner_last_call"] = str(partner_bids[-1]) if partner_bids else "NONE"
 
+        # ---- inferred partnership assets --------------------------------
+        # Deciding game and slam means combining YOUR hand with the range
+        # partner has shown. Nothing here exposed that: `partner_last_call`
+        # is a bare category, so a depth-limited tree has to spend one split
+        # per call value to learn "with 1NT opposite, 25 is enough". That is
+        # ruinously expensive in tree budget, and §6.65 measured the result:
+        # agreement is 96.5% on PASS and 92.6% on 1-level calls but 22-27%
+        # on game and slam, which is where the IMPs are.
+        #
+        # Measured before building: across 40,779 traces where partner's call
+        # is invertible, P(Brill bids game) rises monotonically 0% -> 51%
+        # with combined_hcp_min. The signal is there; it was just not
+        # reachable. Two numbers make it a single split.
+        # `combined_hcp_*` lives in extract_all, not here: this function
+        # builds its own features dict and has no `hcp` key, so adding my
+        # HCP in this scope would silently produce the partner window alone.
+        plo, phi = _partner_hcp_window(partner_bids)
+        features["partner_hcp_min"] = plo
+        features["partner_hcp_max"] = phi
+
         my_bids = bids_by_seat[my_seat]
         features["my_last_call"] = str(my_bids[-1]) if my_bids else "NONE"
 
@@ -499,4 +591,17 @@ class BridgeFeatures:
         need_qt = 1.5 if third_or_fourth else 2.0
         feats["rule_of_21"] = (total >= 21
                                and h_feats.get("quick_tricks", 0.0) >= need_qt)
+
+        # Partnership assets: my HCP combined with the range partner has
+        # promised. This is the quantity game and slam decisions are
+        # actually made on, and it could previously only be reconstructed
+        # by splitting on `partner_last_call` once per call value. See the
+        # comment on `partner_hcp_min` in extract_auction_features.
+        # Clamped at 40 because that is all the HCP in the deck. Without the
+        # clamp, "partner is unknown" reads as my_hcp + 37, which can exceed
+        # 40 and would let the tree split on values no deal can produce.
+        my_hcp = int(h_feats.get("hcp") or 0)
+        feats["combined_hcp_min"] = my_hcp + int(a_feats.get("partner_hcp_min", 0))
+        feats["combined_hcp_max"] = min(
+            40, my_hcp + int(a_feats.get("partner_hcp_max", 37)))
         return feats
