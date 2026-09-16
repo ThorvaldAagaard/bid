@@ -3758,6 +3758,72 @@ That is now six interventions (routing features, pass-capping, DAgger,
 depth, stakes weighting global, stakes weighting surgical) and **only ever
 adding traces has moved the number.**
 
+### 6.66 133k traces: the data lever has saturated, and fidelity decouples completely
+
+The 9,000-board harvest landed (6 shards, 3h45m, 88,909 traces, shards
+verified disjoint), giving **132,968 traces over 13,450 boards** — 3.0× the
+44k set, 9.89 calls/board, zero duplicate positions.
+
+| config | CV agreement (deal split) | rules | IMP/board vs champion |
+| --- | --- | --- | --- |
+| opening d10 (44k) | 80.3% | 1,020 | −0.10 |
+| **opening d10 (133k)** | **82.2%** | **1,120** | **+0.07** (se 0.26, t +0.27) |
+| opening d12 (133k) | **84.7%** | 2,688 | +0.07 (se 0.28, t +0.24) |
+| bid d10 (133k) | 81.9% | 13,891 | **−1.19** (se 0.32, t −3.77) |
+
+Paired against the 44k depth-10 control on the same 600 boards:
+
+| comparison | mean | se | t |
+| --- | --- | --- | --- |
+| 133k d10 − 44k d10 | **+0.168** | 0.251 | **+0.67 (n.s.)** |
+| 133k d12 − 44k d10 | +0.165 | 0.289 | +0.57 (n.s.) |
+| 133k bid − 44k d10 | **−1.093** | 0.350 | **−3.12** |
+| 133k d12 − 133k d10 | −0.003 | 0.264 | −0.01 |
+
+**Three findings.**
+
+**1. The data lever is exhausted.** The same 3× scaling that bought +1.49
+(6×) and then +0.88 (3.1×) now buys **+0.17, not significant**:
+
+| step | scaling | IMP gained |
+| --- | --- | --- |
+| 2.4k → 14.3k | 6.0× | **+1.49** |
+| 14.3k → 44k | 3.1× | **+0.88** (t +3.00) |
+| 44k → 133k | 3.0× | **+0.17** (t +0.67, n.s.) |
+
+This is the extrapolation I flagged as unsafe in §6.61, and it went the
+pessimistic way. We are at parity with champion (+0.07, t +0.27) and more
+Brill traces are no longer the way past it.
+
+**2. Fidelity and IMP have now fully decoupled.** +1.9pp of agreement
+(80.3 → 82.2) bought +0.17 IMP, and the 84.7% depth-12 model — 2.5pp better
+than the 44k depth-10 one — is *statistically identical* to the 82.2% model
+(paired −0.003, t −0.01). Fidelity is still climbing on data; IMP is not.
+Any future work must be graded on the team match, never on agreement.
+
+**3. The `bid` grouping prediction was right about fidelity and wrong about
+anything that matters.** At 14k it was 71.3% vs `opening`'s 78.1%; the
+distiller's docstring said finer groupings need "tens of thousands" of
+traces, and at 133k it reached **81.9%** — within 0.3pp of `opening`. The
+prediction was confirmed. It then loses by **−1.19 IMP/board (t −3.77)**,
+with 13,891 rules. Eighth independent instance of the same lesson.
+
+**Also:** depth 12 gained +3.6pp from this data (81.1 → 84.7) against depth
+10's +1.9pp, so the capacity wall does keep moving with data — but by
+§6.64's inverted-U result that extra fidelity is worth nothing on the board,
+and it is confirmed here (d12 vs d10: −0.003).
+
+`system/brill_distilled.dsl` is now the 133k depth-10 model (1,120 rules).
+Eval seed 7 verified to have **zero** overlap with the 13,450 training
+boards.
+
+**Where this leaves the project:** the distilled system is at parity with
+champion and cannot be pushed past it by imitating Brill harder — more
+traces, more capacity, and finer groupings are all exhausted, and every re-
+weighting of the objective backfires. Remote Brill is +2.63. Closing that
+needs something other than better imitation: a different model class (torch
+is not installed here) or optimising the team-match objective directly.
+
 This is the same wall `--pass-cap` hit, but with a dose-response and a
 visible mechanism rather than a single bad number. Combined with §6.61–§6.64
 the scoreboard of "fix the objective or the representation" is now: routing
