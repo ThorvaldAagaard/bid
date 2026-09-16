@@ -4396,6 +4396,105 @@ boards on which systems differ are decided by large, symmetric swings, and
 the only systematic edge in the data belongs to a system that competes
 twice as often and is right when it does.
 
+### 6.73 The first replicated IMP gain — and it is specialisation, not information
+
+§6.70 introduced a sharper instrument almost by accident. Screening a
+candidate **head-to-head against the incumbent** rather than both against
+champion roughly doubles the power, because two distilled systems agree on
+far more boards than either agrees with a hand-authored one:
+
+| design | boards | se | tie rate | resolves (95%) |
+| --- | --- | --- | --- | --- |
+| both vs champion, paired | 2,200 | 0.148 | ~23% | ±0.29 |
+| **head-to-head vs incumbent** | **2,200** | **0.10–0.11** | **~53%** | **±0.21** |
+
+Two things follow. First, every past comparison can be re-run cheaper and
+sharper. Second, and more important, re-running the two live candidates
+this way produced the project's first replicated win.
+
+**`opening_contested` vs the 133k incumbent, 2,200 boards each:**
+
+| seed | net | se | t | contested | uncontested |
+| --- | --- | --- | --- | --- | --- |
+| 7 | **+0.27** | 0.11 | **+2.43** | −0.12 (t −0.60) | **+0.46 (t +3.43)** |
+| 42 | **+0.33** | 0.11 | **+2.96** | +0.12 (t +0.57) | **+0.43 (t +3.20)** |
+
+Significant on both seeds, with the same signature: the entire effect sits
+in **uncontested** auctions (≈ +0.44) and contested is indistinguishable
+from zero. The replication is what makes this credible — a single t = 2.43
+among the many comparisons run this session would mean little.
+
+**Partner-HCP features, measured the same way: −0.03 (se 0.10, t −0.28).**
+§6.67 called this a null on ±0.52 evidence; it is now resolved to ±0.20
+and is genuinely zero.
+
+**The data lever was not saturated either.** §6.66 concluded it was, on
++0.168 (se 0.251). Measured head-to-head at 2,200 boards, 133k beats 44k
+by **+0.20 (se 0.10, t +2.01)** — significant. §6.66's point estimate was
+right and its significance claim was wrong; the lever was closed by an
+underpowered measurement, exactly the failure §6.70 describes. Revised
+series, all at comparable power or better: +1.49 (6×), +0.88 (3.1×),
+**+0.20 (3.0×)**. That is geometric with ratio ≈ 0.5, so the *total*
+remaining from unlimited data is only about +0.4 — real, but an order of
+magnitude short of the +2.46 target.
+
+**The mechanism is specialisation, not information.** The tree could
+always split on `opponents_bid` — it is an ordinary bool feature. What the
+grouping changes is that each slice gets a *whole tree* instead of sharing
+one, and the gain landed entirely on the slice that was previously being
+diluted. So the lever is capacity per slice, not new signal. That
+prediction is testable and cheap: add another slice dimension and the
+effect should recur.
+
+**Promoted.** `system/brill_distilled.dsl` is now the `opening_contested`
+model — 1,679 rules, CV **84.2%**, the highest fidelity measured here.
+
+#### The specialisation lever does not extend indefinitely
+
+If per-slice capacity is the mechanism, another slice dimension should pay
+again. Vulnerability is the natural candidate — binary, so it fragments
+gently (8 groups, ~16.6k traces each), and the textbook input to exactly
+the game and sacrifice decisions where the uncontested gain appeared.
+
+`--group opening_contested_vul`, 133k, depth 10: **3,002 rules**, CV
+**83.1%** (down from 84.2%). Head-to-head against the promoted model,
+2,200 boards, seed 7:
+
+| | net | se | t | contested | uncontested |
+| --- | --- | --- | --- | --- | --- |
+| `opening_contested_vul` | **+0.01** | 0.10 | +0.13 | −0.12 | +0.09 |
+
+Nothing, at 79% more rules. Not promoted.
+
+Its 250-board screen did flash a promising number — abs deviation from par
++0.75 (t +2.71) against champion, better than the promoted model's +0.40 —
+which is a useful reminder that §6.28's warning is load-bearing: absolute
+deviation from par scores beating par as harshly as missing it, so it can
+improve while the system gets worse. The head-to-head is the instrument
+that settled it.
+
+**Reading the two results together.** One binary split helped (+0.30) and
+a second did not (+0.01), so this is not "more groups is better" and the
+naive extrapolation is wrong. The likely distinction is that
+`opponents_bid` interacts with nearly every other feature — it changes
+what a hand is *for* — so a shared tree had to spend its budget
+re-deriving that interaction in every branch, whereas vulnerability is a
+simple main effect the tree already splits on early and cheaply. The
+lever is worth further slices only where the dimension is an *interaction*
+rather than an additive input. Untested candidates in that class: whether
+partner has bid, and whether the auction has already been doubled.
+
+**The caveat that must travel with it.** Against *champion* the
+improvement is +0.010 against the incumbent's −0.040 — a difference of
+**+0.05 ± 0.29**, not significant. The +0.30 is measured against the
+previous distilled model. These are different match-ups and bridge
+scoring is not transitive: A can beat B without beating C by the same
+margin. Anyone reading "+0.30" should understand it as strength relative
+to the previous system, not as +0.30 against champion. The promotion is
+made because the candidate is significantly stronger in direct contest,
+nominally better against champion, and never worse on any measure — not
+because the objective confirms the size of the gain.
+
 ---
 
 ## 9. References

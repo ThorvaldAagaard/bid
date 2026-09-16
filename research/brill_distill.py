@@ -137,6 +137,27 @@ def group_key(feats: Dict[str, Any], mode: str) -> Any:
         # hard, it changes nothing.
         return (bool(feats.get("is_opening")),
                 bool(feats.get("opponents_bid")))
+    if mode == "opening_contested_vul":
+        # `opening_contested` is the only modelling intervention in this
+        # repo that has ever produced a replicated, significant IMP gain:
+        # +0.27 (t +2.43) on seed 7 and +0.33 (t +2.96) on seed 42, both
+        # at 2,200 boards, and in BOTH cases the entire effect sat in
+        # UNCONTESTED auctions (+0.46 / +0.43) with contested at ~0.
+        #
+        # The tree could always split on `opponents_bid` -- it is a bool
+        # feature -- so this is not new information. It is specialisation:
+        # each slice gets a whole tree instead of sharing one. That the
+        # gain landed on the slice that was previously being diluted says
+        # the lever is capacity per slice, so try another slice dimension.
+        #
+        # Vulnerability is the natural next one. It is the textbook input
+        # to game and sacrifice decisions, it is binary so it fragments
+        # the data gently (8 groups, ~16.6k traces each at 133k), and it
+        # is exactly the kind of thing a shared tree spends its budget on
+        # last.
+        return (bool(feats.get("is_opening")),
+                bool(feats.get("opponents_bid")),
+                bool(feats.get("is_vulnerable")))
     if mode == "bid":
         # last_bid_strain is a STRING ('NONE'/'C'/'D'/'H'/'S'/'NT'), so key on
         # it directly — RuleCondition handles string equality fine (brill.dsl
@@ -156,6 +177,10 @@ def guard_for(key: Any, mode: str) -> List[DecisionNetRule]:
     elif mode == "opening_contested":
         conds = [RuleCondition("is_opening", "==", bool(key[0])),
                  RuleCondition("opponents_bid", "==", bool(key[1]))]
+    elif mode == "opening_contested_vul":
+        conds = [RuleCondition("is_opening", "==", bool(key[0])),
+                 RuleCondition("opponents_bid", "==", bool(key[1])),
+                 RuleCondition("is_vulnerable", "==", bool(key[2]))]
     elif mode == "bid":
         conds = [RuleCondition("auction_len", "==", int(key[0])),
                  RuleCondition("last_bid_level", "==", int(key[1])),
@@ -175,10 +200,14 @@ def _num(v: Any, default: int = 0) -> int:
 def key_label(key: Any) -> str:
     if not isinstance(key, tuple):
         return str(key)
-    if len(key) == 2 and isinstance(key[0], bool):
-        # opening_contested: (is_opening, opponents_bid)
-        return "%s_%s" % ("open" if key[0] else "later",
-                          "cont" if key[1] else "uncont")
+    if len(key) in (2, 3) and isinstance(key[0], bool):
+        # opening_contested:      (is_opening, opponents_bid)
+        # opening_contested_vul:  (is_opening, opponents_bid, is_vulnerable)
+        out = "%s_%s" % ("open" if key[0] else "later",
+                         "cont" if key[1] else "uncont")
+        if len(key) == 3:
+            out += "_vul" if key[2] else "_nv"
+        return out
     return "L%d/%d/%s" % (key[0], key[1], key[2])
 
 
@@ -191,7 +220,8 @@ def main():
                                                   "brill_distilled.dsl"))
     ap.add_argument("--group", default="auction_len",
                     choices=["auction_len", "bid", "opening",
-                             "opening_contested", "none"])
+                             "opening_contested", "opening_contested_vul",
+                             "none"])
     ap.add_argument("--max-depth", type=int, default=8)
     ap.add_argument("--min-samples", type=int, default=25,
                     help="below this a group gets a single majority rule")
