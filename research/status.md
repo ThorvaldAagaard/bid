@@ -4760,6 +4760,70 @@ made it worse still. The contested slice is the one part of this system
 where the distillation objective appears not to be buying anything, and
 it is where the remaining gap to Brill lives.
 
+### 6.77 The same question, three opponents, three answers: +0.05 ± 0.03
+
+Promoting on §6.76's head-to-head left an uncomfortable loose end,
+because the shipped system's *other* number went the other way:
+
+| model | vs champion (pooled, 4,400 bd) |
+| --- | --- |
+| all-330k (1,910 rules) | **+0.484** (se 0.101, t +4.81) |
+| **hybrid (1,833 rules)** | **+0.364** (se 0.100, t +3.64) |
+
+So the hybrid beats the all-330k model by +0.084 in direct contest yet
+scores *worse* against champion. Both runs used the same boards and the
+same seeds, so the two can be differenced board by board — that is a
+second, independent estimate of the same quantity with champion's
+contribution cancelling:
+
+> (330k − champion) − (hybrid − champion) = **330k − hybrid = +0.120**
+> (se 0.070, t +1.72, CI [−0.016, +0.257]) — *not* significant.
+
+Since Brill is the actual target, I ran the tiebreaker there too:
+Brill against each model, 200 boards, seed 7, same deals, differenced
+paired (149/200 boards identical).
+
+| | Brill's edge | |
+| --- | --- | --- |
+| vs 133k (§6.73 baseline) | **+2.455** | |
+| vs all-330k | **+1.820** | (se 0.41) |
+| **vs hybrid** | **+1.555** | (se 0.40) |
+
+> Paired: Brill-vs-330k − Brill-vs-hybrid = **+0.265** (se 0.261,
+> t +1.01) — hybrid better, not significant.
+
+**Three estimates of one quantity, which do not agree:**
+
+| design | boards | hybrid − 330k | se | t |
+| --- | --- | --- | --- | --- |
+| head-to-head | 11,000 | **+0.084** | 0.032 | **+2.59** |
+| via champion | 4,400 | −0.120 | 0.070 | −1.71 |
+| via Brill | 200 | +0.265 | 0.261 | +1.02 |
+| **inverse-variance weighted** | | **+0.051** | 0.029 | +1.74 |
+
+**Decision: keep the hybrid.** The weighted estimate is +0.05
+(CI [−0.007, +0.108]) — positive, not quite significant — and the only
+design that resolves the question on its own is the one that favours it,
+at 5/5 seeds. But this is a much weaker promotion than §6.75's, and it
+should be recorded as such: **the evidence is genuinely mixed, and the
+two models are within about a tenth of an IMP of each other on every
+way of looking at it.**
+
+**Why this is worth writing down at all.** Three measurements of "which
+system is better", all on identical cards, disagree by up to 0.39
+IMP/board — more than the effect being measured. That is §6.73's
+non-transitivity caveat arriving in the data rather than as a warning:
+*how much a contested slice is worth depends on who is sitting opposite.*
+Against an opponent that competes at 15.3% (champion) the more
+aggressive contested slice pays; against one that competes at 22.5%
+(Brill) the more conservative one does. Neither is "better" in the
+abstract, and any future promotion decided on a single opponent should
+be treated as provisional.
+
+**The central number is now +1.56.** Brill's edge has fallen from
++2.455 (§6.71/§6.74, the 133k model) to **+1.555** — about 0.9 IMP/board
+closed over this programme, with roughly 1.6 still open.
+
 ---
 
 ## 9. References
