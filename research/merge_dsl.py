@@ -55,13 +55,27 @@ def main() -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("inputs", nargs="+")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--only-prefix", default="",
+                    help="keep only rules whose id starts with one of these "
+                         "comma-separated prefixes. Rule ids are "
+                         "BD_<slice>_..., so this swaps a single slice of an "
+                         "existing system — e.g. take every slice but "
+                         "BD_later_cont from the new model and BD_later_cont "
+                         "from the old one.")
     args = ap.parse_args()
+
+    keep = tuple(p.strip() for p in args.only_prefix.split(",") if p.strip())
 
     headers, blocks = None, []
     seen = {}
     for path in args.inputs:
         with open(path) as fh:
             header, blks = split_header(fh.read())
+        if keep:
+            before = len(blks)
+            blks = [b for b in blks if rule_id(b).startswith(keep)]
+            print("  %-46s kept %d/%d by prefix" % (os.path.basename(path),
+                                                    len(blks), before))
         # A slice can come back empty (below --min-samples), and its file is
         # then just a header — or nothing. Take the first *real* header.
         if headers is None and any(h.strip() for h in header):

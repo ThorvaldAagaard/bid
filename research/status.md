@@ -4698,6 +4698,70 @@ than trusting more of the same traces to help it.
 
 ---
 
+### 6.76 Reverting the contested slice: +0.084, and the slice decomposition holds
+
+§6.75's last observation was that 2.5x data **hurt** the contested slice
+(−0.20 on all five seeds) while helping uncontested (+0.28). First, the
+cheap check that this was not a harvest artefact: the new 197k and the
+old 133k are distributionally the same — 99.8% vs 100.0% complete
+auctions, 58.7% vs 59.0% contested positions, identical auction-length
+histograms. The regression is real.
+
+That suggests the obvious move: keep the new uncontested slices, put the
+old contested slice back. `merge_dsl.py --only-prefix` makes this a
+one-liner, because every rule carries its slice's guard conditions —
+`BD_later_cont_*` rules can only fire where `opponents_bid` is true, so
+the slices are genuinely independent and swapping one cannot perturb
+another.
+
+> **`brill_distilled_hybrid`** = 330k uncontested (252 + 752) + 133k
+> contested (829) = **1,833 rules**, vs the 1,910-rule all-330k model.
+
+| seed | net | se | t | contested | uncontested |
+| --- | --- | --- | --- | --- | --- |
+| 7 | +0.080 | 0.074 | +1.08 | +0.167 | +0.036 |
+| 42 | +0.110 | 0.073 | +1.51 | +0.301 | +0.023 |
+| 101 | +0.136 | 0.070 | +1.93 | +0.425 | +0.007 |
+| 202 | +0.046 | 0.073 | +0.63 | +0.045 | +0.047 |
+| 303 | +0.046 | 0.072 | +0.64 | +0.049 | +0.045 |
+
+> **Pooled over 11,000 boards: +0.084 IMP/board, se 0.032, t +2.58,
+> 95% CI [+0.020, +0.147].** Positive on 5 of 5 seeds.
+
+**Promoted.** Cumulatively the shipped system is now **+0.22** over the
+133k baseline of §6.73 (+0.131 then +0.084).
+
+#### Two things worth noting about the instrument
+
+The per-board sd here is **3.40**, not the 4.71 of §6.75, and the tie
+rate is **75%** rather than 55%. Two systems that differ on one slice
+agree far more often than two that differ everywhere, so this
+comparison resolves ±0.064 per seed where the full-model one resolved
+±0.20. **Comparing systems that differ in exactly one component is ~3x
+cheaper than comparing whole systems** — the same effect §6.73 found by
+screening against the incumbent, obtained here by construction. Any
+future one-component change should be measured this way.
+
+Second, the uncontested column is not zero (+0.007 to +0.047) even
+though the hybrid's uncontested rules are byte-identical to the
+comparison model's. That is not a bug in the slice decomposition: the
+`contested` label comes from table 1's auction only (§6.71's caveat), so
+a board labelled uncontested can still have the *other* table competing,
+and the hybrid's contested rules act there. The residual is the right
+size to be exactly that.
+
+#### What this says about contested
+
+Reverting recovered +0.084 — real, but it only returns the contested
+slice to where it was. Nothing has made contested *better than it was at
+133k*; more data made it worse, reverting made it neutral, and every
+earlier attempt to push it (§6.68's leaf margin, stakes weighting)
+made it worse still. The contested slice is the one part of this system
+where the distillation objective appears not to be buying anything, and
+it is where the remaining gap to Brill lives.
+
+---
+
 ## 9. References
 
 - Amit & Markovitch, *Learning to Bid in Bridge*, MLJ 63(3), 2006 — BIDI/RBMBMC/PIDM/ID3/co-training foundations.
