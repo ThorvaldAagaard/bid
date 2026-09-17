@@ -4581,6 +4581,123 @@ version string rather than on a response-by-response diff.
 
 ---
 
+### 6.75 Data, 2.5x: the harvest got ~10x cheaper and the gain is +0.13
+
+§6.73 left the data lever open but capped: 133k beat 44k by +0.20, the
+series +1.49 / +0.88 / +0.20 is geometric with ratio ≈ 0.5, and the
+*total* left from unlimited data was put at about +0.4. Two things
+changed the economics.
+
+#### The bulk endpoint
+
+Every harvest in this repo used `/bid`, one request per call. A board
+produces 9.9 traces, so one board cost ~10 round trips, and the requests
+were inherently serial because each `ctx` depends on the previous answer.
+**`/autobid` bids a whole board in one request**, returning the complete
+auction plus a per-call explanation. Same data, ~10x fewer requests, and
+the requests are now independent — so they parallelise.
+
+`research/brill_harvest.py` does this. Measured: **20,000 deals /
+197,761 traces in 44 min on 6 workers, 8.2 deals/s, 0 errors.** Two
+checks before trusting it — 12/12 sampled positions give the *same* call
+from `/autobid` as from `/bid`, and the new set has 9.89 calls/board
+against the existing harvest's 9.89 — plus `--check-overlap` confirmed
+0 of the 20,000 deals collide with the 13,450 already trained on.
+Merged: **330,729 traces, 2.49x.**
+
+#### Fitting 330k on 16 GB
+
+The first attempt thrashed the machine into the ground — 21 MB free, the
+failure §6's notes keep warning about. Two changes, neither of which
+alters a single number:
+
+1. `featurise` stores the raw row instead of a parsed
+   `(Hand, history, …)` tuple and re-parses on demand. 330k traces were
+   pinning ~4.3m `Card` objects for the whole run purely so held-out
+   fidelity could be scored later, and only the held-out slice is ever
+   scored.
+2. `--only-group` fits one slice, dropping other rows as they are
+   featurised. `fit_net` already fits each slice **independently**, so
+   this is exact rather than approximate — verified on a 4k sample that
+   the per-slice rule counts sum to the single-process count
+   (0 + 64 + 319 + 266 = 649) and that the merged rule-id set is
+   identical. `research/merge_dsl.py` reassembles the pieces and refuses
+   on duplicate ids.
+
+Result: 1,910 rules, CV **84.9%** against 84.2%. On the genuinely
+held-out seed-555 set the new model is both more faithful (84.1% vs
+83.5%) and less timid (3.96% vs 3.63% game rate, against Brill's 5.39%).
+
+#### The measurement
+
+Head-to-head against the previously promoted model, 2,200 boards per
+seed:
+
+| seed | net | se | t | contested | uncontested |
+| --- | --- | --- | --- | --- | --- |
+| 7 | +0.103 | 0.101 | +1.02 | −0.17 | **+0.24 (t +2.15)** |
+| 42 | +0.121 | 0.101 | +1.20 | −0.23 | **+0.28 (t +2.55)** |
+| 101 | +0.154 | 0.099 | +1.55 | −0.25 | **+0.34 (t +3.11)** |
+| 202 | +0.106 | 0.102 | +1.04 | −0.11 | +0.20 (t +1.80) |
+| 303 | +0.170 | 0.099 | +1.72 | −0.25 | **+0.35 (t +3.16)** |
+
+> **Pooled over 11,000 boards: +0.131 IMP/board, se 0.045, t +2.92,
+> 95% CI [+0.043, +0.219].** Positive on 5 of 5 seeds.
+
+**And against champion the improvement is much larger than +0.13.**
+Every distilled system before this one was pinned at parity with the
+hand-authored system — §6.72 had the incumbent at −0.040 ± 0.27 and
+`opening_contested` at +0.010 ± 0.27. This one is not:
+
+| vs `champion_system` | net | se | t |
+| --- | --- | --- | --- |
+| seed 7 | **+0.559** | 0.144 | **+3.90** |
+| seed 42 | **+0.409** | 0.141 | **+2.89** |
+| **pooled (4,400 boards)** | **+0.484** | 0.101 | **+4.81** |
+
+95% CI **[+0.287, +0.681]**. Both seeds significant on their own. This is
+the first time a system here has beaten champion by a margin the
+objective can actually see, and it is ~10x the head-to-head +0.13 — a
+reminder, if one were needed, that the two match-ups measure different
+things and that "beats the previous distilled model" is a weak statement
+about absolute strength.
+
+**Promoted.** `system/brill_distilled.dsl` is now the 330k model
+(1,910 rules, CV 84.9%); the previous one is kept as
+`system/brill_distilled_133k.dsl`.
+
+Two honest notes on the statistics. First, no single seed is significant
+— five were needed, and this is the comparison §6.70's table was for:
+one seed resolves ±0.20 and the effect is +0.13. Anyone repeating this
+with two seeds will get +0.10 and +0.12 and conclude nothing. Second,
+the seeds agree far more tightly than sampling theory predicts
+(between-seed sd 0.030 against a within-run se of 0.101), so the pooled
+`se 0.045` used above is the **conservative** figure; the between-seed
+estimate would give t ≈ 9.7. The mechanism is presumably the one §6.73
+found — two near-identical distilled systems tie on most boards, and
+what varies between board samples is a thin tail.
+
+#### The finding that matters more than the +0.13
+
+The gain is entirely uncontested (**+0.28**, significant on four of five
+seeds on its own) and **contested is negative on all five** (mean
+−0.20). More data made the model *worse* where the opponents have bid.
+
+That is §6.71's paradox reappearing from the opposite direction. More
+data lets the tree imitate Brill's competitive calls more often, but
+imitation is not judgement: Brill competes at 22.5% and is right when it
+does, and a model that competes more without knowing which competitions
+are good loses. The earlier evidence said forcing competition costs
+−0.76 to −2.85; this says *learning* it costs −0.20. Both point at the
+same thing — in contested auctions the marginal call is not the
+informative one.
+
+It also means the data lever is not uniform, and the obvious next
+experiment is to fit the contested slice on its own objective rather
+than trusting more of the same traces to help it.
+
+---
+
 ## 9. References
 
 - Amit & Markovitch, *Learning to Bid in Bridge*, MLJ 63(3), 2006 — BIDI/RBMBMC/PIDM/ID3/co-training foundations.
